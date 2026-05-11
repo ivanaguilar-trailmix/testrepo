@@ -1,0 +1,15 @@
+# Core — required to run the simulator
+numpy==2.4.1
+pandas==2.3.3
+scipy==1.17.1
+plotly==6.6.0
+ipywidgets==8.1.8
+ipykernel==7.1.0
+voila==0.5.12
+
+# Needed to load pickled data (exported from BigQuery)
+db-dtypes==1.5.0
+
+# BigQuery — only needed if refreshing data from source (refresh_data = True)
+# google-cloud-bigquery==3.40.0
+# google-auth==2.47.0
