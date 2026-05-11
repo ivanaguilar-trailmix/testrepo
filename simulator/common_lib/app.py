@@ -5,11 +5,12 @@ from __future__ import annotations
 
 import traceback
 
+import ipywidgets as _w
 import pandas as pd
-from IPython.display import display as _display
 
 from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve
-from common_lib.plots import plot, configure as _configure_plots
+from common_lib.plots import build_chart_widget, configure as _configure_plots
+from common_lib.sheets import load_inputs
 from common_lib.simulation import (
     PlatformInputs, SimulationEngine,
     load_scenario, list_scenarios,
@@ -43,6 +44,7 @@ def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict,
         )
 
 
+
 def setup_callbacks(
     panel,
     engine: SimulationEngine,
@@ -51,8 +53,6 @@ def setup_callbacks(
     live_conversion: pd.DataFrame = None,
 ) -> None:
     """Wire all panel buttons to their callback functions."""
-
-    _configure_plots(actuals)
 
     def _build_inputs(platform: str, overrides: dict) -> PlatformInputs:
         anchors = panel.get_curve_anchors()
@@ -71,24 +71,30 @@ def setup_callbacks(
 
     def run_simulation():
         try:
-            name     = panel.scenario_name.value
-            start    = panel.get_forecast_start()
-            n_months = int(panel.forecast_months.value)
-            ios_inp  = _build_inputs('ios',     panel.get_ios_overrides())
-            and_inp  = _build_inputs('android', panel.get_android_overrides())
-            result   = engine.run(ios_inp, and_inp, forecast_start=start, scenario_name=name, n_months=n_months)
+            name        = panel.scenario_name.value
+            start       = panel.get_forecast_start()
+            n_months    = int(panel.forecast_months.value)
+            actuals_from = panel.get_actuals_from()
+            ios_inp     = _build_inputs('ios',     panel.get_ios_overrides())
+            and_inp     = _build_inputs('android', panel.get_android_overrides())
+            result      = engine.run(ios_inp, and_inp, forecast_start=start, scenario_name=name, n_months=n_months)
             save_result(name, result)
 
-            with panel.charts_output:
-                panel.charts_output.clear_output(wait=True)
-                plot(name, chart='dau')
-                plot(name, chart='revenue')
-                plot(name, chart='monthly')
+            filtered = actuals[actuals['dt'].dt.date >= actuals_from] if actuals_from else actuals
+            _configure_plots(filtered)
 
-            with panel.table_output:
-                panel.table_output.clear_output(wait=True)
-                _display(monthly_table(name, actuals, team_cost=panel.get_team_cost()))
+            n_actuals = max(1, (start.year - actuals_from.year) * 12 + (start.month - actuals_from.month)) if actuals_from else 6
 
+            chart_ws = {k: build_chart_widget(name, k) for k in panel.get_selected_charts()}
+            table_html = monthly_table(
+                name, filtered,
+                team_cost=panel.get_team_cost(),
+                historical_marketing=panel.get_historical_marketing(),
+                n_actuals=n_actuals,
+            ).to_html()
+            table_w = _w.HTML(f'<div style="overflow-x:auto">{table_html}</div>')
+
+            panel.set_chart_results(chart_ws, table_w)
             panel.set_status(f"Done — {name}  |  save the scenario to persist inputs", 'green')
         except Exception:
             traceback.print_exc()
@@ -96,20 +102,26 @@ def setup_callbacks(
 
     def save_current_scenario():
         try:
-            name          = panel.scenario_name.value
-            start         = panel.get_forecast_start()
-            n_months      = int(panel.forecast_months.value)
-            ios_inp       = _build_inputs('ios',     panel.get_ios_overrides())
-            and_inp       = _build_inputs('android', panel.get_android_overrides())
-            curve_anchors = panel.get_curve_anchors()
-            actuals_range = panel.get_actuals_range()
-            team_cost     = panel.get_team_cost()
+            name            = panel.scenario_name.value
+            start           = panel.get_forecast_start()
+            n_months        = int(panel.forecast_months.value)
+            ios_inp         = _build_inputs('ios',     panel.get_ios_overrides())
+            and_inp         = _build_inputs('android', panel.get_android_overrides())
+            curve_anchors   = panel.get_curve_anchors()
+            actuals_range   = panel.get_actuals_range()
+            team_cost       = panel.get_team_cost()
+            actuals_from         = panel.get_actuals_from()
+            selected_charts      = panel.get_selected_charts()
+            historical_marketing = panel.get_historical_marketing()
             path = save_scenario(
                 name, start, ios_inp, and_inp,
                 n_months=n_months,
                 curve_anchors=curve_anchors,
                 actuals_range=actuals_range,
                 monthly_team_cost=team_cost,
+                actuals_from=str(actuals_from) if actuals_from else None,
+                selected_charts=selected_charts,
+                historical_marketing=historical_marketing,
             )
             panel.set_status(f'Saved to {path.name}', 'green')
             panel.load_dropdown.options = ['— new scenario —'] + list_scenarios()
@@ -119,7 +131,7 @@ def setup_callbacks(
 
     def load_saved_scenario(name: str):
         try:
-            _, start, n_months, ios_inp, and_inp, curve_anchors, actuals_range, monthly_team_cost = load_scenario(name)
+            _, start, n_months, ios_inp, and_inp, curve_anchors, actuals_range, monthly_team_cost, actuals_from, selected_charts, historical_marketing = load_scenario(name)
             panel.forecast_start.value             = start
             panel.forecast_months.value            = n_months
             panel.scenario_name.value              = name
@@ -152,6 +164,12 @@ def setup_callbacks(
                 panel.set_actuals_range(actuals_range)
             if monthly_team_cost:
                 panel.team_cost_panel.set_values(monthly_team_cost, is_baseline=True)
+            if actuals_from:
+                panel.set_actuals_from(actuals_from)
+            if selected_charts:
+                panel.set_selected_charts(selected_charts)
+            if historical_marketing:
+                panel.set_historical_marketing(historical_marketing)
             panel.set_status(f'Loaded: {name}', 'blue')
         except Exception:
             traceback.print_exc()
@@ -227,10 +245,27 @@ def setup_callbacks(
             traceback.print_exc()
             panel.arpdau_actuals_panel.set_status(f"Error: {e}", 'red')
 
+    def load_team_cost_from_csv():
+        try:
+            inputs = load_inputs()
+            tc_df  = inputs.get('team_cost')
+            if tc_df is None or tc_df.empty:
+                panel.set_status("team_cost.csv not found or empty", 'red')
+                return
+            panel.team_cost_panel.set_values(
+                dict(zip(tc_df['month'], tc_df['team_cost'].astype(float))),
+                is_baseline=True,
+            )
+            panel.set_status("Team cost loaded from CSV", 'green')
+        except Exception as e:
+            traceback.print_exc()
+            panel.set_status(f"CSV load error: {e}", 'red')
+
     panel.on_run(run_simulation)
     panel.on_save(save_current_scenario)
     panel.on_load(load_saved_scenario)
     panel.on_set_anchor(set_anchor_from_actuals)
+    panel.team_cost_panel.on_load_csv(load_team_cost_from_csv)
     panel.retention_actuals_panel.on_load(lambda: _load_single_curve('retention'))
     panel.conversion_actuals_panel.on_load(lambda: _load_single_curve('conversion'))
     panel.arpdau_actuals_panel.on_load(load_arpdau_from_actuals)

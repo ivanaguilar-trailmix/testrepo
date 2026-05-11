@@ -3,6 +3,7 @@ Monthly P&L summary table: actuals + forecast combined.
 """
 from __future__ import annotations
 
+import calendar
 import pandas as pd
 
 from common_lib.simulation import load_result, load_scenario
@@ -95,12 +96,45 @@ def monthly_table(
     n_actuals : int
         How many historical months to show before the forecast start.
     """
-    _, forecast_start, _, ios_inp, and_inp, _, _ = load_scenario(scenario)
+    _, forecast_start, _, ios_inp, and_inp, *_ = load_scenario(scenario)
     result = load_result(scenario)
 
     act_df = _monthly_actuals(actuals, forecast_start, n_actuals)
     fct_df = _monthly_forecast(result)
-    df     = pd.concat([act_df, fct_df], ignore_index=True).sort_values('date').reset_index(drop=True)
+
+    # Blend partial-month actuals into the first forecast row when forecast
+    # starts mid-month (e.g. forecast_start = May 11 → add May 1–10 actuals).
+    if forecast_start.day > 1:
+        _act = actuals.copy()
+        _act['dt'] = pd.to_datetime(_act['dt'])
+        month_first = forecast_start.replace(day=1)
+        partial = _act[
+            (_act['dt'].dt.date >= month_first) &
+            (_act['dt'].dt.date <  forecast_start)
+        ]
+        if not partial.empty:
+            dp = (
+                partial.groupby('dt')
+                .agg(dau=('dau', 'sum'), iap=('iap_revenue', 'sum'), ad=('ad_revenue', 'sum'))
+                .reset_index()
+            )
+            fct_month = pd.Period(forecast_start, 'M')
+            mask = fct_df['month'] == fct_month
+            if mask.any():
+                idx = fct_df.index[mask][0]
+                fct_df.loc[idx, 'iap_revenue']  += dp['iap'].sum()
+                fct_df.loc[idx, 'ad_revenue']   += dp['ad'].sum()
+                fct_df.loc[idx, 'total_dau']    += dp['dau'].sum()
+                fct_df.loc[idx, 'revenue_gross'] = (fct_df.loc[idx, 'iap_revenue'] +
+                                                     fct_df.loc[idx, 'ad_revenue'])
+                fct_df.loc[idx, 'revenue_net']   = (fct_df.loc[idx, 'iap_revenue'] * IAP_NET_FACTOR +
+                                                     fct_df.loc[idx, 'ad_revenue']  * AD_NET_FACTOR)
+                days = calendar.monthrange(forecast_start.year, forecast_start.month)[1]
+                fct_df.loc[idx, 'avg_dau'] = fct_df.loc[idx, 'total_dau'] / days
+                fct_df.loc[idx, 'arpdau']  = (fct_df.loc[idx, 'revenue_gross'] /
+                                               fct_df.loc[idx, 'total_dau'])
+
+    df = pd.concat([act_df, fct_df], ignore_index=True).sort_values('date').reset_index(drop=True)
     df['month_str'] = df['month'].astype(str)
 
     def _mkt(row):
