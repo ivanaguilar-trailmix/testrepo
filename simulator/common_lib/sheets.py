@@ -27,12 +27,10 @@ def load_inputs() -> dict[str, pd.DataFrame]:
     Returns dict with keys: cpi, ua_spend, team_cost.
     Retention, conversion, and ARPDAU are now loaded from actuals via the panel.
     """
-    mc_path = INPUTS_DIR / "marketing_cost.csv"
     return {
-        "cpi":            _load_csv("cpi"),
-        "ua_spend":       _load_csv("ua_spend"),
-        "team_cost":      _load_csv("team_cost"),
-        "marketing_cost": _normalize_month(pd.read_csv(mc_path)) if mc_path.exists() else None,
+        "cpi":       _load_csv("cpi"),
+        "ua_spend":  _load_csv("ua_spend"),
+        "team_cost": _load_csv("team_cost"),
     }
 
 

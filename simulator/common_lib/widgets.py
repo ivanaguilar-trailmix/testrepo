@@ -160,13 +160,13 @@ class PlatformPanel:
         self._set_anchor_callbacks: list[Callable] = []
         self._set_anchor_btn.on_click(lambda _: [cb() for cb in self._set_anchor_callbacks])
 
-        self._cpi_inputs:   list[widgets.BoundedFloatText] = []
-        self._ua_inputs:    list[widgets.BoundedFloatText] = []
-        self._month_labels: list[widgets.Label]            = []
-        self._data_rows:    list[widgets.HBox]             = []
+        self._cpi_inputs:      list[widgets.BoundedFloatText] = []
+        self._installs_labels: list[widgets.HTML]             = []
+        self._month_labels:    list[widgets.Label]            = []
+        self._data_rows:       list[widgets.HBox]             = []
+        self._monthly_ua:      dict                           = {}
 
         cpi_fill = _fill_btn()
-        ua_fill  = _fill_btn()
 
         def _col_hdr(text, btn):
             return widgets.VBox(
@@ -175,45 +175,44 @@ class PlatformPanel:
             )
 
         header_row = widgets.HBox([
-            widgets.HTML("<b>Month</b>", layout=widgets.Layout(width="90px")),
-            _col_hdr("CPI ($)",      cpi_fill),
-            _col_hdr("UA Spend ($)", ua_fill),
+            widgets.HTML("<b>Month</b>",       layout=widgets.Layout(width="90px")),
+            _col_hdr("CPI ($)",                cpi_fill),
+            widgets.HTML("<b>Installs/mo</b>", layout=widgets.Layout(width="100px", padding="4px 0 0 4px")),
         ])
 
         cpi_fill.on_click(lambda _: [
             w.__setattr__("value", self._cpi_inputs[0].value)
             for i, w in enumerate(self._cpi_inputs) if 0 < i < len(self._months)
         ])
-        ua_fill.on_click(lambda _: [
-            w.__setattr__("value", self._ua_inputs[0].value)
-            for i, w in enumerate(self._ua_inputs) if 0 < i < len(self._months)
-        ])
 
         self._rows_box = widgets.VBox([])
         self._apply_months(self._months)
 
         paste_section = _make_paste_section(
-            [("CPI ($)", self._cpi_inputs), ("UA Spend ($)", self._ua_inputs)],
+            [("CPI ($)", self._cpi_inputs)],
             self._months,
         )
 
         platform_label = "iOS" if platform == "ios" else "Android"
         self._box = widgets.VBox([
-            _header(f"{platform_label} — Platform Inputs"),
-            widgets.HBox([self.anchor_dau, self._set_anchor_btn, self.avg_base_age]),
+            _header(f"{platform_label} — CPI"),
             header_row,
             self._rows_box,
             paste_section,
         ], layout=widgets.Layout(border="1px solid #ddd", padding="10px", margin="4px"))
 
     def _create_row(self) -> None:
-        lbl   = widgets.Label("", layout=widgets.Layout(width="90px"))
-        cpi_w = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
-        ua_w  = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=1000, layout=widgets.Layout(width="110px"))
+        i        = len(self._data_rows)
+        lbl      = widgets.Label("", layout=widgets.Layout(width="90px"))
+        cpi_w    = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
+        inst_lbl = widgets.HTML("—", layout=widgets.Layout(width="100px", padding="4px 0 0 4px"))
+
+        cpi_w.observe(lambda change, _i=i: self._refresh_installs_row(_i), names='value')
+
         self._month_labels.append(lbl)
         self._cpi_inputs.append(cpi_w)
-        self._ua_inputs.append(ua_w)
-        self._data_rows.append(widgets.HBox([lbl, cpi_w, ua_w]))
+        self._installs_labels.append(inst_lbl)
+        self._data_rows.append(widgets.HBox([lbl, cpi_w, inst_lbl]))
 
     def _apply_months(self, months: list[str]):
         while len(self._data_rows) < len(months):
@@ -224,39 +223,55 @@ class PlatformPanel:
 
     def update_months(self, start_month: str, n_months: int):
         new_months = _month_sequence(n_months, start_month)
-        old_values = {
-            m: {'cpi': self._cpi_inputs[i].value, 'ua': self._ua_inputs[i].value}
-            for i, m in enumerate(self._months)
-        }
+        old_cpi = {m: self._cpi_inputs[i].value for i, m in enumerate(self._months)}
         self._months[:] = new_months
         self._apply_months(new_months)
         self._loading = True
         try:
             for i, m in enumerate(new_months):
-                v       = old_values.get(m, {})
-                new_cpi = v.get('cpi', 0)
-                new_ua  = v.get('ua',  0)
+                new_cpi = old_cpi.get(m, 0)
                 if self._cpi_inputs[i].value != new_cpi: self._cpi_inputs[i].value = new_cpi
-                if self._ua_inputs[i].value  != new_ua:  self._ua_inputs[i].value  = new_ua
         finally:
             self._loading = False
+        for i in range(len(self._months)):
+            self._refresh_installs_row(i)
 
     @property
     def values(self) -> dict:
         return {
-            "monthly_cpi":      {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
-            "monthly_ua_spend": {m: round(w.value, 2) for m, w in zip(self._months, self._ua_inputs)},
-            "anchor_dau":       round(self.anchor_dau.value, 2),
-            "avg_base_age":     int(self.avg_base_age.value),
+            "monthly_cpi":  {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
+            "anchor_dau":   round(self.anchor_dau.value, 2),
+            "avg_base_age": int(self.avg_base_age.value),
         }
 
     def on_set_anchor(self, callback: Callable):
         self._set_anchor_callbacks = [callback]
 
-    def set_monthly_values(self, monthly_cpi: dict, monthly_ua: Optional[dict] = None):
-        for m, cpi_w, ua_w in zip(self._months, self._cpi_inputs, self._ua_inputs):
+    def set_monthly_values(self, monthly_cpi: dict):
+        for m, cpi_w in zip(self._months, self._cpi_inputs):
             if m in monthly_cpi: cpi_w.value = round(float(monthly_cpi[m]), 2)
-            if monthly_ua and m in monthly_ua: ua_w.value = round(float(monthly_ua[m]), 2)
+        for i in range(len(self._months)):
+            self._refresh_installs_row(i)
+
+    def _refresh_installs_row(self, i: int):
+        if i >= len(self._months):
+            return
+        m   = self._months[i]
+        cpi = self._cpi_inputs[i].value
+        ua  = self._monthly_ua.get(m, 0)
+        self._installs_labels[i].value = f"{round(ua / cpi):,.0f}" if cpi > 0 and ua > 0 else "—"
+
+    def set_ua_for_installs(self, monthly_ua: dict):
+        self._monthly_ua = monthly_ua
+        for i in range(len(self._months)):
+            self._refresh_installs_row(i)
+
+    def dau_widget(self) -> widgets.VBox:
+        platform_label = "iOS" if self.platform == "ios" else "Android"
+        return widgets.VBox([
+            _header(f"{platform_label} — Simulation Parameters"),
+            widgets.HBox([self.anchor_dau, self._set_anchor_btn, self.avg_base_age]),
+        ], layout=widgets.Layout(border="1px solid #ddd", padding="10px", margin="4px"))
 
     def widget(self) -> widgets.VBox:
         return self._box
@@ -685,6 +700,199 @@ class TeamCostPanel:
 
 
 # ---------------------------------------------------------------------------
+# Combined UA budget panel (total monthly spend + per-month iOS/Android split)
+# ---------------------------------------------------------------------------
+
+class UABudgetPanel:
+
+    def __init__(self, n_months: int = 12, start_month: Optional[str] = None):
+        self._months           = _month_sequence(n_months, start_month)
+        self._baseline_budget:  dict[str, float] = {}
+        self._baseline_ios_pct: dict[str, float] = {}
+        self._loading = False
+
+        self._budget_inputs:        list[widgets.BoundedFloatText] = []
+        self._ios_pct_inputs:       list[widgets.BoundedFloatText] = []
+        self._ios_spend_labels:     list[widgets.HTML]             = []
+        self._android_spend_labels: list[widgets.HTML]             = []
+        self._month_labels:         list[widgets.Label]            = []
+        self._data_rows:            list[widgets.HBox]             = []
+        self._change_callbacks:     list[Callable]                 = []
+
+        budget_fill  = _fill_btn()
+        ios_pct_fill = _fill_btn()
+
+        def _col_hdr(text, btn, width="130px"):
+            return widgets.VBox(
+                [widgets.HTML(f"<b>{text}</b>"), btn],
+                layout=widgets.Layout(width=width),
+            )
+
+        header_row = widgets.HBox([
+            widgets.HTML("<b>Month</b>",     layout=widgets.Layout(width="90px")),
+            _col_hdr("Total Budget ($)",     budget_fill,  "130px"),
+            _col_hdr("iOS %",                ios_pct_fill, "80px"),
+            widgets.HTML("<b>iOS $</b>",     layout=widgets.Layout(width="100px")),
+            widgets.HTML("<b>Android $</b>", layout=widgets.Layout(width="100px")),
+        ])
+
+        budget_fill.on_click(lambda _: [
+            w.__setattr__("value", self._budget_inputs[0].value)
+            for i, w in enumerate(self._budget_inputs) if 0 < i < len(self._months)
+        ])
+        ios_pct_fill.on_click(lambda _: [
+            w.__setattr__("value", self._ios_pct_inputs[0].value)
+            for i, w in enumerate(self._ios_pct_inputs) if 0 < i < len(self._months)
+        ])
+
+        self._rows_box = widgets.VBox([])
+        self._apply_months(self._months)
+
+        paste_section = _make_paste_section(
+            [("Budget ($)", self._budget_inputs), ("iOS %", self._ios_pct_inputs)],
+            self._months,
+        )
+
+        self._box = widgets.VBox([
+            _header("UA Budget — Monthly Inputs"),
+            widgets.HTML("<span style='font-size:11px;color:#888'>Total UA spend per month. iOS% drives the platform split; Android gets the remainder.</span>"),
+            header_row,
+            self._rows_box,
+            paste_section,
+        ], layout=widgets.Layout(padding="10px"))
+
+    def _create_row(self) -> None:
+        i           = len(self._data_rows)
+        lbl         = widgets.Label("", layout=widgets.Layout(width="90px"))
+        budget_w    = widgets.BoundedFloatText(value=0,  min=0, max=1e9, step=1000, layout=widgets.Layout(width="130px"))
+        ios_pct_w        = widgets.BoundedFloatText(value=50, min=0, max=100, step=1, layout=widgets.Layout(width="80px"))
+        ios_spend_lbl    = widgets.HTML("$0", layout=widgets.Layout(width="100px", padding="4px 0 0 8px"))
+        android_spend_lbl = widgets.HTML("$0", layout=widgets.Layout(width="100px", padding="4px 0 0 8px"))
+
+        budget_w.observe(  lambda change, _i=i: self._on_change_idx(_i, 'budget',  change), names='value')
+        ios_pct_w.observe( lambda change, _i=i: self._on_change_idx(_i, 'ios_pct', change), names='value')
+
+        self._month_labels.append(lbl)
+        self._budget_inputs.append(budget_w)
+        self._ios_pct_inputs.append(ios_pct_w)
+        self._ios_spend_labels.append(ios_spend_lbl)
+        self._android_spend_labels.append(android_spend_lbl)
+        self._data_rows.append(widgets.HBox([lbl, budget_w, ios_pct_w, ios_spend_lbl, android_spend_lbl]))
+
+    def _apply_months(self, months: list[str]):
+        while len(self._data_rows) < len(months):
+            self._create_row()
+        for i, m in enumerate(months):
+            self._month_labels[i].value = m
+        self._rows_box.children = tuple(self._data_rows[:len(months)])
+
+    def _on_change_idx(self, i: int, col: str, change):
+        if self._loading or i >= len(self._months):
+            return
+        m = self._months[i]
+        if col == 'budget':
+            bv = self._baseline_budget.get(m)
+            _highlight(self._budget_inputs[i], bv is not None and abs(round(change['new'], 0) - round(bv, 0)) > 0.5)
+        else:
+            bv = self._baseline_ios_pct.get(m)
+            _highlight(self._ios_pct_inputs[i], bv is not None and abs(round(change['new'], 1) - round(bv, 1)) > 0.1)
+        self._update_spend_labels(i)
+        for cb in self._change_callbacks:
+            cb()
+
+    def _update_spend_labels(self, i: int):
+        budget = self._budget_inputs[i].value
+        pct    = self._ios_pct_inputs[i].value
+        ios_s  = round(budget * pct / 100)
+        and_s  = round(budget * (1 - pct / 100))
+        self._ios_spend_labels[i].value     = f"${ios_s:,.0f}"
+        self._android_spend_labels[i].value = f"${and_s:,.0f}"
+
+    def on_change(self, callback: Callable):
+        self._change_callbacks.append(callback)
+
+    def _clear_highlights(self):
+        for w in self._budget_inputs:  _highlight(w, False)
+        for w in self._ios_pct_inputs: _highlight(w, False)
+
+    def update_months(self, start_month: str, n_months: int):
+        new_months  = _month_sequence(n_months, start_month)
+        old_budget  = {m: self._budget_inputs[i].value  for i, m in enumerate(self._months)}
+        old_ios_pct = {m: self._ios_pct_inputs[i].value for i, m in enumerate(self._months)}
+        self._months[:] = new_months
+        self._apply_months(new_months)
+        self._loading = True
+        try:
+            for i, m in enumerate(new_months):
+                new_b = old_budget.get(m,   0)
+                new_p = old_ios_pct.get(m, 50)
+                if self._budget_inputs[i].value  != new_b: self._budget_inputs[i].value  = new_b
+                if self._ios_pct_inputs[i].value != new_p: self._ios_pct_inputs[i].value = new_p
+                self._update_spend_labels(i)
+        finally:
+            self._loading = False
+
+    @property
+    def values(self) -> dict:
+        return {
+            'monthly_budget':  {m: round(w.value, 0) for m, w in zip(self._months, self._budget_inputs)},
+            'monthly_ios_pct': {m: round(w.value, 1) for m, w in zip(self._months, self._ios_pct_inputs)},
+        }
+
+    def get_ios_ua(self, forecast_ym: str) -> dict:
+        return {
+            m: round(b.value * p.value / 100, 0)
+            for m, b, p in zip(self._months, self._budget_inputs, self._ios_pct_inputs)
+            if m >= forecast_ym
+        }
+
+    def get_android_ua(self, forecast_ym: str) -> dict:
+        return {
+            m: round(b.value * (1 - p.value / 100), 0)
+            for m, b, p in zip(self._months, self._budget_inputs, self._ios_pct_inputs)
+            if m >= forecast_ym
+        }
+
+    def get_historical_ua(self, forecast_ym: str) -> dict:
+        return {
+            m: round(b.value, 0)
+            for m, b in zip(self._months, self._budget_inputs)
+            if m < forecast_ym
+        }
+
+    def set_values(self, monthly_budget: dict, monthly_ios_pct: dict, is_baseline: bool = False):
+        self._loading = True
+        try:
+            for i, m in enumerate(self._months):
+                new_b = float(monthly_budget.get(m,  self._budget_inputs[i].value))
+                new_p = float(monthly_ios_pct.get(m, self._ios_pct_inputs[i].value))
+                if self._budget_inputs[i].value  != new_b: self._budget_inputs[i].value  = new_b
+                if self._ios_pct_inputs[i].value != new_p: self._ios_pct_inputs[i].value = new_p
+                self._update_spend_labels(i)
+        finally:
+            self._loading = False
+        for cb in self._change_callbacks:
+            cb()
+        if is_baseline:
+            self._baseline_budget  = {m: float(monthly_budget.get(m,  0))  for m in self._months}
+            self._baseline_ios_pct = {m: float(monthly_ios_pct.get(m, 50)) for m in self._months}
+            self._clear_highlights()
+        else:
+            for i, m in enumerate(self._months):
+                if m in monthly_budget:
+                    bv = self._baseline_budget.get(m)
+                    _highlight(self._budget_inputs[i],
+                               bv is not None and abs(round(self._budget_inputs[i].value, 0) - round(bv, 0)) > 0.5)
+                if m in monthly_ios_pct:
+                    bv = self._baseline_ios_pct.get(m)
+                    _highlight(self._ios_pct_inputs[i],
+                               bv is not None and abs(round(self._ios_pct_inputs[i].value, 1) - round(bv, 1)) > 0.1)
+
+    def widget(self) -> widgets.VBox:
+        return self._box
+
+
+# ---------------------------------------------------------------------------
 # Actuals date range selector
 # ---------------------------------------------------------------------------
 
@@ -848,6 +1056,10 @@ class ScenarioPanel:
         # ---- team cost panel ----
         self.team_cost_panel = TeamCostPanel(n_months=12, start_month=start_month, label="Team Cost")
 
+        # ---- UA budget panel ----
+        self.ua_budget_panel = UABudgetPanel(n_months=12, start_month=start_month)
+        self.ua_budget_panel.on_change(self._sync_installs)
+
         # ---- actuals range panels ----
         self.retention_actuals_panel  = ActualsRangePanel('retention')
         self.conversion_actuals_panel = ActualsRangePanel('conversion')
@@ -855,17 +1067,21 @@ class ScenarioPanel:
 
         # ---- tabbed input area ----
         input_tab = widgets.Tab(children=[
+            widgets.HBox([self.ios_panel.dau_widget(), self.android_panel.dau_widget()]),
             widgets.HBox([self.ios_panel.widget(), self.android_panel.widget()]),
             widgets.VBox([self.retention_actuals_panel.widget(),  self.retention_panel.widget()]),
             widgets.VBox([self.conversion_actuals_panel.widget(), self.conversion_panel.widget()]),
             widgets.VBox([self.arpdau_actuals_panel.widget(),     self.arpdau_panel.widget()]),
             self.team_cost_panel.widget(),
+            self.ua_budget_panel.widget(),
         ])
-        input_tab.set_title(0, 'Monthly inputs')
-        input_tab.set_title(1, 'Retention')
-        input_tab.set_title(2, 'Conversion')
-        input_tab.set_title(3, 'ARPDAU')
-        input_tab.set_title(4, 'Team Cost')
+        input_tab.set_title(0, 'DAU')
+        input_tab.set_title(1, 'CPI')
+        input_tab.set_title(2, 'Retention')
+        input_tab.set_title(3, 'Conversion')
+        input_tab.set_title(4, 'ARPDAU')
+        input_tab.set_title(5, 'Team Cost')
+        input_tab.set_title(6, 'UA Budget')
 
         # ---- result area (populated after Run via set_chart_results) ----
         self._chart_btns_box  = widgets.HBox([], layout=widgets.Layout(
@@ -882,6 +1098,7 @@ class ScenarioPanel:
             layout=widgets.Layout(width='190px'),
         )
         self._actuals_months.observe(self._on_forecast_params_change, names='value')
+        self._on_forecast_params_change(None)  # initialise extended panels with correct month range
 
         # ---- chart checkboxes ----
         self._chart_checks = {
@@ -936,10 +1153,16 @@ class ScenarioPanel:
         self._status.value = f"<span style='color:{color}'>{message}</span>"
 
     def get_ios_overrides(self) -> dict:
-        return self.ios_panel.values
+        forecast_ym = self.get_forecast_start().strftime("%Y-%m")
+        v = self.ios_panel.values
+        v['monthly_ua_spend'] = self.ua_budget_panel.get_ios_ua(forecast_ym)
+        return v
 
     def get_android_overrides(self) -> dict:
-        return self.android_panel.values
+        forecast_ym = self.get_forecast_start().strftime("%Y-%m")
+        v = self.android_panel.values
+        v['monthly_ua_spend'] = self.ua_budget_panel.get_android_ua(forecast_ym)
+        return v
 
     def get_curve_anchors(self) -> dict:
         ret  = self.retention_panel.values
@@ -981,10 +1204,11 @@ class ScenarioPanel:
         return [k for k, cb in self._chart_checks.items() if cb.value]
 
     def get_historical_marketing(self) -> dict:
-        return {}
+        forecast_ym = self.get_forecast_start().strftime("%Y-%m")
+        return self.ua_budget_panel.get_historical_ua(forecast_ym)
 
     def set_historical_marketing(self, data: dict):
-        pass
+        pass  # handled in app.py during load_saved_scenario
 
     def get_actuals_range(self) -> dict:
         return {
@@ -1059,10 +1283,17 @@ class ScenarioPanel:
             return
         actuals_ym = self.get_actuals_from().strftime("%Y-%m")
 
-        # Team cost: actuals_from → end of forecast
+        # Extended panels: actuals_from → end of forecast
         forecast_end_ym = _month_offset(forecast_ym, n_forecast - 1)
-        n_team = _month_count_inclusive(actuals_ym, forecast_end_ym)
-        self.team_cost_panel.update_months(actuals_ym, n_team)
+        n_extended = _month_count_inclusive(actuals_ym, forecast_end_ym)
+        self.team_cost_panel.update_months(actuals_ym, n_extended)
+        self.ua_budget_panel.update_months(actuals_ym, n_extended)
+        self._sync_installs()
+
+    def _sync_installs(self):
+        forecast_ym = self.get_forecast_start().strftime("%Y-%m")
+        self.ios_panel.set_ua_for_installs(self.ua_budget_panel.get_ios_ua(forecast_ym))
+        self.android_panel.set_ua_for_installs(self.ua_budget_panel.get_android_ua(forecast_ym))
 
     def _on_run(self, _):
         import traceback

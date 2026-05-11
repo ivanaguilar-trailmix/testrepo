@@ -286,22 +286,26 @@ def save_scenario(
     actuals_from: str = None,
     selected_charts: list = None,
     historical_marketing: dict = None,
+    monthly_ua_budget: dict = None,
+    monthly_ios_pct: dict = None,
 ) -> Path:
     SCENARIOS_DIR.mkdir(exist_ok=True)
     safe_name = name.replace(" ", "_").lower()
     path = SCENARIOS_DIR / f"{safe_name}.json"
     payload = {
-        "name":                name,
-        "forecast_start":      str(forecast_start),
-        "n_months":            n_months,
-        "curve_anchors":       curve_anchors,
-        "actuals_range":       actuals_range,
-        "monthly_team_cost":   monthly_team_cost,
-        "actuals_from":        actuals_from,
-        "selected_charts":     selected_charts,
+        "name":                 name,
+        "forecast_start":       str(forecast_start),
+        "n_months":             n_months,
+        "curve_anchors":        curve_anchors,
+        "actuals_range":        actuals_range,
+        "monthly_team_cost":    monthly_team_cost,
+        "actuals_from":         actuals_from,
+        "selected_charts":      selected_charts,
         "historical_marketing": historical_marketing,
-        "ios":                 _inputs_to_dict(ios_inputs),
-        "android":             _inputs_to_dict(android_inputs),
+        "monthly_ua_budget":    monthly_ua_budget,
+        "monthly_ios_pct":      monthly_ios_pct,
+        "ios":                  _inputs_to_dict(ios_inputs),
+        "android":              _inputs_to_dict(android_inputs),
     }
     path.write_text(json.dumps(payload, indent=2))
     return path
@@ -325,6 +329,8 @@ def load_scenario(name: str) -> tuple:
         payload.get("actuals_from"),
         payload.get("selected_charts"),
         payload.get("historical_marketing"),
+        payload.get("monthly_ua_budget"),
+        payload.get("monthly_ios_pct"),
     )
 
 

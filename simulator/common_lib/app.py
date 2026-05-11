@@ -30,11 +30,15 @@ def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict,
 
     for platform, widget_panel in [('ios', panel.ios_panel), ('android', panel.android_panel)]:
         cpi_sub = cpi_df[cpi_df['platform'] == platform].dropna(subset=['cpi'])
-        ua_sub  = ua_df[ua_df['platform'] == platform]
         widget_panel.set_monthly_values(
-            monthly_cpi = dict(zip(cpi_sub['month'], cpi_sub['cpi'].astype(float))),
-            monthly_ua  = dict(zip(ua_sub['month'],  ua_sub['budget'].astype(float))),
+            monthly_cpi=dict(zip(cpi_sub['month'], cpi_sub['cpi'].astype(float))),
         )
+
+    panel.ua_budget_panel.set_values(
+        monthly_budget  = dict(zip(ua_df['month'], ua_df['total_budget'].astype(float))),
+        monthly_ios_pct = dict(zip(ua_df['month'], ua_df['ios_pct'].astype(float))),
+        is_baseline=True,
+    )
 
     tc_df = sheet_inputs.get('team_cost')
     if tc_df is not None:
@@ -42,7 +46,6 @@ def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict,
             dict(zip(tc_df['month'], tc_df['team_cost'].astype(float))),
             is_baseline=True,
         )
-
 
 
 def setup_callbacks(
@@ -102,17 +105,17 @@ def setup_callbacks(
 
     def save_current_scenario():
         try:
-            name            = panel.scenario_name.value
-            start           = panel.get_forecast_start()
-            n_months        = int(panel.forecast_months.value)
-            ios_inp         = _build_inputs('ios',     panel.get_ios_overrides())
-            and_inp         = _build_inputs('android', panel.get_android_overrides())
-            curve_anchors   = panel.get_curve_anchors()
-            actuals_range   = panel.get_actuals_range()
-            team_cost       = panel.get_team_cost()
-            actuals_from         = panel.get_actuals_from()
-            selected_charts      = panel.get_selected_charts()
-            historical_marketing = panel.get_historical_marketing()
+            name          = panel.scenario_name.value
+            start         = panel.get_forecast_start()
+            n_months      = int(panel.forecast_months.value)
+            ios_inp       = _build_inputs('ios',     panel.get_ios_overrides())
+            and_inp       = _build_inputs('android', panel.get_android_overrides())
+            curve_anchors = panel.get_curve_anchors()
+            actuals_range = panel.get_actuals_range()
+            team_cost     = panel.get_team_cost()
+            actuals_from  = panel.get_actuals_from()
+            selected_charts = panel.get_selected_charts()
+            ua_vals       = panel.ua_budget_panel.values
             path = save_scenario(
                 name, start, ios_inp, and_inp,
                 n_months=n_months,
@@ -121,7 +124,9 @@ def setup_callbacks(
                 monthly_team_cost=team_cost,
                 actuals_from=str(actuals_from) if actuals_from else None,
                 selected_charts=selected_charts,
-                historical_marketing=historical_marketing,
+                historical_marketing=panel.get_historical_marketing(),
+                monthly_ua_budget=ua_vals['monthly_budget'],
+                monthly_ios_pct=ua_vals['monthly_ios_pct'],
             )
             panel.set_status(f'Saved to {path.name}', 'green')
             panel.load_dropdown.options = ['— new scenario —'] + list_scenarios()
@@ -131,7 +136,11 @@ def setup_callbacks(
 
     def load_saved_scenario(name: str):
         try:
-            _, start, n_months, ios_inp, and_inp, curve_anchors, actuals_range, monthly_team_cost, actuals_from, selected_charts, historical_marketing = load_scenario(name)
+            (_, start, n_months, ios_inp, and_inp,
+             curve_anchors, actuals_range, monthly_team_cost,
+             actuals_from, selected_charts, historical_marketing,
+             monthly_ua_budget, monthly_ios_pct) = load_scenario(name)
+
             panel.forecast_start.value             = start
             panel.forecast_months.value            = n_months
             panel.scenario_name.value              = name
@@ -139,14 +148,8 @@ def setup_callbacks(
             panel.android_panel.anchor_dau.value   = and_inp.anchor_dau or 0
             panel.ios_panel.avg_base_age.value     = ios_inp.avg_base_age
             panel.android_panel.avg_base_age.value = and_inp.avg_base_age
-            panel.ios_panel.set_monthly_values(
-                monthly_cpi = ios_inp.monthly_cpi,
-                monthly_ua  = ios_inp.monthly_ua_spend,
-            )
-            panel.android_panel.set_monthly_values(
-                monthly_cpi = and_inp.monthly_cpi,
-                monthly_ua  = and_inp.monthly_ua_spend,
-            )
+            panel.ios_panel.set_monthly_values(monthly_cpi=ios_inp.monthly_cpi)
+            panel.android_panel.set_monthly_values(monthly_cpi=and_inp.monthly_cpi)
             panel.arpdau_panel.set_values(
                 ios_iap     = ios_inp.monthly_iap_arpdau,
                 ios_ad      = ios_inp.monthly_ad_arpdau,
@@ -168,8 +171,28 @@ def setup_callbacks(
                 panel.set_actuals_from(actuals_from)
             if selected_charts:
                 panel.set_selected_charts(selected_charts)
-            if historical_marketing:
-                panel.set_historical_marketing(historical_marketing)
+
+            # UA budget: new format takes precedence; fall back to deriving from per-platform UA
+            if monthly_ua_budget is not None:
+                panel.ua_budget_panel.set_values(
+                    monthly_ua_budget,
+                    monthly_ios_pct or {m: 50 for m in monthly_ua_budget},
+                    is_baseline=True,
+                )
+            else:
+                combined_budget  = {}
+                combined_ios_pct = {}
+                for m, v in (ios_inp.monthly_ua_spend or {}).items():
+                    and_v = (and_inp.monthly_ua_spend or {}).get(m, 0)
+                    total = v + and_v
+                    combined_budget[m]  = total
+                    combined_ios_pct[m] = (v / total * 100) if total > 0 else 50
+                for m, v in (historical_marketing or {}).items():
+                    combined_budget.setdefault(m, v)
+                    combined_ios_pct.setdefault(m, 50)
+                if combined_budget:
+                    panel.ua_budget_panel.set_values(combined_budget, combined_ios_pct, is_baseline=True)
+
             panel.set_status(f'Loaded: {name}', 'blue')
         except Exception:
             traceback.print_exc()
