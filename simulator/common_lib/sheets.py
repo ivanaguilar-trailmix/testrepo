@@ -15,16 +15,14 @@ def _load_csv(name: str) -> pd.DataFrame:
 
 def load_inputs() -> dict[str, pd.DataFrame]:
     """
-    Read all simulator inputs from local CSV files in config/inputs/.
+    Read CPI and UA spend inputs from local CSV files in config/inputs/.
 
-    Returns dict with keys: retention, conversion, ua_spend, cpi, arpdau.
+    Returns dict with keys: cpi, ua_spend.
+    Retention, conversion, and ARPDAU are now loaded from actuals via the panel.
     """
     return {
-        "retention":  _load_csv("retention"),
-        "conversion": _load_csv("conversion"),
-        "ua_spend":   _load_csv("ua_spend"),
-        "cpi":        _load_csv("cpi"),
-        "arpdau":     _load_csv("arpdau"),
+        "cpi":      _load_csv("cpi"),
+        "ua_spend": _load_csv("ua_spend"),
     }
 
 

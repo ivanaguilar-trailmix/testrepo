@@ -58,14 +58,14 @@ def plot(scenarios, chart: str = 'all') -> None:
                         x=grp['dt'], y=grp['dau'], name=f'actual / {platform}',
                         mode='markers', marker=dict(color=COLORS.get(platform, 'grey'), size=4, opacity=0.6),
                         legendgroup=f'actual/{platform}',
-                        hovertemplate=f'actual / {platform}: %{{y:,.0f}}<extra></extra>',
+                        hovertemplate=f'actual / {platform} (%{{x|%b %d}}): %{{y:,.0f}}<extra></extra>',
                     ))
                 combined_dau = _actuals.groupby('dt')['dau'].sum().reset_index()
                 fig.add_trace(go.Scatter(
                     x=combined_dau['dt'], y=combined_dau['dau'], name='actual / combined',
                     mode='markers', marker=dict(color=COLORS['combined'], size=4, opacity=0.6),
                     legendgroup='actual/combined',
-                    hovertemplate='actual / combined: %{y:,.0f}<extra></extra>',
+                    hovertemplate='actual / combined (%{x|%b %d}): %{y:,.0f}<extra></extra>',
                 ))
 
             if metric == 'revenue':
@@ -78,13 +78,13 @@ def plot(scenarios, chart: str = 'all') -> None:
                         x=grp['dt'], y=rev, name=f'actual / {platform}',
                         mode='markers', marker=dict(color=color, size=4, opacity=0.4),
                         legendgroup=f'actual/{platform}',
-                        hovertemplate=f'actual / {platform}: %{{y:$,.2f}}<extra></extra>',
+                        hovertemplate=f'actual / {platform} (%{{x|%b %d}}): %{{y:$,.2f}}<extra></extra>',
                     ))
                     fig.add_trace(go.Scatter(
                         x=grp['dt'], y=rev_ma, name=f'actual 7MA / {platform}',
                         mode='lines', line=dict(color=color, width=2),
                         legendgroup=f'actual/{platform}',
-                        hovertemplate=f'7MA / {platform}: %{{y:$,.2f}}<extra></extra>',
+                        hovertemplate=f'7MA / {platform} (%{{x|%b %d}}): %{{y:$,.2f}}<extra></extra>',
                     ))
                 combined_rev = (
                     _actuals.groupby('dt')[['iap_revenue', 'ad_revenue']]
@@ -96,18 +96,18 @@ def plot(scenarios, chart: str = 'all') -> None:
                     x=combined_rev['dt'], y=combined_rev['total'], name='actual / combined',
                     mode='markers', marker=dict(color=COLORS['combined'], size=4, opacity=0.4),
                     legendgroup='actual/combined',
-                    hovertemplate='actual / combined: %{y:$,.2f}<extra></extra>',
+                    hovertemplate='actual / combined (%{x|%b %d}): %{y:$,.2f}<extra></extra>',
                 ))
                 fig.add_trace(go.Scatter(
                     x=combined_rev['dt'], y=combined_rev['total_ma'], name='actual 7MA / combined',
                     mode='lines', line=dict(color=COLORS['combined'], width=2),
                     legendgroup='actual/combined',
-                    hovertemplate='7MA / combined: %{y:$,.2f}<extra></extra>',
+                    hovertemplate='7MA / combined (%{x|%b %d}): %{y:$,.2f}<extra></extra>',
                 ))
 
         fig.update_layout(
             title_text=f'{y_label} — {title}',
-            height=600, width=1400, margin=dict(t=60, b=30), hovermode='x unified',
+            height=600, width=1400, margin=dict(t=60, b=30), hovermode='closest',
         )
         fig.show()
 
@@ -129,7 +129,7 @@ def plot(scenarios, chart: str = 'all') -> None:
             ))
         fig2.update_layout(
             title_text=f'Monthly Total Revenue — {title}', barmode='group',
-            height=400, margin=dict(t=60, b=30), hovermode='x unified',
+            height=400, margin=dict(t=60, b=30), hovermode='closest',
             yaxis=dict(tickprefix='$', tickformat=',.0f'), xaxis_title='Month',
         )
         fig2.show()
@@ -143,7 +143,7 @@ def _resolve_named_anchors(scenarios_or_anchors) -> list[tuple[str, dict]]:
         scenarios_or_anchors = [scenarios_or_anchors]
     result = []
     for name in scenarios_or_anchors:
-        _, _, _, _, _, curve_anchors = load_scenario(name)
+        _, _, _, _, _, curve_anchors, *_ = load_scenario(name)
         if curve_anchors is None:
             print(f"Warning: '{name}' has no saved curve anchors — skipped.")
             continue

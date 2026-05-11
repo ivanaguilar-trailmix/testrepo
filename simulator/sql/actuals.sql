@@ -41,7 +41,8 @@ WITH ad_rev AS (
   left join ad_rev using (user_id, dt)
   left join iap_rev using (user_id, dt)
   where 1=1
-  and dt>=start_date
+  and dt >= start_date
+  and dt < CURRENT_DATE()
   and platform in ('AND', 'IOS')
   group by all
   order by 1,2 
