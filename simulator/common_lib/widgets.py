@@ -68,13 +68,19 @@ class PlatformPanel:
         self.platform = platform
         self._months = _month_sequence(n_months, start_month)
 
-        self.anchor_dau   = _float_input(0.0, "Anchor DAU",   step=1)
+        self.anchor_dau   = _float_input(0.0, "Anchor DAU", step=1)
         self.avg_base_age = widgets.BoundedIntText(
             value=60, min=1, max=730, step=1,
             description="Avg base age:",
             style={"description_width": "100px"},
             layout=widgets.Layout(width="200px"),
         )
+        self._set_anchor_btn = widgets.Button(
+            description="Set from actuals", button_style="warning",
+            layout=widgets.Layout(width="150px"),
+        )
+        self._set_anchor_callbacks: list[Callable] = []
+        self._set_anchor_btn.on_click(lambda _: [cb() for cb in self._set_anchor_callbacks])
 
         self._cpi_inputs   = []
         self._ua_inputs    = []
@@ -119,7 +125,7 @@ class PlatformPanel:
         platform_label = "iOS" if platform == "ios" else "Android"
         self._box = widgets.VBox([
             _header(f"{platform_label} — Platform Inputs"),
-            widgets.HBox([self.anchor_dau, self.avg_base_age]),
+            widgets.HBox([self.anchor_dau, self.avg_base_age, self._set_anchor_btn]),
             header_row,
             *self._data_rows,
         ], layout=widgets.Layout(border="1px solid #ddd", padding="10px", margin="4px"))
@@ -156,6 +162,9 @@ class PlatformPanel:
             "anchor_dau":     round(self.anchor_dau.value, 2),
             "avg_base_age":   int(self.avg_base_age.value),
         }
+
+    def on_set_anchor(self, callback: Callable):
+        self._set_anchor_callbacks = [callback]
 
     def set_monthly_values(self, monthly_cpi: dict, monthly_ua: Optional[dict] = None):
         for m, cpi_w, ua_w in zip(self._months, self._cpi_inputs, self._ua_inputs):
@@ -678,10 +687,9 @@ class ActualsRangePanel:
 
 class ScenarioPanel:
     def __init__(self, saved_scenarios: list[str] = None):
-        self._run_callbacks:        list[Callable] = []
-        self._save_callbacks:       list[Callable] = []
-        self._load_callbacks:       list[Callable] = []
-        self._set_anchor_callbacks: list[Callable] = []
+        self._run_callbacks:  list[Callable] = []
+        self._save_callbacks: list[Callable] = []
+        self._load_callbacks: list[Callable] = []
 
         # ---- top bar ----
         self.scenario_name = widgets.Text(
@@ -751,33 +759,33 @@ class ScenarioPanel:
         self.table_output  = widgets.Output()
 
         # ---- action buttons ----
-        run_btn        = widgets.Button(description="Run simulation",          button_style="primary",
-                                        layout=widgets.Layout(width="160px"))
-        save_btn       = widgets.Button(description="Save scenario",           button_style="success",
-                                        layout=widgets.Layout(width="160px"))
-        set_anchor_btn = widgets.Button(description="Set anchor from actuals", button_style="warning",
-                                        layout=widgets.Layout(width="200px"))
+        run_btn  = widgets.Button(description="Run simulation", button_style="primary",
+                                  layout=widgets.Layout(width="160px"))
+        save_btn = widgets.Button(description="Save scenario",  button_style="success",
+                                  layout=widgets.Layout(width="160px"))
         self._status = widgets.HTML("")
 
         run_btn.on_click(self._on_run)
         save_btn.on_click(self._on_save)
-        set_anchor_btn.on_click(self._on_set_anchor)
 
         self._box = widgets.VBox([
             _header("Game Simulator"),
             widgets.HBox([self.scenario_name, self.forecast_start, self.forecast_months]),
             widgets.HBox([self.load_dropdown, load_btn]),
             input_tab,
-            widgets.HBox([run_btn, save_btn, set_anchor_btn]),
+            widgets.HBox([run_btn, save_btn]),
             self._status,
         ])
 
     # ---- public API ----
 
-    def on_run(self, callback: Callable):       self._run_callbacks        = [callback]
-    def on_save(self, callback: Callable):      self._save_callbacks       = [callback]
-    def on_load(self, callback: Callable):      self._load_callbacks       = [callback]
-    def on_set_anchor(self, callback: Callable): self._set_anchor_callbacks = [callback]
+    def on_run(self, callback: Callable):  self._run_callbacks  = [callback]
+    def on_save(self, callback: Callable): self._save_callbacks = [callback]
+    def on_load(self, callback: Callable): self._load_callbacks = [callback]
+
+    def on_set_anchor(self, callback: Callable):
+        self.ios_panel.on_set_anchor(callback)
+        self.android_panel.on_set_anchor(callback)
 
     def set_status(self, message: str, color: str = "green"):
         self._status.value = f"<span style='color:{color}'>{message}</span>"
@@ -855,15 +863,6 @@ class ScenarioPanel:
     def _on_save(self, _):
         for cb in self._save_callbacks:
             cb()
-
-    def _on_set_anchor(self, _):
-        import traceback
-        try:
-            for cb in self._set_anchor_callbacks:
-                cb()
-        except Exception as e:
-            traceback.print_exc()
-            self.set_status(f"Anchor error: {e}", "red")
 
     def _on_load(self, _):
         import traceback
