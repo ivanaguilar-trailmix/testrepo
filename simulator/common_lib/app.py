@@ -6,18 +6,21 @@ from __future__ import annotations
 import traceback
 
 import pandas as pd
+from IPython.display import display as _display
 
-from common_lib.curves import anchors_from_df, average_actuals_anchors, average_arpdau_from_actuals, build_curve
+from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve
+from common_lib.plots import plot, configure as _configure_plots
 from common_lib.simulation import (
     PlatformInputs, SimulationEngine,
     load_scenario, list_scenarios,
     save_result, save_scenario,
 )
+from common_lib.tables import monthly_table
 
 
 def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict,
                   sheet_inputs: dict) -> None:
-    """Populate panel with last-observed anchor DAU and CSV CPI/UA inputs."""
+    """Populate panel with last-observed anchor DAU and CSV CPI/UA/team-cost inputs."""
     panel.ios_panel.anchor_dau.value     = float(anchor_dau.get('ios',     0))
     panel.android_panel.anchor_dau.value = float(anchor_dau.get('android', 0))
 
@@ -32,6 +35,13 @@ def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict,
             monthly_ua  = dict(zip(ua_sub['month'],  ua_sub['budget'].astype(float))),
         )
 
+    tc_df = sheet_inputs.get('team_cost')
+    if tc_df is not None:
+        panel.team_cost_panel.set_values(
+            dict(zip(tc_df['month'], tc_df['team_cost'].astype(float))),
+            is_baseline=True,
+        )
+
 
 def setup_callbacks(
     panel,
@@ -41,6 +51,8 @@ def setup_callbacks(
     live_conversion: pd.DataFrame = None,
 ) -> None:
     """Wire all panel buttons to their callback functions."""
+
+    _configure_plots(actuals)
 
     def _build_inputs(platform: str, overrides: dict) -> PlatformInputs:
         anchors = panel.get_curve_anchors()
@@ -65,8 +77,19 @@ def setup_callbacks(
             ios_inp  = _build_inputs('ios',     panel.get_ios_overrides())
             and_inp  = _build_inputs('android', panel.get_android_overrides())
             result   = engine.run(ios_inp, and_inp, forecast_start=start, scenario_name=name, n_months=n_months)
-            path     = save_result(name, result)
-            panel.set_status(f"Saved → {path.name}  |  call plot('{name}') to chart", 'green')
+            save_result(name, result)
+
+            with panel.charts_output:
+                panel.charts_output.clear_output(wait=True)
+                plot(name, chart='dau')
+                plot(name, chart='revenue')
+                plot(name, chart='monthly')
+
+            with panel.table_output:
+                panel.table_output.clear_output(wait=True)
+                _display(monthly_table(name, actuals, team_cost=panel.get_team_cost()))
+
+            panel.set_status(f"Done — {name}  |  save the scenario to persist inputs", 'green')
         except Exception:
             traceback.print_exc()
             panel.set_status("Error — see cell output", "red")
@@ -80,11 +103,13 @@ def setup_callbacks(
             and_inp       = _build_inputs('android', panel.get_android_overrides())
             curve_anchors = panel.get_curve_anchors()
             actuals_range = panel.get_actuals_range()
+            team_cost     = panel.get_team_cost()
             path = save_scenario(
                 name, start, ios_inp, and_inp,
                 n_months=n_months,
                 curve_anchors=curve_anchors,
                 actuals_range=actuals_range,
+                monthly_team_cost=team_cost,
             )
             panel.set_status(f'Saved to {path.name}', 'green')
             panel.load_dropdown.options = ['— new scenario —'] + list_scenarios()
@@ -94,7 +119,7 @@ def setup_callbacks(
 
     def load_saved_scenario(name: str):
         try:
-            _, start, n_months, ios_inp, and_inp, curve_anchors, actuals_range = load_scenario(name)
+            _, start, n_months, ios_inp, and_inp, curve_anchors, actuals_range, monthly_team_cost = load_scenario(name)
             panel.forecast_start.value             = start
             panel.forecast_months.value            = n_months
             panel.scenario_name.value              = name
@@ -125,6 +150,8 @@ def setup_callbacks(
                 )
             if actuals_range:
                 panel.set_actuals_range(actuals_range)
+            if monthly_team_cost:
+                panel.team_cost_panel.set_values(monthly_team_cost, is_baseline=True)
             panel.set_status(f'Loaded: {name}', 'blue')
         except Exception:
             traceback.print_exc()
@@ -185,7 +212,6 @@ def setup_callbacks(
             if avgs['ios']['iap'] is None and avgs['android']['iap'] is None:
                 panel.arpdau_actuals_panel.set_status(f"No actuals data in {start} – {end}", 'orange')
                 return
-            # spread the average across every forecast month
             months = panel.arpdau_panel._months
             panel.arpdau_panel.set_values(
                 ios_iap     = {m: avgs['ios']['iap']     for m in months} if avgs['ios']['iap']     is not None else {},

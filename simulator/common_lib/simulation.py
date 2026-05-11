@@ -282,24 +282,26 @@ def save_scenario(
     n_months: int = 12,
     curve_anchors: dict = None,
     actuals_range: dict = None,
+    monthly_team_cost: dict = None,
 ) -> Path:
     SCENARIOS_DIR.mkdir(exist_ok=True)
     safe_name = name.replace(" ", "_").lower()
     path = SCENARIOS_DIR / f"{safe_name}.json"
     payload = {
-        "name":           name,
-        "forecast_start": str(forecast_start),
-        "n_months":       n_months,
-        "curve_anchors":  curve_anchors,
-        "actuals_range":  actuals_range,
-        "ios":            _inputs_to_dict(ios_inputs),
-        "android":        _inputs_to_dict(android_inputs),
+        "name":               name,
+        "forecast_start":     str(forecast_start),
+        "n_months":           n_months,
+        "curve_anchors":      curve_anchors,
+        "actuals_range":      actuals_range,
+        "monthly_team_cost":  monthly_team_cost,
+        "ios":                _inputs_to_dict(ios_inputs),
+        "android":            _inputs_to_dict(android_inputs),
     }
     path.write_text(json.dumps(payload, indent=2))
     return path
 
 
-def load_scenario(name: str) -> tuple[str, date, int, PlatformInputs, PlatformInputs, dict, dict]:
+def load_scenario(name: str) -> tuple[str, date, int, PlatformInputs, PlatformInputs, dict, dict, dict]:
     safe_name = name.replace(" ", "_").lower()
     path = SCENARIOS_DIR / f"{safe_name}.json"
     if not path.exists():
@@ -311,8 +313,9 @@ def load_scenario(name: str) -> tuple[str, date, int, PlatformInputs, PlatformIn
         payload.get("n_months", 12),
         _inputs_from_dict(payload["ios"]),
         _inputs_from_dict(payload["android"]),
-        payload.get("curve_anchors"),   # None for scenarios saved before curve_anchors feature
-        payload.get("actuals_range"),   # None for scenarios saved before actuals_range feature
+        payload.get("curve_anchors"),        # None for old scenarios
+        payload.get("actuals_range"),        # None for old scenarios
+        payload.get("monthly_team_cost"),    # None for old scenarios
     )
 
 

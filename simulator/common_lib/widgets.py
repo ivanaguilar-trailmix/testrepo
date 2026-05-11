@@ -450,6 +450,119 @@ class ARPDAUPanel:
 
 
 # ---------------------------------------------------------------------------
+# Team cost panel — single-column monthly inputs
+# ---------------------------------------------------------------------------
+
+class TeamCostPanel:
+    MAX_MONTHS = 24
+
+    def __init__(self, n_months: int = 12, start_month: Optional[str] = None):
+        self._months   = _month_sequence(n_months, start_month)
+        self._baseline: dict[str, float] = {}
+        self._loading  = False
+
+        self._inputs:       list[widgets.BoundedFloatText] = []
+        self._month_labels: list[widgets.Label]            = []
+        self._data_rows:    list[widgets.HBox]             = []
+
+        fill_btn = _fill_btn()
+
+        def _col_hdr(text, btn):
+            return widgets.VBox(
+                [widgets.HTML(f"<b>{text}</b>"), btn],
+                layout=widgets.Layout(width="150px"),
+            )
+
+        header_row = widgets.HBox([
+            widgets.HTML("<b>Month</b>", layout=widgets.Layout(width="90px")),
+            _col_hdr("Team Cost ($)",   fill_btn),
+        ])
+
+        for _ in range(self.MAX_MONTHS):
+            lbl = widgets.Label("", layout=widgets.Layout(width="90px"))
+            w   = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=1000,
+                                           layout=widgets.Layout(width="150px"))
+            self._month_labels.append(lbl)
+            self._inputs.append(w)
+            self._data_rows.append(widgets.HBox([lbl, w]))
+
+        fill_btn.on_click(lambda _: [
+            w.__setattr__("value", self._inputs[0].value)
+            for i, w in enumerate(self._inputs) if 0 < i < len(self._months)
+        ])
+
+        for i, m in enumerate(_month_sequence(self.MAX_MONTHS, start_month)):
+            self._inputs[i].observe(
+                lambda change, _m=m: self._on_change(_m, change),
+                names='value',
+            )
+
+        self._apply_months(self._months)
+
+        self._box = widgets.VBox([
+            _header("Team Cost — Monthly Inputs"),
+            widgets.HTML("<span style='font-size:11px;color:#888'>Monthly headcount/operating cost.</span>"),
+            header_row,
+            *self._data_rows,
+        ], layout=widgets.Layout(padding="10px"))
+
+    def _apply_months(self, months: list[str]):
+        for i, row in enumerate(self._data_rows):
+            if i < len(months):
+                self._month_labels[i].value = months[i]
+                row.layout.display = ''
+            else:
+                row.layout.display = 'none'
+
+    def _on_change(self, month: str, change):
+        if self._loading:
+            return
+        bv = self._baseline.get(month)
+        try:
+            i = self._months.index(month)
+        except ValueError:
+            return
+        _highlight(self._inputs[i], bv is not None and abs(round(change['new'], 0) - round(bv, 0)) > 0.5)
+
+    def _clear_highlights(self):
+        for w in self._inputs:
+            _highlight(w, False)
+
+    def update_months(self, start_month: str, n_months: int):
+        new_months = _month_sequence(n_months, start_month)
+        old = {m: self._inputs[i].value for i, m in enumerate(self._months)}
+        self._months = new_months
+        self._apply_months(new_months)
+        for i, m in enumerate(new_months):
+            self._inputs[i].value = old.get(m, 0)
+
+    @property
+    def values(self) -> dict:
+        return {m: round(w.value, 0) for m, w in zip(self._months, self._inputs)}
+
+    def set_values(self, monthly_team_cost: dict, is_baseline: bool = False):
+        self._loading = True
+        try:
+            for i, m in enumerate(self._months):
+                if m in monthly_team_cost:
+                    self._inputs[i].value = round(float(monthly_team_cost[m]), 0)
+        finally:
+            self._loading = False
+        if is_baseline:
+            self._baseline = {m: monthly_team_cost.get(m, 0) for m in self._months}
+            self._clear_highlights()
+        else:
+            for i, m in enumerate(self._months):
+                if m in monthly_team_cost:
+                    bv = self._baseline.get(m)
+                    _highlight(self._inputs[i],
+                               bv is not None and abs(round(self._inputs[i].value, 0) - round(bv, 0)) > 0.5)
+
+    def widget(self) -> widgets.VBox:
+        return self._box
+
+
+# ---------------------------------------------------------------------------
 # Actuals date range selector
 # ---------------------------------------------------------------------------
 
@@ -611,6 +724,9 @@ class ScenarioPanel:
         # ---- ARPDAU panel ----
         self.arpdau_panel = ARPDAUPanel(n_months=12, start_month=start_month)
 
+        # ---- team cost panel ----
+        self.team_cost_panel = TeamCostPanel(n_months=12, start_month=start_month)
+
         # ---- actuals range panels ----
         self.retention_actuals_panel  = ActualsRangePanel('retention')
         self.conversion_actuals_panel = ActualsRangePanel('conversion')
@@ -622,11 +738,17 @@ class ScenarioPanel:
             widgets.VBox([self.retention_actuals_panel.widget(),  self.retention_panel.widget()]),
             widgets.VBox([self.conversion_actuals_panel.widget(), self.conversion_panel.widget()]),
             widgets.VBox([self.arpdau_actuals_panel.widget(),     self.arpdau_panel.widget()]),
+            self.team_cost_panel.widget(),
         ])
         input_tab.set_title(0, 'Monthly inputs')
         input_tab.set_title(1, 'Retention')
         input_tab.set_title(2, 'Conversion')
         input_tab.set_title(3, 'ARPDAU')
+        input_tab.set_title(4, 'Team Cost')
+
+        # ---- output widgets (charts + table update after Run) ----
+        self.charts_output = widgets.Output()
+        self.table_output  = widgets.Output()
 
         # ---- action buttons ----
         run_btn        = widgets.Button(description="Run simulation",          button_style="primary",
@@ -677,6 +799,9 @@ class ScenarioPanel:
     def get_arpdau(self) -> dict:
         return self.arpdau_panel.values
 
+    def get_team_cost(self) -> dict:
+        return self.team_cost_panel.values
+
     def get_actuals_range(self) -> dict:
         return {
             'retention':  self.retention_actuals_panel.get_state(),
@@ -701,6 +826,8 @@ class ScenarioPanel:
 
     def display(self):
         display(self._box)
+        display(self.charts_output)
+        display(self.table_output)
 
     # ---- private ----
 
@@ -713,6 +840,7 @@ class ScenarioPanel:
         self.ios_panel.update_months(start_month, n_months)
         self.android_panel.update_months(start_month, n_months)
         self.arpdau_panel.update_months(start_month, n_months)
+        self.team_cost_panel.update_months(start_month, n_months)
 
     def _on_run(self, _):
         import traceback
