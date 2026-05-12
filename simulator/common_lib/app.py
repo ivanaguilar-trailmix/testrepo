@@ -200,9 +200,9 @@ def setup_callbacks(
 
     def set_anchor_from_actuals():
         start     = panel.get_forecast_start()
-        available = actuals[actuals['dt'].dt.date <= start]
+        available = actuals[actuals['dt'].dt.date < start]
         if available.empty:
-            panel.set_status(f"No actuals available on or before {start}", 'orange')
+            panel.set_status(f"No actuals available before {start}", 'orange')
             return
         anchor_date = available['dt'].dt.date.max()
         day_data    = actuals[actuals['dt'].dt.date == anchor_date]
