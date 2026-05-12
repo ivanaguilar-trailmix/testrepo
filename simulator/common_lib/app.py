@@ -11,7 +11,7 @@ import pandas as pd
 from datetime import timedelta
 
 from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve, derive_age_distribution
-from common_lib.plots import build_chart_widget, build_curve_widget, configure as _configure_plots
+from common_lib.plots import build_chart_widget, build_curve_widget, build_curve_preview, configure as _configure_plots
 from common_lib.sheets import load_inputs
 from common_lib.simulation import (
     PlatformInputs, SimulationEngine,
@@ -73,6 +73,7 @@ def setup_callbacks(
             monthly_ad_arpdau=arpdau[platform]['ad'],
             monthly_ua_spend=overrides['monthly_ua_spend'],
             anchor_dau=overrides.get('anchor_dau'),
+            anchor_offset_pct=overrides.get('anchor_offset_pct', 0.0),
             avg_base_age=overrides.get('avg_base_age', 90),
             age_distribution=overrides.get('age_distribution') or None,
         )
@@ -151,10 +152,12 @@ def setup_callbacks(
             panel.forecast_start.value             = start
             panel.forecast_months.value            = n_months
             panel.scenario_name.value              = name
-            panel.ios_panel.anchor_dau.value       = ios_inp.anchor_dau or 0
-            panel.android_panel.anchor_dau.value   = and_inp.anchor_dau or 0
-            panel.ios_panel.avg_base_age.value     = ios_inp.avg_base_age
-            panel.android_panel.avg_base_age.value = and_inp.avg_base_age
+            panel.ios_panel.anchor_dau.value            = ios_inp.anchor_dau or 0
+            panel.android_panel.anchor_dau.value        = and_inp.anchor_dau or 0
+            panel.ios_panel.anchor_offset_pct.value     = ios_inp.anchor_offset_pct
+            panel.android_panel.anchor_offset_pct.value = and_inp.anchor_offset_pct
+            panel.ios_panel.avg_base_age.value          = ios_inp.avg_base_age
+            panel.android_panel.avg_base_age.value      = and_inp.avg_base_age
             if ios_inp.age_distribution:
                 panel.ios_panel.set_age_distribution(ios_inp.age_distribution)
             if and_inp.age_distribution:
@@ -310,6 +313,15 @@ def setup_callbacks(
         except Exception as e:
             traceback.print_exc()
             widget_panel._age_dist_status.value = f"<span style='color:red;font-size:11px'>Error: {e}</span>"
+
+    def _preview_curve(metric: str):
+        curve_panel = panel.retention_panel if metric == 'retention' else panel.conversion_panel
+        anchors = panel.get_curve_anchors()
+        platform_anchors = {p: anchors[p][metric] for p in ('ios', 'android')}
+        curve_panel.set_preview(build_curve_preview(platform_anchors, metric))
+
+    panel.retention_panel.on_preview(lambda: _preview_curve('retention'))
+    panel.conversion_panel.on_preview(lambda: _preview_curve('conversion'))
 
     panel.on_run(run_simulation)
     panel.on_save(save_current_scenario)

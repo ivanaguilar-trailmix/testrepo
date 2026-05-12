@@ -147,6 +147,12 @@ class PlatformPanel:
         self._loading = False
 
         self.anchor_dau   = _float_input(0.0, "DAU", step=1)
+        self.anchor_offset_pct = widgets.BoundedFloatText(
+            value=0.0, min=-50.0, max=50.0, step=0.5,
+            description="DAU offset %:",
+            style={"description_width": "100px"},
+            layout=widgets.Layout(width="200px"),
+        )
         self.avg_base_age = widgets.BoundedIntText(
             value=60, min=1, max=730, step=1,
             description="Avg base age:",
@@ -161,6 +167,7 @@ class PlatformPanel:
         self._set_anchor_btn.on_click(lambda _: [cb() for cb in self._set_anchor_callbacks])
 
         self._age_distribution: dict = {}
+        self._dist_stale: bool = False
         self._derive_btn = widgets.Button(
             description="Derive from installs", button_style="info",
             layout=widgets.Layout(width="170px"),
@@ -250,10 +257,11 @@ class PlatformPanel:
     @property
     def values(self) -> dict:
         return {
-            "monthly_cpi":      {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
-            "anchor_dau":       round(self.anchor_dau.value, 2),
-            "avg_base_age":     int(self.avg_base_age.value),
-            "age_distribution": dict(self._age_distribution) if self._age_distribution else None,
+            "monthly_cpi":        {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
+            "anchor_dau":         round(self.anchor_dau.value, 2),
+            "anchor_offset_pct":  round(self.anchor_offset_pct.value, 2),
+            "avg_base_age":       int(self.avg_base_age.value),
+            "age_distribution":   dict(self._age_distribution) if self._age_distribution else None,
         }
 
     def on_set_anchor(self, callback: Callable):
@@ -263,26 +271,49 @@ class PlatformPanel:
         self._derive_callbacks = [callback]
 
     def set_age_distribution(self, dist: dict):
-        """Store a derived distribution and update the status label."""
         self._age_distribution = {int(k): float(v) for k, v in dist.items()}
+        self._dist_stale = False
+        self._refresh_dist_display()
+
+    def mark_distribution_stale(self):
+        if self._age_distribution:
+            self._dist_stale = True
+            self._refresh_dist_display()
+
+    def _refresh_dist_display(self):
         if not self._age_distribution:
             self._age_dist_status.value = (
-                "<span style='color:orange;font-size:11px'>Derived distribution is empty — check installs data</span>"
+                "<span style='color:#999;font-size:11px'>Not derived — using avg base age fallback</span>"
             )
             return
-        # Build a compact summary grouped into readable age bands
-        bands = [(1, 6, 'D1–6'), (7, 29, 'D7–29'), (30, 89, 'D30–89'),
-                 (90, 364, 'D90–364'), (365, 999, 'D365–999'),
-                 (1000, 1799, 'D1000–1799'), (1800, 9999, 'D1800+')]
-        parts = []
+        bands = [
+            (1,    6,    'D1–6'),
+            (7,    29,   'D7–29'),
+            (30,   89,   'D30–89'),
+            (90,   364,  'D90–364'),
+            (365,  999,  'D365–999'),
+            (1000, 1799, 'D1000–1799'),
+            (1800, 9999, 'D1800+'),
+        ]
+        rows_html = ''
         for lo, hi, label in bands:
             pct = sum(v for k, v in self._age_distribution.items() if lo <= k <= hi) * 100
             if pct >= 0.1:
-                parts.append(f"{label}: {pct:.1f}%")
-        summary = ' | '.join(parts)
-        self._age_dist_status.value = (
-            f"<span style='color:green;font-size:11px'>Derived — {summary}</span>"
+                rows_html += (
+                    f"<tr><td style='padding:1px 16px 1px 0'>{label}</td>"
+                    f"<td style='text-align:right'>{pct:.1f}%</td></tr>"
+                )
+        table = (
+            "<table style='font-size:11px;border-collapse:collapse;margin-top:4px'>"
+            "<tr><th style='text-align:left;padding:1px 16px 1px 0;color:#555'>Age band</th>"
+            "<th style='text-align:right;color:#555'>Share</th></tr>"
+            f"{rows_html}</table>"
         )
+        if self._dist_stale:
+            header = "<div style='color:orange;font-size:11px;margin-bottom:2px'>⚠ Retention changed — re-derive to update</div>"
+        else:
+            header = "<div style='color:green;font-size:11px;margin-bottom:2px'>✓ Derived from installs</div>"
+        self._age_dist_status.value = header + table
 
     def set_monthly_values(self, monthly_cpi: dict):
         for m, cpi_w in zip(self._months, self._cpi_inputs):
@@ -305,15 +336,24 @@ class PlatformPanel:
 
     def dau_widget(self) -> widgets.VBox:
         platform_label = "iOS" if self.platform == "ios" else "Android"
+        organic_group = widgets.VBox([
+            widgets.HTML("<b style='font-size:12px'>Organic Base Decay</b>"),
+            widgets.HBox(
+                [self.avg_base_age,
+                 widgets.HTML("<span style='color:#999;font-size:11px;padding:6px 0 0 8px'>fallback when no distribution</span>")],
+                layout=widgets.Layout(align_items='center'),
+            ),
+            widgets.HTML("<span style='font-size:11px;color:#666;margin-top:4px'>Age distribution from install history:</span>"),
+            widgets.HBox([self._derive_btn], layout=widgets.Layout(margin='4px 0 2px 0')),
+            self._age_dist_status,
+        ], layout=widgets.Layout(
+            border='1px solid #ccc', padding='8px', margin='6px 0 0 0',
+        ))
         return widgets.VBox([
             _header(f"{platform_label} — Simulation Parameters"),
-            widgets.HBox([self.anchor_dau, self._set_anchor_btn]),
-            widgets.HBox([self.avg_base_age,
-                          widgets.HTML("<span style='color:#999;font-size:11px;padding:6px 0 0 8px'>(fallback)</span>")],
+            widgets.HBox([self.anchor_dau, self.anchor_offset_pct, self._set_anchor_btn],
                          layout=widgets.Layout(align_items='center')),
-            widgets.HTML("<b style='font-size:12px'>Age distribution</b>"),
-            widgets.HBox([self._derive_btn, self._age_dist_status],
-                         layout=widgets.Layout(align_items='center', margin='2px 0')),
+            organic_group,
         ], layout=widgets.Layout(border="1px solid #ddd", padding="10px", margin="4px"))
 
     def widget(self) -> widgets.VBox:
@@ -336,6 +376,7 @@ class CurvePanel:
         self._inputs:   dict[str, list[widgets.BoundedFloatText]] = {'ios': [], 'android': []}
         self._baseline: dict[str, dict[int, float]] = {'ios': {}, 'android': {}}
         self._loading = False
+        self._change_callbacks: list[Callable] = []
 
         header = widgets.HBox([
             widgets.HTML("<b>Day</b>",         layout=widgets.Layout(width="60px")),
@@ -356,10 +397,26 @@ class CurvePanel:
                 ios_w, and_w,
             ]))
 
+        self._preview_callbacks: list[Callable] = []
+        self._preview_btn = widgets.Button(
+            description="Preview curve", button_style="",
+            layout=widgets.Layout(width="130px"),
+        )
+        self._preview_btn.on_click(lambda _: [cb() for cb in self._preview_callbacks])
+        self._preview_box = widgets.VBox([])
+
+        table_col = widgets.VBox([
+            widgets.HTML(f"<span style='font-size:11px;color:#888'>{note}Values as %. PCHIP-interpolated to D1–D1800.</span>"),
+            *rows,
+            widgets.HBox([self._preview_btn], layout=widgets.Layout(margin='8px 0 4px 0')),
+        ], layout=widgets.Layout(min_width='340px'))
+
         self._box = widgets.VBox([
             _header(f"{label} Curve Anchors"),
-            widgets.HTML(f"<span style='font-size:11px;color:#888'>{note}Values as %. PCHIP-interpolated to D1–D365.</span>"),
-            *rows,
+            widgets.HBox(
+                [table_col, self._preview_box],
+                layout=widgets.Layout(align_items='flex-start'),
+            ),
         ], layout=widgets.Layout(padding="10px"))
 
     def _on_change(self, dx: int, platform: str, change):
@@ -371,6 +428,8 @@ class CurvePanel:
             _highlight(w, abs(round(change['new'], 2) - round(baseline_val * 100, 2)) > 1e-9)
         else:
             _highlight(w, False)
+        for cb in self._change_callbacks:
+            cb()
 
     def _clear_highlights(self):
         for platform in ('ios', 'android'):
@@ -413,6 +472,15 @@ class CurvePanel:
     def clear_baseline(self):
         self._baseline = {'ios': {}, 'android': {}}
         self._clear_highlights()
+
+    def on_change(self, callback: Callable):
+        self._change_callbacks.append(callback)
+
+    def on_preview(self, callback: Callable):
+        self._preview_callbacks.append(callback)
+
+    def set_preview(self, fig_widget) -> None:
+        self._preview_box.children = (fig_widget,)
 
     def widget(self) -> widgets.VBox:
         return self._box
@@ -958,7 +1026,7 @@ class ActualsRangePanel:
             layout=widgets.Layout(width='220px'),
         )
         self._days_back = widgets.BoundedIntText(
-            value=90, min=7, max=730, step=1,
+            value=90, min=7, max=1800, step=1,
             description='Days back:',
             style={'description_width': '80px'},
             layout=widgets.Layout(width='180px'),
@@ -1092,6 +1160,11 @@ class ScenarioPanel:
         # ---- curve panels ----
         self.retention_panel  = CurvePanel('retention')
         self.conversion_panel = CurvePanel('conversion')
+
+        def _on_retention_changed():
+            self.ios_panel.mark_distribution_stale()
+            self.android_panel.mark_distribution_stale()
+        self.retention_panel.on_change(_on_retention_changed)
 
         # ---- ARPDAU panel ----
         self.arpdau_panel = ARPDAUPanel(n_months=12, start_month=start_month)

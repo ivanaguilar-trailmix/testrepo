@@ -266,6 +266,45 @@ def build_curve_widget(curve_anchors: dict, metric: str) -> go.FigureWidget:
     return go.FigureWidget(_build_curve_fig(metric, [('current', curve_anchors)]))
 
 
+def build_curve_preview(platform_anchors: dict, metric: str) -> go.FigureWidget:
+    """
+    Compact inline FigureWidget for the CurvePanel preview button.
+
+    platform_anchors: {'ios': {dx: fraction, ...}, 'android': {...}}
+    """
+    dx_full = list(range(1, 1801))
+    fig = go.Figure()
+    for platform in ('ios', 'android'):
+        raw = {int(k): v for k, v in platform_anchors.get(platform, {}).items()}
+        if not any(v > 0 for v in raw.values()):
+            continue
+        curve = build_curve(raw)
+        color = COLORS[platform]
+        fig.add_trace(go.Scatter(
+            x=dx_full, y=curve * 100,
+            name=platform,
+            line=dict(color=color),
+            hovertemplate=f'{platform}: %{{y:.2f}}%<extra></extra>',
+        ))
+        anchor_days = sorted(k for k in raw if k >= 1)
+        fig.add_trace(go.Scatter(
+            x=anchor_days, y=[raw[k] * 100 for k in anchor_days],
+            mode='markers', showlegend=False,
+            marker=dict(color=color, size=7, symbol='circle-open', line=dict(width=2)),
+            hovertemplate=f'D%{{x}} anchor: %{{y:.2f}}%<extra></extra>',
+        ))
+    fig.update_layout(
+        title_text=f'{metric.capitalize()} Curve — D1 to D1800',
+        height=320, width=750,
+        margin=dict(t=45, b=35, l=55, r=20),
+        hovermode='x unified',
+        yaxis=dict(ticksuffix='%', title=f'{metric.capitalize()} rate (%)'),
+        xaxis_title='Day since install',
+        legend=dict(orientation='h', y=1.12),
+    )
+    return go.FigureWidget(fig)
+
+
 def plot_retention(scenarios_or_anchors) -> None:
     """
     Plot interpolated retention curves for iOS and Android.
