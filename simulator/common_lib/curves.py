@@ -1,11 +1,13 @@
-from datetime import date
+from datetime import date, timedelta
 
 import numpy as np
 import pandas as pd
 from scipy.interpolate import PchipInterpolator
 
+_AGE_BUCKETS = [1, 3, 7, 14, 30, 60, 90, 180, 365, 1000, 1800]
 
-def build_curve(anchor_points: dict, n_days: int = 365) -> np.ndarray:
+
+def build_curve(anchor_points: dict, n_days: int = 1800) -> np.ndarray:
     """
     Interpolate a full D1-D{n_days} curve from sparse {dx: value} anchor points.
 
@@ -122,3 +124,46 @@ def anchors_from_df(df, platform: str, month: str = None) -> dict:
     mask = sub[platform].replace("", np.nan).notna()
     sub = sub[mask]
     return dict(zip(sub["dx"].astype(int), sub[platform].astype(float)))
+
+
+def derive_age_distribution(
+    installs_df: pd.DataFrame,
+    platform: str,
+    retention_curve: np.ndarray,
+    anchor_date: date,
+) -> dict:
+    """
+    Derive the age distribution of the existing user base at anchor_date.
+
+    For each historical install cohort, estimates how many users survive to anchor_date
+    using the retention curve, then normalises into fractional buckets at _AGE_BUCKETS.
+
+    installs_df : columns dt (date-like), platform (str), new_installs (int)
+    retention_curve : 1800-day array where index i = D(i+1) survival rate
+    anchor_date : the day the anchor_dau was observed (typically forecast_start - 1)
+
+    Returns {bucket_dx: fraction} bucketed at _AGE_BUCKETS, fractions sum to 1.0.
+    Returns {} if no usable data.
+    """
+    df = installs_df.copy()
+    df['dt'] = pd.to_datetime(df['dt']).dt.date
+    df = df[df['platform'] == platform].copy()
+    df['age'] = df['dt'].apply(lambda d: (anchor_date - d).days)
+    df = df[(df['age'] >= 1)]
+
+    n = len(retention_curve)
+    df['surviving'] = df.apply(
+        lambda r: float(r['new_installs']) * retention_curve[min(int(r['age']) - 1, n - 1)],
+        axis=1,
+    )
+    total = df['surviving'].sum()
+    if total <= 0:
+        return {}
+
+    # Bucket each age into the nearest _AGE_BUCKETS representative
+    def _bucket(age: int) -> int:
+        return min(_AGE_BUCKETS, key=lambda b: abs(b - age))
+
+    df['bucket'] = df['age'].apply(_bucket)
+    bucketed = df.groupby('bucket')['surviving'].sum() / total
+    return {int(b): round(float(f), 6) for b, f in bucketed.items() if f > 1e-6}

@@ -28,8 +28,9 @@ class PlatformInputs:
     monthly_iap_arpdau: dict       # {"2026-05": 0.05, ...}
     monthly_ad_arpdau: dict        # {"2026-05": 0.02, ...}
     monthly_ua_spend: dict         # {"2026-05": 100_000, ...}
-    anchor_dau: Optional[float] = None  # last observed DAU (organic base anchor)
-    avg_base_age: int = 60         # assumed avg cohort age of existing users at anchor date
+    anchor_dau: Optional[float] = None        # last observed DAU (organic base anchor)
+    avg_base_age: int = 90                    # fallback: single-age approximation when no distribution
+    age_distribution: Optional[dict] = None  # {dx: fraction} derived from install history; overrides avg_base_age
 
 
 @dataclass
@@ -178,6 +179,19 @@ def _organic_base_decay(
     return organic
 
 
+def _organic_base_decay_multi(
+    anchor_dau: float,
+    retention: np.ndarray,
+    age_distribution: dict,
+    n_days: int,
+) -> np.ndarray:
+    """Sum independent decay contributions from each age-bucket segment."""
+    organic = np.zeros(n_days)
+    for age_days, fraction in age_distribution.items():
+        organic += _organic_base_decay(anchor_dau * fraction, retention, int(age_days), n_days)
+    return organic
+
+
 # ---------------------------------------------------------------------------
 # Per-platform runner
 # ---------------------------------------------------------------------------
@@ -195,9 +209,14 @@ def _run_platform(inputs: PlatformInputs, start_date: date, n_days: int) -> Plat
     )
 
     if inputs.anchor_dau is not None and inputs.anchor_dau > 0:
-        organic_dau = _organic_base_decay(
-            inputs.anchor_dau, inputs.retention_curve, inputs.avg_base_age, n_days
-        )
+        if inputs.age_distribution:
+            organic_dau = _organic_base_decay_multi(
+                inputs.anchor_dau, inputs.retention_curve, inputs.age_distribution, n_days
+            )
+        else:
+            organic_dau = _organic_base_decay(
+                inputs.anchor_dau, inputs.retention_curve, inputs.avg_base_age, n_days
+            )
     else:
         organic_dau = np.zeros(n_days)
 
@@ -257,10 +276,14 @@ def _inputs_to_dict(inputs: PlatformInputs) -> dict:
         "monthly_ua_spend":   inputs.monthly_ua_spend,
         "anchor_dau":         inputs.anchor_dau,
         "avg_base_age":       inputs.avg_base_age,
+        "age_distribution":   {str(k): v for k, v in inputs.age_distribution.items()} if inputs.age_distribution else None,
     }
 
 
 def _inputs_from_dict(d: dict) -> PlatformInputs:
+    age_dist = d.get("age_distribution")
+    if age_dist is not None:
+        age_dist = {int(k): float(v) for k, v in age_dist.items()}
     return PlatformInputs(
         platform=d["platform"],
         retention_curve=np.array(d["retention_curve"]),
@@ -270,7 +293,8 @@ def _inputs_from_dict(d: dict) -> PlatformInputs:
         monthly_ad_arpdau=d["monthly_ad_arpdau"],
         monthly_ua_spend=d["monthly_ua_spend"],
         anchor_dau=d.get("anchor_dau"),
-        avg_base_age=d.get("avg_base_age", 60),
+        avg_base_age=d.get("avg_base_age", 90),
+        age_distribution=age_dist,
     )
 
 

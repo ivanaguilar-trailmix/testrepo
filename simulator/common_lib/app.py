@@ -8,7 +8,9 @@ import traceback
 import ipywidgets as _w
 import pandas as pd
 
-from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve
+from datetime import timedelta
+
+from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve, derive_age_distribution
 from common_lib.plots import build_chart_widget, build_curve_widget, configure as _configure_plots
 from common_lib.sheets import load_inputs
 from common_lib.simulation import (
@@ -55,6 +57,7 @@ def setup_callbacks(
     live_retention:  pd.DataFrame = None,
     live_conversion: pd.DataFrame = None,
     default_scenario: str = None,
+    installs: pd.DataFrame = None,
 ) -> None:
     """Wire all panel buttons to their callback functions."""
 
@@ -70,7 +73,8 @@ def setup_callbacks(
             monthly_ad_arpdau=arpdau[platform]['ad'],
             monthly_ua_spend=overrides['monthly_ua_spend'],
             anchor_dau=overrides.get('anchor_dau'),
-            avg_base_age=overrides.get('avg_base_age', 60),
+            avg_base_age=overrides.get('avg_base_age', 90),
+            age_distribution=overrides.get('age_distribution') or None,
         )
 
     def run_simulation():
@@ -151,6 +155,10 @@ def setup_callbacks(
             panel.android_panel.anchor_dau.value   = and_inp.anchor_dau or 0
             panel.ios_panel.avg_base_age.value     = ios_inp.avg_base_age
             panel.android_panel.avg_base_age.value = and_inp.avg_base_age
+            if ios_inp.age_distribution:
+                panel.ios_panel.set_age_distribution(ios_inp.age_distribution)
+            if and_inp.age_distribution:
+                panel.android_panel.set_age_distribution(and_inp.age_distribution)
             panel.ios_panel.set_monthly_values(monthly_cpi=ios_inp.monthly_cpi)
             panel.android_panel.set_monthly_values(monthly_cpi=and_inp.monthly_cpi)
             panel.arpdau_panel.set_values(
@@ -284,6 +292,25 @@ def setup_callbacks(
             traceback.print_exc()
             panel.set_status(f"CSV load error: {e}", 'red')
 
+    def _derive_age_dist(platform: str, widget_panel):
+        if installs is None:
+            widget_panel._age_dist_status.value = (
+                "<span style='color:red;font-size:11px'>installs data not loaded — pass installs= to setup_callbacks()</span>"
+            )
+            return
+        try:
+            start       = panel.get_forecast_start()
+            anchor_date = (actuals[actuals['dt'].dt.date < start]['dt'].dt.date.max()
+                           if not actuals[actuals['dt'].dt.date < start].empty
+                           else start - timedelta(days=1))
+            anchors    = panel.get_curve_anchors()
+            retention  = build_curve(anchors[platform]['retention'])
+            dist       = derive_age_distribution(installs, platform, retention, anchor_date)
+            widget_panel.set_age_distribution(dist)
+        except Exception as e:
+            traceback.print_exc()
+            widget_panel._age_dist_status.value = f"<span style='color:red;font-size:11px'>Error: {e}</span>"
+
     panel.on_run(run_simulation)
     panel.on_save(save_current_scenario)
     panel.on_load(load_saved_scenario)
@@ -292,6 +319,8 @@ def setup_callbacks(
     panel.retention_actuals_panel.on_load(lambda: _load_single_curve('retention'))
     panel.conversion_actuals_panel.on_load(lambda: _load_single_curve('conversion'))
     panel.arpdau_actuals_panel.on_load(load_arpdau_from_actuals)
+    panel.ios_panel.on_derive(lambda: _derive_age_dist('ios',     panel.ios_panel))
+    panel.android_panel.on_derive(lambda: _derive_age_dist('android', panel.android_panel))
 
     if default_scenario:
         load_saved_scenario(default_scenario)

@@ -160,6 +160,17 @@ class PlatformPanel:
         self._set_anchor_callbacks: list[Callable] = []
         self._set_anchor_btn.on_click(lambda _: [cb() for cb in self._set_anchor_callbacks])
 
+        self._age_distribution: dict = {}
+        self._derive_btn = widgets.Button(
+            description="Derive from installs", button_style="info",
+            layout=widgets.Layout(width="170px"),
+        )
+        self._derive_callbacks: list[Callable] = []
+        self._derive_btn.on_click(lambda _: [cb() for cb in self._derive_callbacks])
+        self._age_dist_status = widgets.HTML(
+            "<span style='color:#999;font-size:11px'>Not derived — using avg base age fallback</span>"
+        )
+
         self._cpi_inputs:      list[widgets.BoundedFloatText] = []
         self._installs_labels: list[widgets.HTML]             = []
         self._month_labels:    list[widgets.Label]            = []
@@ -239,13 +250,39 @@ class PlatformPanel:
     @property
     def values(self) -> dict:
         return {
-            "monthly_cpi":  {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
-            "anchor_dau":   round(self.anchor_dau.value, 2),
-            "avg_base_age": int(self.avg_base_age.value),
+            "monthly_cpi":      {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
+            "anchor_dau":       round(self.anchor_dau.value, 2),
+            "avg_base_age":     int(self.avg_base_age.value),
+            "age_distribution": dict(self._age_distribution) if self._age_distribution else None,
         }
 
     def on_set_anchor(self, callback: Callable):
         self._set_anchor_callbacks = [callback]
+
+    def on_derive(self, callback: Callable):
+        self._derive_callbacks = [callback]
+
+    def set_age_distribution(self, dist: dict):
+        """Store a derived distribution and update the status label."""
+        self._age_distribution = {int(k): float(v) for k, v in dist.items()}
+        if not self._age_distribution:
+            self._age_dist_status.value = (
+                "<span style='color:orange;font-size:11px'>Derived distribution is empty — check installs data</span>"
+            )
+            return
+        # Build a compact summary grouped into readable age bands
+        bands = [(1, 6, 'D1–6'), (7, 29, 'D7–29'), (30, 89, 'D30–89'),
+                 (90, 364, 'D90–364'), (365, 999, 'D365–999'),
+                 (1000, 1799, 'D1000–1799'), (1800, 9999, 'D1800+')]
+        parts = []
+        for lo, hi, label in bands:
+            pct = sum(v for k, v in self._age_distribution.items() if lo <= k <= hi) * 100
+            if pct >= 0.1:
+                parts.append(f"{label}: {pct:.1f}%")
+        summary = ' | '.join(parts)
+        self._age_dist_status.value = (
+            f"<span style='color:green;font-size:11px'>Derived — {summary}</span>"
+        )
 
     def set_monthly_values(self, monthly_cpi: dict):
         for m, cpi_w in zip(self._months, self._cpi_inputs):
@@ -270,7 +307,13 @@ class PlatformPanel:
         platform_label = "iOS" if self.platform == "ios" else "Android"
         return widgets.VBox([
             _header(f"{platform_label} — Simulation Parameters"),
-            widgets.HBox([self.anchor_dau, self._set_anchor_btn, self.avg_base_age]),
+            widgets.HBox([self.anchor_dau, self._set_anchor_btn]),
+            widgets.HBox([self.avg_base_age,
+                          widgets.HTML("<span style='color:#999;font-size:11px;padding:6px 0 0 8px'>(fallback)</span>")],
+                         layout=widgets.Layout(align_items='center')),
+            widgets.HTML("<b style='font-size:12px'>Age distribution</b>"),
+            widgets.HBox([self._derive_btn, self._age_dist_status],
+                         layout=widgets.Layout(align_items='center', margin='2px 0')),
         ], layout=widgets.Layout(border="1px solid #ddd", padding="10px", margin="4px"))
 
     def widget(self) -> widgets.VBox:
@@ -282,7 +325,7 @@ class PlatformPanel:
 # ---------------------------------------------------------------------------
 
 class CurvePanel:
-    DX_POINTS = [1, 3, 7, 14, 30, 60, 90, 180, 365]
+    DX_POINTS = [1, 3, 7, 14, 30, 60, 90, 180, 365, 1000, 1800]
 
     def __init__(self, metric: str):
         self.metric = metric
