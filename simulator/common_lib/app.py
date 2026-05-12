@@ -69,7 +69,7 @@ def setup_callbacks(
             monthly_ad_arpdau=arpdau[platform]['ad'],
             monthly_ua_spend=overrides['monthly_ua_spend'],
             anchor_dau=overrides.get('anchor_dau'),
-            avg_base_age=overrides.get('avg_base_age', 60),
+            age_distribution=overrides.get('age_distribution') or None,
         )
 
     def run_simulation():
@@ -144,10 +144,12 @@ def setup_callbacks(
             panel.forecast_start.value             = start
             panel.forecast_months.value            = n_months
             panel.scenario_name.value              = name
-            panel.ios_panel.anchor_dau.value       = ios_inp.anchor_dau or 0
-            panel.android_panel.anchor_dau.value   = and_inp.anchor_dau or 0
-            panel.ios_panel.avg_base_age.value     = ios_inp.avg_base_age
-            panel.android_panel.avg_base_age.value = and_inp.avg_base_age
+            panel.ios_panel.anchor_dau.value     = ios_inp.anchor_dau or 0
+            panel.android_panel.anchor_dau.value = and_inp.anchor_dau or 0
+            if ios_inp.age_distribution:
+                panel.ios_panel.set_age_distribution(ios_inp.age_distribution)
+            if and_inp.age_distribution:
+                panel.android_panel.set_age_distribution(and_inp.age_distribution)
             panel.ios_panel.set_monthly_values(monthly_cpi=ios_inp.monthly_cpi)
             panel.android_panel.set_monthly_values(monthly_cpi=and_inp.monthly_cpi)
             panel.arpdau_panel.set_values(
