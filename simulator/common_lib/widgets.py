@@ -165,11 +165,11 @@ class PlatformPanel:
             self._age_dist_inputs.append(w)
         self._age_total_label = widgets.HTML("")
         self._update_age_total()
-        self._age_csv_upload = widgets.FileUpload(
-            accept='.csv', multiple=False, description='Load CSV',
-            layout=widgets.Layout(width='130px'),
+        self._age_csv_btn = widgets.Button(
+            description='Load CSV', button_style='info',
+            layout=widgets.Layout(width='120px'),
         )
-        self._age_csv_upload.observe(self._on_age_csv_upload, names='value')
+        self._age_csv_btn.on_click(self._on_age_csv_load)
 
         self._cpi_inputs:      list[widgets.BoundedFloatText] = []
         self._installs_labels: list[widgets.HTML]             = []
@@ -273,18 +273,15 @@ class PlatformPanel:
         color = "green" if abs(total - 100.0) < 0.5 else "red"
         self._age_total_label.value = f"<span style='color:{color};font-size:12px'>Total: {total:.1f}%</span>"
 
-    def _on_age_csv_upload(self, change):
-        if not change['new']:
-            return
+    def _on_age_csv_load(self, _):
+        from pathlib import Path
+        from common_lib.sheets import load_age_distribution_csv
+        path = Path(__file__).parent.parent / "config" / "inputs" / "age_distribution.csv"
         try:
-            file_obj = change['new'][0]
-            try:
-                content = bytes(file_obj['content'])
-            except (TypeError, KeyError):
-                content = bytes(file_obj.content)
-            from common_lib.sheets import load_age_distribution_csv
-            dist = load_age_distribution_csv(content)
+            dist = load_age_distribution_csv(path.read_bytes())
             self.set_age_distribution(dist)
+        except FileNotFoundError:
+            self._age_total_label.value = "<span style='color:red;font-size:12px'>age_distribution.csv not found in config/inputs/</span>"
         except Exception as e:
             self._age_total_label.value = f"<span style='color:red;font-size:12px'>CSV error: {e}</span>"
 
@@ -327,7 +324,7 @@ class PlatformPanel:
             _header(f"{platform_label} — DAU Parameters"),
             widgets.HBox([self.anchor_dau, self._set_anchor_btn]),
             widgets.HTML("<b style='font-size:12px'>Age distribution of existing base</b>"),
-            widgets.HBox([self._age_csv_upload, self._age_total_label],
+            widgets.HBox([self._age_csv_btn, self._age_total_label],
                          layout=widgets.Layout(align_items='center', margin='4px 0')),
             header_row,
             *rows,

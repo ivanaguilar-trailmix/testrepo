@@ -276,9 +276,11 @@ def _inputs_from_dict(d: dict) -> PlatformInputs:
     if age_dist is not None:
         age_dist = {int(k): float(v) for k, v in age_dist.items()}
     else:
-        # backward compat: old scenarios stored a single avg_base_age
-        avg_base_age = d.get("avg_base_age", 60)
-        age_dist = {avg_base_age: 1.0}
+        # backward compat: snap avg_base_age to the nearest panel DX point
+        _DX = [1, 3, 7, 14, 30, 60, 90, 180, 365]
+        avg_base_age = d.get("avg_base_age", 90)
+        nearest = min(_DX, key=lambda x: abs(x - avg_base_age))
+        age_dist = {nearest: 1.0}
     return PlatformInputs(
         platform=d["platform"],
         retention_curve=np.array(d["retention_curve"]),
