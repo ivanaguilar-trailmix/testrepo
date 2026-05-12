@@ -9,7 +9,7 @@ import ipywidgets as _w
 import pandas as pd
 
 from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve
-from common_lib.plots import build_chart_widget, configure as _configure_plots
+from common_lib.plots import build_chart_widget, build_curve_widget, configure as _configure_plots
 from common_lib.sheets import load_inputs
 from common_lib.simulation import (
     PlatformInputs, SimulationEngine,
@@ -54,6 +54,7 @@ def setup_callbacks(
     actuals: pd.DataFrame,
     live_retention:  pd.DataFrame = None,
     live_conversion: pd.DataFrame = None,
+    default_scenario: str = None,
 ) -> None:
     """Wire all panel buttons to their callback functions."""
 
@@ -69,7 +70,7 @@ def setup_callbacks(
             monthly_ad_arpdau=arpdau[platform]['ad'],
             monthly_ua_spend=overrides['monthly_ua_spend'],
             anchor_dau=overrides.get('anchor_dau'),
-            age_distribution=overrides.get('age_distribution') or None,
+            avg_base_age=overrides.get('avg_base_age', 60),
         )
 
     def run_simulation():
@@ -88,7 +89,10 @@ def setup_callbacks(
 
             n_actuals = max(1, (start.year - actuals_from.year) * 12 + (start.month - actuals_from.month)) if actuals_from else 6
 
-            chart_ws = {k: build_chart_widget(name, k) for k in panel.get_selected_charts()}
+            curve_anchors = panel.get_curve_anchors()
+            chart_ws = {k: build_chart_widget(name, k) for k in ('dau', 'installs', 'revenue', 'monthly')}
+            chart_ws['retention']  = build_curve_widget(curve_anchors, 'retention')
+            chart_ws['conversion'] = build_curve_widget(curve_anchors, 'conversion')
             table_html = monthly_table(
                 name, filtered,
                 team_cost=panel.get_team_cost(),
@@ -114,7 +118,6 @@ def setup_callbacks(
             actuals_range = panel.get_actuals_range()
             team_cost     = panel.get_team_cost()
             actuals_from  = panel.get_actuals_from()
-            selected_charts = panel.get_selected_charts()
             ua_vals       = panel.ua_budget_panel.values
             path = save_scenario(
                 name, start, ios_inp, and_inp,
@@ -123,7 +126,7 @@ def setup_callbacks(
                 actuals_range=actuals_range,
                 monthly_team_cost=team_cost,
                 actuals_from=str(actuals_from) if actuals_from else None,
-                selected_charts=selected_charts,
+                selected_charts=None,
                 historical_marketing=panel.get_historical_marketing(),
                 monthly_ua_budget=ua_vals['monthly_budget'],
                 monthly_ios_pct=ua_vals['monthly_ios_pct'],
@@ -144,12 +147,10 @@ def setup_callbacks(
             panel.forecast_start.value             = start
             panel.forecast_months.value            = n_months
             panel.scenario_name.value              = name
-            panel.ios_panel.anchor_dau.value     = ios_inp.anchor_dau or 0
-            panel.android_panel.anchor_dau.value = and_inp.anchor_dau or 0
-            if ios_inp.age_distribution:
-                panel.ios_panel.set_age_distribution(ios_inp.age_distribution)
-            if and_inp.age_distribution:
-                panel.android_panel.set_age_distribution(and_inp.age_distribution)
+            panel.ios_panel.anchor_dau.value       = ios_inp.anchor_dau or 0
+            panel.android_panel.anchor_dau.value   = and_inp.anchor_dau or 0
+            panel.ios_panel.avg_base_age.value     = ios_inp.avg_base_age
+            panel.android_panel.avg_base_age.value = and_inp.avg_base_age
             panel.ios_panel.set_monthly_values(monthly_cpi=ios_inp.monthly_cpi)
             panel.android_panel.set_monthly_values(monthly_cpi=and_inp.monthly_cpi)
             panel.arpdau_panel.set_values(
@@ -171,9 +172,6 @@ def setup_callbacks(
                 panel.team_cost_panel.set_values(monthly_team_cost, is_baseline=True)
             if actuals_from:
                 panel.set_actuals_from(actuals_from)
-            if selected_charts:
-                panel.set_selected_charts(selected_charts)
-
             # UA budget: new format takes precedence; fall back to deriving from per-platform UA
             if monthly_ua_budget is not None:
                 panel.ua_budget_panel.set_values(
@@ -294,3 +292,6 @@ def setup_callbacks(
     panel.retention_actuals_panel.on_load(lambda: _load_single_curve('retention'))
     panel.conversion_actuals_panel.on_load(lambda: _load_single_curve('conversion'))
     panel.arpdau_actuals_panel.on_load(load_arpdau_from_actuals)
+
+    if default_scenario:
+        load_saved_scenario(default_scenario)

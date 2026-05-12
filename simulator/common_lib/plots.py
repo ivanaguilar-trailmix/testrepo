@@ -234,7 +234,7 @@ def _resolve_named_anchors(scenarios_or_anchors) -> list[tuple[str, dict]]:
     return result
 
 
-def _plot_single_curve(metric: str, named_anchors: list[tuple[str, dict]]) -> None:
+def _build_curve_fig(metric: str, named_anchors: list[tuple[str, dict]]) -> go.Figure:
     dx = list(range(1, 366))
     fig = go.Figure()
     for i, (label, anchors) in enumerate(named_anchors):
@@ -258,7 +258,12 @@ def _plot_single_curve(metric: str, named_anchors: list[tuple[str, dict]]) -> No
         yaxis=dict(ticksuffix='%', title=f'{metric.capitalize()} rate'),
         xaxis_title='Day since install',
     )
-    fig.show()
+    return fig
+
+
+def build_curve_widget(curve_anchors: dict, metric: str) -> go.FigureWidget:
+    """Return a FigureWidget for a retention or conversion curve from a live anchors dict."""
+    return go.FigureWidget(_build_curve_fig(metric, [('current', curve_anchors)]))
 
 
 def plot_retention(scenarios_or_anchors) -> None:
@@ -271,7 +276,7 @@ def plot_retention(scenarios_or_anchors) -> None:
     """
     named = _resolve_named_anchors(scenarios_or_anchors)
     if named:
-        _plot_single_curve('retention', named)
+        _build_curve_fig('retention', named).show()
 
 
 def plot_conversion(scenarios_or_anchors) -> None:
@@ -284,4 +289,4 @@ def plot_conversion(scenarios_or_anchors) -> None:
     """
     named = _resolve_named_anchors(scenarios_or_anchors)
     if named:
-        _plot_single_curve('conversion', named)
+        _build_curve_fig('conversion', named).show()

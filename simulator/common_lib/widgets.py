@@ -146,30 +146,19 @@ class PlatformPanel:
         self._months  = _month_sequence(n_months, start_month)
         self._loading = False
 
-        self.anchor_dau = _float_input(0.0, "DAU", step=1)
+        self.anchor_dau   = _float_input(0.0, "DAU", step=1)
+        self.avg_base_age = widgets.BoundedIntText(
+            value=60, min=1, max=730, step=1,
+            description="Avg base age:",
+            style={"description_width": "100px"},
+            layout=widgets.Layout(width="200px"),
+        )
         self._set_anchor_btn = widgets.Button(
             description="Set from actuals", button_style="warning",
             layout=widgets.Layout(width="150px"),
         )
         self._set_anchor_callbacks: list[Callable] = []
         self._set_anchor_btn.on_click(lambda _: [cb() for cb in self._set_anchor_callbacks])
-
-        # age distribution table (one row per DX_POINTS entry)
-        self._age_dist_inputs: list[widgets.BoundedFloatText] = []
-        for _ in CurvePanel.DX_POINTS:
-            w = widgets.BoundedFloatText(
-                value=0.0, min=0.0, max=100.0, step=0.01,
-                layout=widgets.Layout(width="100px"),
-            )
-            w.observe(lambda _c: self._update_age_total(), names='value')
-            self._age_dist_inputs.append(w)
-        self._age_total_label = widgets.HTML("")
-        self._update_age_total()
-        self._age_csv_btn = widgets.Button(
-            description='Load CSV', button_style='info',
-            layout=widgets.Layout(width='120px'),
-        )
-        self._age_csv_btn.on_click(self._on_age_csv_load)
 
         self._cpi_inputs:      list[widgets.BoundedFloatText] = []
         self._installs_labels: list[widgets.HTML]             = []
@@ -250,40 +239,10 @@ class PlatformPanel:
     @property
     def values(self) -> dict:
         return {
-            "monthly_cpi":      {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
-            "anchor_dau":       round(self.anchor_dau.value, 2),
-            "age_distribution": self.age_distribution,
+            "monthly_cpi":  {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
+            "anchor_dau":   round(self.anchor_dau.value, 2),
+            "avg_base_age": int(self.avg_base_age.value),
         }
-
-    @property
-    def age_distribution(self) -> dict:
-        return {
-            dx: round(w.value / 100, 6)
-            for dx, w in zip(CurvePanel.DX_POINTS, self._age_dist_inputs)
-            if w.value > 0
-        }
-
-    def set_age_distribution(self, dist: dict):
-        dist = {int(k): float(v) for k, v in dist.items()}
-        for i, dx in enumerate(CurvePanel.DX_POINTS):
-            self._age_dist_inputs[i].value = round(dist.get(dx, 0.0) * 100, 2)
-
-    def _update_age_total(self):
-        total = sum(w.value for w in self._age_dist_inputs)
-        color = "green" if abs(total - 100.0) < 0.5 else "red"
-        self._age_total_label.value = f"<span style='color:{color};font-size:12px'>Total: {total:.1f}%</span>"
-
-    def _on_age_csv_load(self, _):
-        from pathlib import Path
-        from common_lib.sheets import load_age_distribution_csv
-        path = Path(__file__).parent.parent / "config" / "inputs" / "age_distribution.csv"
-        try:
-            dist = load_age_distribution_csv(path.read_bytes())
-            self.set_age_distribution(dist)
-        except FileNotFoundError:
-            self._age_total_label.value = "<span style='color:red;font-size:12px'>age_distribution.csv not found in config/inputs/</span>"
-        except Exception as e:
-            self._age_total_label.value = f"<span style='color:red;font-size:12px'>CSV error: {e}</span>"
 
     def on_set_anchor(self, callback: Callable):
         self._set_anchor_callbacks = [callback]
@@ -309,25 +268,9 @@ class PlatformPanel:
 
     def dau_widget(self) -> widgets.VBox:
         platform_label = "iOS" if self.platform == "ios" else "Android"
-        header_row = widgets.HBox([
-            widgets.HTML("<b>Day</b>",       layout=widgets.Layout(width="60px")),
-            widgets.HTML("<b>% of base</b>", layout=widgets.Layout(width="110px")),
-        ])
-        rows = [
-            widgets.HBox([
-                widgets.Label(f"D{dx}", layout=widgets.Layout(width="60px")),
-                w,
-            ])
-            for dx, w in zip(CurvePanel.DX_POINTS, self._age_dist_inputs)
-        ]
         return widgets.VBox([
-            _header(f"{platform_label} — DAU Parameters"),
-            widgets.HBox([self.anchor_dau, self._set_anchor_btn]),
-            widgets.HTML("<b style='font-size:12px'>Age distribution of existing base</b>"),
-            widgets.HBox([self._age_csv_btn, self._age_total_label],
-                         layout=widgets.Layout(align_items='center', margin='4px 0')),
-            header_row,
-            *rows,
+            _header(f"{platform_label} — Simulation Parameters"),
+            widgets.HBox([self.anchor_dau, self._set_anchor_btn, self.avg_base_age]),
         ], layout=widgets.Layout(border="1px solid #ddd", padding="10px", margin="4px"))
 
     def widget(self) -> widgets.VBox:
@@ -1157,15 +1100,6 @@ class ScenarioPanel:
         self._actuals_months.observe(self._on_forecast_params_change, names='value')
         self._on_forecast_params_change(None)  # initialise extended panels with correct month range
 
-        # ---- chart checkboxes ----
-        self._chart_checks = {
-            'dau':      widgets.Checkbox(value=True,  description='DAU',      indent=False, layout=widgets.Layout(width='70px')),
-            'installs': widgets.Checkbox(value=False, description='Installs', indent=False, layout=widgets.Layout(width='85px')),
-            'revenue':  widgets.Checkbox(value=True,  description='Revenue',  indent=False, layout=widgets.Layout(width='85px')),
-            'payers':   widgets.Checkbox(value=False, description='Payers',   indent=False, layout=widgets.Layout(width='75px')),
-            'monthly':  widgets.Checkbox(value=True,  description='Monthly',  indent=False, layout=widgets.Layout(width='85px')),
-        }
-
         # ---- action buttons ----
         run_btn  = widgets.Button(description="Run simulation", button_style="primary",
                                   layout=widgets.Layout(width="155px"))
@@ -1184,11 +1118,7 @@ class ScenarioPanel:
                 self.scenario_name, self.forecast_start,
                 self.forecast_months, self._actuals_months,
             ]),
-            widgets.HBox([
-                self.load_dropdown, load_btn, divider,
-                widgets.HTML("<span style='margin:4px 4px 0 4px;font-size:12px'><b>Charts:</b></span>"),
-                *self._chart_checks.values(),
-            ]),
+            widgets.HBox([self.load_dropdown, load_btn]),
             input_tab,
             widgets.HBox([run_btn, save_btn, self._status],
                          layout=widgets.Layout(align_items='center')),
@@ -1251,15 +1181,6 @@ class ScenarioPanel:
         n = max(1, (start.year - d.year) * 12 + (start.month - d.month))
         self._actuals_months.value = n
 
-    def set_selected_charts(self, charts: list):
-        if not charts:
-            return
-        for key, cb in self._chart_checks.items():
-            cb.value = key in charts
-
-    def get_selected_charts(self) -> list[str]:
-        return [k for k, cb in self._chart_checks.items() if cb.value]
-
     def get_historical_marketing(self) -> dict:
         forecast_ym = self.get_forecast_start().strftime("%Y-%m")
         return self.ua_budget_panel.get_historical_ua(forecast_ym)
@@ -1293,7 +1214,8 @@ class ScenarioPanel:
         """Populate the button-bar and result area after a successful Run."""
         _LABELS = {
             'dau': 'DAU', 'installs': 'Installs', 'revenue': 'Revenue',
-            'payers': 'Payers', 'monthly': 'Monthly', 'table': 'P&L Table',
+            'monthly': 'Monthly', 'table': 'P&L Table',
+            'retention': 'Retention', 'conversion': 'Conversion',
         }
         self._cached_results = {**chart_widgets, 'table': table_widget}
         btns = []

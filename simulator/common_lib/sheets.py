@@ -1,5 +1,3 @@
-import io
-
 import pandas as pd
 from pathlib import Path
 
@@ -38,28 +36,3 @@ def load_inputs() -> dict[str, pd.DataFrame]:
 
 def get_inputs_dir() -> str:
     return str(INPUTS_DIR)
-
-
-def load_age_distribution_csv(content: bytes) -> dict:
-    """
-    Parse an age-distribution CSV with columns dx (int) and pct (float, as %).
-    Returns {dx: fraction} normalised so fractions sum to 1.0.
-
-    Example CSV:
-        dx,pct
-        7,4.0
-        30,15.0
-        60,18.0
-        90,22.0
-        180,20.0
-        365,11.0
-    """
-    df = pd.read_csv(io.BytesIO(content))
-    df.columns = [c.strip().lower() for c in df.columns]
-    df['dx']  = df['dx'].astype(int)
-    df['pct'] = df['pct'].astype(float)
-    total = df['pct'].sum()
-    if total <= 0:
-        raise ValueError("pct column sums to zero")
-    df['pct'] = df['pct'] / total * 100  # normalise to 100%
-    return {int(row['dx']): round(float(row['pct']) / 100, 6) for _, row in df.iterrows()}
