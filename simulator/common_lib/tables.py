@@ -8,7 +8,7 @@ import pandas as pd
 
 from common_lib.simulation import load_result, load_scenario
 
-IAP_NET_FACTOR = 0.70
+IAP_NET_FACTOR = 0.70   # fallback for actuals rows (no per-month input available)
 AD_NET_FACTOR  = 0.85
 
 _YELLOW = '#FFFDE7'
@@ -75,9 +75,9 @@ def _monthly_forecast(result: pd.DataFrame) -> pd.DataFrame:
 def monthly_table(
     scenario: str,
     actuals: pd.DataFrame,
-    team_cost=None,
     historical_marketing=None,
     n_actuals: int = 6,
+    monthly_iap_net_factor: dict = None,
 ) -> 'pd.io.formats.style.Styler':
     """
     Build a styled monthly P&L table combining actuals and forecast.
@@ -88,13 +88,12 @@ def monthly_table(
         Saved scenario name (result must exist).
     actuals : pd.DataFrame
         Daily actuals with columns: dt, platform, dau, iap_revenue, ad_revenue.
-    team_cost : float or dict {month_str: float}, optional
-        Monthly team/headcount cost.  float = same every month.
     historical_marketing : dict {month_str: float}, optional
-        Actual UA spend for historical months (e.g. {'2025-10': 574515}).
-        Forecast months always use the scenario's ua_spend.
+        Actual UA spend for historical months.
     n_actuals : int
         How many historical months to show before the forecast start.
+    monthly_iap_net_factor : dict {month_str: float}, optional
+        Per-month IAP gross-to-net factor for forecast rows. Falls back to 0.70.
     """
     _, forecast_start, _, ios_inp, and_inp, *_ = load_scenario(scenario)
     result = load_result(scenario)
@@ -127,8 +126,6 @@ def monthly_table(
                 fct_df.loc[idx, 'total_dau']    += dp['dau'].sum()
                 fct_df.loc[idx, 'revenue_gross'] = (fct_df.loc[idx, 'iap_revenue'] +
                                                      fct_df.loc[idx, 'ad_revenue'])
-                fct_df.loc[idx, 'revenue_net']   = (fct_df.loc[idx, 'iap_revenue'] * IAP_NET_FACTOR +
-                                                     fct_df.loc[idx, 'ad_revenue']  * AD_NET_FACTOR)
                 days = calendar.monthrange(forecast_start.year, forecast_start.month)[1]
                 fct_df.loc[idx, 'avg_dau'] = fct_df.loc[idx, 'total_dau'] / days
                 fct_df.loc[idx, 'arpdau']  = (fct_df.loc[idx, 'revenue_gross'] /
@@ -136,6 +133,28 @@ def monthly_table(
 
     df = pd.concat([act_df, fct_df], ignore_index=True).sort_values('date').reset_index(drop=True)
     df['month_str'] = df['month'].astype(str)
+
+    # Apply per-month IAP net factor to forecast rows; actuals always use constant.
+    def _iap_net(row):
+        if row['is_forecast'] and monthly_iap_net_factor:
+            return float(monthly_iap_net_factor.get(row['month_str'], IAP_NET_FACTOR))
+        return IAP_NET_FACTOR
+
+    df['iap_net_factor'] = df.apply(_iap_net, axis=1)
+    df['revenue_net']    = df['iap_revenue'] * df['iap_net_factor'] + df['ad_revenue'] * AD_NET_FACTOR
+
+    # DAU actuals map: all available actuals grouped by month (sum platforms per day, then avg days).
+    _all = actuals.copy()
+    _all['dt'] = pd.to_datetime(_all['dt'])
+    _all['month_str'] = _all['dt'].dt.strftime('%Y-%m')
+    dau_actuals_map = (
+        _all.groupby(['dt', 'month_str'])['dau'].sum()
+        .reset_index()
+        .groupby('month_str')['dau'].mean()
+        .round().astype(int)
+        .to_dict()
+    )
+    df['dau_actuals'] = df['month_str'].map(dau_actuals_map)
 
     def _mkt(row):
         m = row['month_str']
@@ -145,30 +164,24 @@ def monthly_table(
             return historical_marketing.get(m, float('nan'))
         return float('nan')
 
-    def _team(m):
-        if team_cost is None:
-            return float('nan')
-        if isinstance(team_cost, dict):
-            return float(team_cost.get(m, float('nan')))
-        return float(team_cost)
-
     df['marketing_cost'] = df.apply(_mkt, axis=1)
-    df['team_cost']      = df['month_str'].apply(_team)
-    df['profit']         = (
-        df['revenue_net']
-        - df['marketing_cost'].fillna(0)
-        - df['team_cost'].fillna(0)
-    )
+    df['game_margin']    = df['revenue_net'] - df['marketing_cost'].fillna(0)
+
+    def _fmt(x):
+        return f'${x:,.0f}' if pd.notna(x) else '—'
+
+    def _fmt_dau(x):
+        return f'{int(x):,}' if pd.notna(x) else '—'
 
     disp = pd.DataFrame({
         'Date':            df['date'].dt.strftime('%Y-%m-%d'),
+        'DAU Actuals':     df['dau_actuals'],
         'DAU':             df['avg_dau'].round().astype(int),
         'ARPDAU':          df['arpdau'],
         'Revenue (Gross)': df['revenue_gross'],
         'Revenue (Net)':   df['revenue_net'],
         'Marketing Cost':  df['marketing_cost'],
-        'Team Cost':       df['team_cost'],
-        'Profit':          df['profit'],
+        'Game Margin':     df['game_margin'],
         '_fc':             df['is_forecast'],
     })
     is_fc = disp['_fc'].tolist()
@@ -178,21 +191,18 @@ def monthly_table(
         c = f'background-color: {_YELLOW}' if is_fc[row.name] else ''
         return [c] * len(row)
 
-    def _fmt(x):
-        return f'${x:,.0f}' if pd.notna(x) else '—'
-
     styler = (
         disp.style
         .apply(_row_bg, axis=1)
-        .map(lambda _: f'background-color: {_GREEN}', subset=['Profit'])
+        .map(lambda _: f'background-color: {_GREEN}', subset=['Game Margin'])
         .format({
+            'DAU Actuals':     _fmt_dau,
             'DAU':             '{:,}',
             'ARPDAU':          '${:.2f}',
             'Revenue (Gross)': _fmt,
             'Revenue (Net)':   _fmt,
             'Marketing Cost':  _fmt,
-            'Team Cost':       _fmt,
-            'Profit':          _fmt,
+            'Game Margin':     _fmt,
         })
         .set_table_styles([
             {'selector': 'th',

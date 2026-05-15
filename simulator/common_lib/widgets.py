@@ -178,11 +178,13 @@ class PlatformPanel:
             "<span style='color:#999;font-size:11px'>Not derived — using avg base age fallback</span>"
         )
 
-        self._cpi_inputs:      list[widgets.BoundedFloatText] = []
-        self._installs_labels: list[widgets.HTML]             = []
-        self._month_labels:    list[widgets.Label]            = []
-        self._data_rows:       list[widgets.HBox]             = []
-        self._monthly_ua:      dict                           = {}
+        self._cpi_inputs:       list[widgets.BoundedFloatText] = []
+        self._boost_inputs:     list[widgets.BoundedFloatText] = []
+        self._boost_labels:     list[widgets.Label]            = []
+        self._installs_labels:  list[widgets.HTML]             = []
+        self._month_labels:     list[widgets.Label]            = []
+        self._data_rows:        list[widgets.HBox]             = []
+        self._monthly_ua:       dict                           = {}
 
         cpi_fill = _fill_btn()
 
@@ -203,7 +205,8 @@ class PlatformPanel:
             for i, w in enumerate(self._cpi_inputs) if 0 < i < len(self._months)
         ])
 
-        self._rows_box = widgets.VBox([])
+        self._rows_box       = widgets.VBox([])
+        self._boost_rows_box = widgets.VBox([])
         self._apply_months(self._months)
 
         paste_section = _make_paste_section(
@@ -222,33 +225,44 @@ class PlatformPanel:
     def _create_row(self) -> None:
         i        = len(self._data_rows)
         lbl      = widgets.Label("", layout=widgets.Layout(width="90px"))
-        cpi_w    = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
+        cpi_w    = widgets.BoundedFloatText(value=0,   min=0,   max=1e9,  step=0.01, layout=widgets.Layout(width="110px"))
         inst_lbl = widgets.HTML("—", layout=widgets.Layout(width="100px", padding="4px 0 0 4px"))
+
+        boost_lbl = widgets.Label("", layout=widgets.Layout(width="90px"))
+        boost_w   = widgets.BoundedFloatText(value=0.0, min=0.0, max=200.0, step=0.1, layout=widgets.Layout(width="110px"))
 
         cpi_w.observe(lambda change, _i=i: self._refresh_installs_row(_i), names='value')
 
         self._month_labels.append(lbl)
         self._cpi_inputs.append(cpi_w)
         self._installs_labels.append(inst_lbl)
+        self._boost_labels.append(boost_lbl)
+        self._boost_inputs.append(boost_w)
         self._data_rows.append(widgets.HBox([lbl, cpi_w, inst_lbl]))
 
     def _apply_months(self, months: list[str]):
         while len(self._data_rows) < len(months):
             self._create_row()
         for i, m in enumerate(months):
-            self._month_labels[i].value = m
-        self._rows_box.children = tuple(self._data_rows[:len(months)])
+            self._month_labels[i].value  = m
+            self._boost_labels[i].value  = m
+        self._rows_box.children       = tuple(self._data_rows[:len(months)])
+        boost_rows = [widgets.HBox([self._boost_labels[i], self._boost_inputs[i]]) for i in range(len(months))]
+        self._boost_rows_box.children = tuple(boost_rows)
 
     def update_months(self, start_month: str, n_months: int):
-        new_months = _month_sequence(n_months, start_month)
-        old_cpi = {m: self._cpi_inputs[i].value for i, m in enumerate(self._months)}
+        new_months  = _month_sequence(n_months, start_month)
+        old_cpi     = {m: self._cpi_inputs[i].value   for i, m in enumerate(self._months)}
+        old_boost   = {m: self._boost_inputs[i].value for i, m in enumerate(self._months)}
         self._months[:] = new_months
         self._apply_months(new_months)
         self._loading = True
         try:
             for i, m in enumerate(new_months):
-                new_cpi = old_cpi.get(m, 0)
-                if self._cpi_inputs[i].value != new_cpi: self._cpi_inputs[i].value = new_cpi
+                new_cpi   = old_cpi.get(m, 0)
+                new_boost = old_boost.get(m, 0.0)
+                if self._cpi_inputs[i].value   != new_cpi:   self._cpi_inputs[i].value   = new_cpi
+                if self._boost_inputs[i].value != new_boost: self._boost_inputs[i].value = new_boost
         finally:
             self._loading = False
         for i in range(len(self._months)):
@@ -257,11 +271,12 @@ class PlatformPanel:
     @property
     def values(self) -> dict:
         return {
-            "monthly_cpi":        {m: round(w.value, 2) for m, w in zip(self._months, self._cpi_inputs)},
-            "anchor_dau":         round(self.anchor_dau.value, 2),
-            "anchor_offset_pct":  round(self.anchor_offset_pct.value, 2),
-            "avg_base_age":       int(self.avg_base_age.value),
-            "age_distribution":   dict(self._age_distribution) if self._age_distribution else None,
+            "monthly_cpi":                {m: round(w.value, 2)  for m, w in zip(self._months, self._cpi_inputs)},
+            "monthly_installs_boost_pct": {m: round(w.value, 2)  for m, w in zip(self._months, self._boost_inputs)},
+            "anchor_dau":                 round(self.anchor_dau.value, 2),
+            "anchor_offset_pct":          round(self.anchor_offset_pct.value, 2),
+            "avg_base_age":               int(self.avg_base_age.value),
+            "age_distribution":           dict(self._age_distribution) if self._age_distribution else None,
         }
 
     def on_set_anchor(self, callback: Callable):
@@ -315,9 +330,11 @@ class PlatformPanel:
             header = "<div style='color:green;font-size:11px;margin-bottom:2px'>✓ Derived from installs</div>"
         self._age_dist_status.value = header + table
 
-    def set_monthly_values(self, monthly_cpi: dict):
-        for m, cpi_w in zip(self._months, self._cpi_inputs):
-            if m in monthly_cpi: cpi_w.value = round(float(monthly_cpi[m]), 2)
+    def set_monthly_values(self, monthly_cpi: dict, monthly_boost_pct: dict = None):
+        for i, m in enumerate(self._months):
+            if m in monthly_cpi: self._cpi_inputs[i].value = round(float(monthly_cpi[m]), 2)
+            if monthly_boost_pct and m in monthly_boost_pct:
+                self._boost_inputs[i].value = round(float(monthly_boost_pct[m]), 2)
         for i in range(len(self._months)):
             self._refresh_installs_row(i)
 
@@ -349,11 +366,28 @@ class PlatformPanel:
         ], layout=widgets.Layout(
             border='1px solid #ccc', padding='8px', margin='6px 0 0 0',
         ))
+        boost_fill = _fill_btn()
+        boost_fill.on_click(lambda _: [
+            w.__setattr__("value", self._boost_inputs[0].value)
+            for i, w in enumerate(self._boost_inputs) if 0 < i < len(self._months)
+        ])
+        boost_group = widgets.VBox([
+            widgets.HTML("<b style='font-size:12px'>External Installs Boost</b>"),
+            widgets.HTML("<span style='font-size:11px;color:#888'>% of organic DAU added as extra installs per month.</span>"),
+            widgets.HBox([
+                widgets.HTML("<b>Month</b>",   layout=widgets.Layout(width="90px")),
+                widgets.VBox([widgets.HTML("<b>Boost %</b>"), boost_fill], layout=widgets.Layout(width="110px")),
+            ]),
+            self._boost_rows_box,
+        ], layout=widgets.Layout(
+            border='1px solid #ccc', padding='8px', margin='6px 0 0 0',
+        ))
         return widgets.VBox([
             _header(f"{platform_label} — Simulation Parameters"),
             widgets.HBox([self.anchor_dau, self.anchor_offset_pct, self._set_anchor_btn],
                          layout=widgets.Layout(align_items='center')),
             organic_group,
+            boost_group,
         ], layout=widgets.Layout(border="1px solid #ddd", padding="10px", margin="4px"))
 
     def widget(self) -> widgets.VBox:
@@ -504,6 +538,7 @@ class ARPDAUPanel:
             'ios':     {'iap': [], 'ad': []},
             'android': {'iap': [], 'ad': []},
         }
+        self._iap_net_inputs: list[widgets.BoundedFloatText] = []
         self._month_labels: list[widgets.Label] = []
         self._data_rows:    list[widgets.HBox]  = []
 
@@ -511,19 +546,21 @@ class ARPDAUPanel:
         ios_ad_fill  = _fill_btn()
         and_iap_fill = _fill_btn()
         and_ad_fill  = _fill_btn()
+        net_fill     = _fill_btn()
 
-        def _col_hdr(text, btn):
+        def _col_hdr(text, btn, width="110px"):
             return widgets.VBox(
                 [widgets.HTML(f"<b>{text}</b>"), btn],
-                layout=widgets.Layout(width="110px"),
+                layout=widgets.Layout(width=width),
             )
 
         header_row = widgets.HBox([
-            widgets.HTML("<b>Month</b>",        layout=widgets.Layout(width="90px")),
+            widgets.HTML("<b>Month</b>",          layout=widgets.Layout(width="90px")),
             _col_hdr("iOS IAP ($)",   ios_iap_fill),
             _col_hdr("iOS Ad ($)",    ios_ad_fill),
             _col_hdr("And IAP ($)",   and_iap_fill),
             _col_hdr("And Ad ($)",    and_ad_fill),
+            _col_hdr("IAP Net Factor", net_fill, "110px"),
         ])
 
         def _make_fill(platform, metric):
@@ -540,23 +577,28 @@ class ARPDAUPanel:
         ios_ad_fill.on_click( _make_fill('ios',     'ad'))
         and_iap_fill.on_click(_make_fill('android', 'iap'))
         and_ad_fill.on_click( _make_fill('android', 'ad'))
+        net_fill.on_click(lambda _: [
+            w.__setattr__("value", self._iap_net_inputs[0].value)
+            for i, w in enumerate(self._iap_net_inputs) if 0 < i < len(self._months)
+        ])
 
         self._rows_box = widgets.VBox([])
         self._apply_months(self._months)
 
         paste_section = _make_paste_section(
             [
-                ("iOS IAP ($)",  self._inputs['ios']['iap']),
-                ("iOS Ad ($)",   self._inputs['ios']['ad']),
-                ("And IAP ($)",  self._inputs['android']['iap']),
-                ("And Ad ($)",   self._inputs['android']['ad']),
+                ("iOS IAP ($)",    self._inputs['ios']['iap']),
+                ("iOS Ad ($)",     self._inputs['ios']['ad']),
+                ("And IAP ($)",    self._inputs['android']['iap']),
+                ("And Ad ($)",     self._inputs['android']['ad']),
+                ("IAP Net Factor", self._iap_net_inputs),
             ],
             self._months,
         )
 
         self._box = widgets.VBox([
-            _header("ARPDAU — Monthly Inputs"),
-            widgets.HTML("<span style='font-size:11px;color:#888'>IAP and Ad ARPDAU per platform per month.</span>"),
+            _header("Revenue — Monthly Inputs"),
+            widgets.HTML("<span style='font-size:11px;color:#888'>IAP and Ad ARPDAU per platform per month. IAP Net Factor = store cut (default 0.70).</span>"),
             header_row,
             self._rows_box,
             paste_section,
@@ -564,11 +606,12 @@ class ARPDAUPanel:
 
     def _create_row(self) -> None:
         i = len(self._data_rows)
-        lbl         = widgets.Label("", layout=widgets.Layout(width="90px"))
-        ios_iap_w   = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
-        ios_ad_w    = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
-        and_iap_w   = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
-        and_ad_w    = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
+        lbl           = widgets.Label("", layout=widgets.Layout(width="90px"))
+        ios_iap_w     = widgets.BoundedFloatText(value=0,    min=0,   max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
+        ios_ad_w      = widgets.BoundedFloatText(value=0,    min=0,   max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
+        and_iap_w     = widgets.BoundedFloatText(value=0,    min=0,   max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
+        and_ad_w      = widgets.BoundedFloatText(value=0,    min=0,   max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
+        net_factor_w  = widgets.BoundedFloatText(value=0.70, min=0.0, max=1.0, step=0.01, layout=widgets.Layout(width="110px"))
 
         ios_iap_w.observe(lambda ch, _i=i: self._on_change_idx(_i, 'ios',     'iap', ch), names='value')
         ios_ad_w.observe( lambda ch, _i=i: self._on_change_idx(_i, 'ios',     'ad',  ch), names='value')
@@ -579,8 +622,9 @@ class ARPDAUPanel:
         self._inputs['ios']['ad'].append(ios_ad_w)
         self._inputs['android']['iap'].append(and_iap_w)
         self._inputs['android']['ad'].append(and_ad_w)
+        self._iap_net_inputs.append(net_factor_w)
         self._month_labels.append(lbl)
-        self._data_rows.append(widgets.HBox([lbl, ios_iap_w, ios_ad_w, and_iap_w, and_ad_w]))
+        self._data_rows.append(widgets.HBox([lbl, ios_iap_w, ios_ad_w, and_iap_w, and_ad_w, net_factor_w]))
 
     def _apply_months(self, months: list[str]):
         while len(self._data_rows) < len(months):
@@ -612,6 +656,7 @@ class ARPDAUPanel:
                 'ios_ad':  self._inputs['ios']['ad'][i].value,
                 'and_iap': self._inputs['android']['iap'][i].value,
                 'and_ad':  self._inputs['android']['ad'][i].value,
+                'net':     self._iap_net_inputs[i].value,
             }
         self._months[:] = new_months
         self._apply_months(new_months)
@@ -623,10 +668,12 @@ class ARPDAUPanel:
                 ios_ad  = v.get('ios_ad',  0)
                 and_iap = v.get('and_iap', 0)
                 and_ad  = v.get('and_ad',  0)
+                net     = v.get('net',     0.70)
                 if self._inputs['ios']['iap'][i].value     != ios_iap: self._inputs['ios']['iap'][i].value     = ios_iap
                 if self._inputs['ios']['ad'][i].value      != ios_ad:  self._inputs['ios']['ad'][i].value      = ios_ad
                 if self._inputs['android']['iap'][i].value != and_iap: self._inputs['android']['iap'][i].value = and_iap
                 if self._inputs['android']['ad'][i].value  != and_ad:  self._inputs['android']['ad'][i].value  = and_ad
+                if self._iap_net_inputs[i].value           != net:     self._iap_net_inputs[i].value           = net
         finally:
             self._loading = False
 
@@ -638,15 +685,17 @@ class ARPDAUPanel:
                 'iap': {m: round(w.value, 4) for m, w in zip(self._months, self._inputs[platform]['iap'])},
                 'ad':  {m: round(w.value, 4) for m, w in zip(self._months, self._inputs[platform]['ad'])},
             }
+        result['iap_net_factor'] = {m: round(w.value, 4) for m, w in zip(self._months, self._iap_net_inputs)}
         return result
 
     def set_values(
         self,
-        ios_iap:     dict,
-        ios_ad:      dict,
-        android_iap: dict,
-        android_ad:  dict,
-        is_baseline: bool = False,
+        ios_iap:        dict,
+        ios_ad:         dict,
+        android_iap:    dict,
+        android_ad:     dict,
+        is_baseline:    bool = False,
+        iap_net_factor: dict = None,
     ):
         self._loading = True
         try:
@@ -655,6 +704,8 @@ class ARPDAUPanel:
                 if m in ios_ad:      self._inputs['ios']['ad'][i].value       = round(float(ios_ad[m]),      4)
                 if m in android_iap: self._inputs['android']['iap'][i].value  = round(float(android_iap[m]), 4)
                 if m in android_ad:  self._inputs['android']['ad'][i].value   = round(float(android_ad[m]),  4)
+                if iap_net_factor and m in iap_net_factor:
+                    self._iap_net_inputs[i].value = round(float(iap_net_factor[m]), 4)
         finally:
             self._loading = False
 
@@ -1169,9 +1220,6 @@ class ScenarioPanel:
         # ---- ARPDAU panel ----
         self.arpdau_panel = ARPDAUPanel(n_months=12, start_month=start_month)
 
-        # ---- team cost panel ----
-        self.team_cost_panel = TeamCostPanel(n_months=12, start_month=start_month, label="Team Cost")
-
         # ---- UA budget panel ----
         self.ua_budget_panel = UABudgetPanel(n_months=12, start_month=start_month)
         self.ua_budget_panel.on_change(self._sync_installs)
@@ -1188,16 +1236,14 @@ class ScenarioPanel:
             widgets.VBox([self.retention_actuals_panel.widget(),  self.retention_panel.widget()]),
             widgets.VBox([self.conversion_actuals_panel.widget(), self.conversion_panel.widget()]),
             widgets.VBox([self.arpdau_actuals_panel.widget(),     self.arpdau_panel.widget()]),
-            self.team_cost_panel.widget(),
             self.ua_budget_panel.widget(),
         ])
         input_tab.set_title(0, 'DAU')
         input_tab.set_title(1, 'CPI')
         input_tab.set_title(2, 'Retention')
         input_tab.set_title(3, 'Conversion')
-        input_tab.set_title(4, 'ARPDAU')
-        input_tab.set_title(5, 'Team Cost')
-        input_tab.set_title(6, 'UA Budget')
+        input_tab.set_title(4, 'Revenue')
+        input_tab.set_title(5, 'UA Budget')
 
         # ---- result area (populated after Run via set_chart_results) ----
         self._chart_btns_box  = widgets.HBox([], layout=widgets.Layout(
@@ -1277,9 +1323,6 @@ class ScenarioPanel:
 
     def get_arpdau(self) -> dict:
         return self.arpdau_panel.values
-
-    def get_team_cost(self) -> dict:
-        return self.team_cost_panel.values
 
     def get_actuals_from(self) -> date:
         start = self.get_forecast_start()
@@ -1381,7 +1424,6 @@ class ScenarioPanel:
         # Extended panels: actuals_from → end of forecast
         forecast_end_ym = _month_offset(forecast_ym, n_forecast - 1)
         n_extended = _month_count_inclusive(actuals_ym, forecast_end_ym)
-        self.team_cost_panel.update_months(actuals_ym, n_extended)
         self.ua_budget_panel.update_months(actuals_ym, n_extended)
         self._sync_installs()
 

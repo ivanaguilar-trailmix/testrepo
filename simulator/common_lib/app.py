@@ -64,6 +64,7 @@ def setup_callbacks(
     def _build_inputs(platform: str, overrides: dict) -> PlatformInputs:
         anchors = panel.get_curve_anchors()
         arpdau  = panel.get_arpdau()
+        boost   = overrides.get('monthly_installs_boost_pct') or {}
         return PlatformInputs(
             platform=platform,
             retention_curve=build_curve(anchors[platform]['retention']),
@@ -76,6 +77,7 @@ def setup_callbacks(
             anchor_offset_pct=overrides.get('anchor_offset_pct', 0.0),
             avg_base_age=overrides.get('avg_base_age', 90),
             age_distribution=overrides.get('age_distribution') or None,
+            monthly_installs_boost_pct=boost if boost else None,
         )
 
     def run_simulation():
@@ -98,11 +100,12 @@ def setup_callbacks(
             chart_ws = {k: build_chart_widget(name, k) for k in ('dau', 'installs', 'revenue', 'monthly')}
             chart_ws['retention']  = build_curve_widget(curve_anchors, 'retention')
             chart_ws['conversion'] = build_curve_widget(curve_anchors, 'conversion')
+            arpdau_vals = panel.get_arpdau()
             table_html = monthly_table(
                 name, filtered,
-                team_cost=panel.get_team_cost(),
                 historical_marketing=panel.get_historical_marketing(),
                 n_actuals=n_actuals,
+                monthly_iap_net_factor=arpdau_vals.get('iap_net_factor'),
             ).to_html()
             table_w = _w.HTML(f'<div style="overflow-x:auto">{table_html}</div>')
 
@@ -119,22 +122,23 @@ def setup_callbacks(
             n_months      = int(panel.forecast_months.value)
             ios_inp       = _build_inputs('ios',     panel.get_ios_overrides())
             and_inp       = _build_inputs('android', panel.get_android_overrides())
-            curve_anchors = panel.get_curve_anchors()
-            actuals_range = panel.get_actuals_range()
-            team_cost     = panel.get_team_cost()
-            actuals_from  = panel.get_actuals_from()
-            ua_vals       = panel.ua_budget_panel.values
+            curve_anchors   = panel.get_curve_anchors()
+            actuals_range   = panel.get_actuals_range()
+            actuals_from    = panel.get_actuals_from()
+            ua_vals         = panel.ua_budget_panel.values
+            arpdau_vals     = panel.get_arpdau()
             path = save_scenario(
                 name, start, ios_inp, and_inp,
                 n_months=n_months,
                 curve_anchors=curve_anchors,
                 actuals_range=actuals_range,
-                monthly_team_cost=team_cost,
+                monthly_team_cost=None,
                 actuals_from=str(actuals_from) if actuals_from else None,
                 selected_charts=None,
                 historical_marketing=panel.get_historical_marketing(),
                 monthly_ua_budget=ua_vals['monthly_budget'],
                 monthly_ios_pct=ua_vals['monthly_ios_pct'],
+                monthly_iap_net_factor=arpdau_vals.get('iap_net_factor'),
             )
             panel.set_status(f'Saved to {path.name}', 'green')
             panel.load_dropdown.options = ['— new scenario —'] + list_scenarios()
@@ -147,7 +151,8 @@ def setup_callbacks(
             (_, start, n_months, ios_inp, and_inp,
              curve_anchors, actuals_range, monthly_team_cost,
              actuals_from, selected_charts, historical_marketing,
-             monthly_ua_budget, monthly_ios_pct) = load_scenario(name)
+             monthly_ua_budget, monthly_ios_pct,
+             monthly_iap_net_factor) = load_scenario(name)
 
             panel.forecast_start.value             = start
             panel.forecast_months.value            = n_months
@@ -162,13 +167,20 @@ def setup_callbacks(
                 panel.ios_panel.set_age_distribution(ios_inp.age_distribution)
             if and_inp.age_distribution:
                 panel.android_panel.set_age_distribution(and_inp.age_distribution)
-            panel.ios_panel.set_monthly_values(monthly_cpi=ios_inp.monthly_cpi)
-            panel.android_panel.set_monthly_values(monthly_cpi=and_inp.monthly_cpi)
+            panel.ios_panel.set_monthly_values(
+                monthly_cpi=ios_inp.monthly_cpi,
+                monthly_boost_pct=ios_inp.monthly_installs_boost_pct or {},
+            )
+            panel.android_panel.set_monthly_values(
+                monthly_cpi=and_inp.monthly_cpi,
+                monthly_boost_pct=and_inp.monthly_installs_boost_pct or {},
+            )
             panel.arpdau_panel.set_values(
-                ios_iap     = ios_inp.monthly_iap_arpdau,
-                ios_ad      = ios_inp.monthly_ad_arpdau,
-                android_iap = and_inp.monthly_iap_arpdau,
-                android_ad  = and_inp.monthly_ad_arpdau,
+                ios_iap        = ios_inp.monthly_iap_arpdau,
+                ios_ad         = ios_inp.monthly_ad_arpdau,
+                android_iap    = and_inp.monthly_iap_arpdau,
+                android_ad     = and_inp.monthly_ad_arpdau,
+                iap_net_factor = monthly_iap_net_factor,
             )
             if curve_anchors:
                 panel.retention_panel.set_values(
@@ -179,8 +191,6 @@ def setup_callbacks(
                 )
             if actuals_range:
                 panel.set_actuals_range(actuals_range)
-            if monthly_team_cost:
-                panel.team_cost_panel.set_values(monthly_team_cost, is_baseline=True)
             if actuals_from:
                 panel.set_actuals_from(actuals_from)
             # UA budget: new format takes precedence; fall back to deriving from per-platform UA
@@ -279,22 +289,6 @@ def setup_callbacks(
             traceback.print_exc()
             panel.arpdau_actuals_panel.set_status(f"Error: {e}", 'red')
 
-    def load_team_cost_from_csv():
-        try:
-            inputs = load_inputs()
-            tc_df  = inputs.get('team_cost')
-            if tc_df is None or tc_df.empty:
-                panel.set_status("team_cost.csv not found or empty", 'red')
-                return
-            panel.team_cost_panel.set_values(
-                dict(zip(tc_df['month'], tc_df['team_cost'].astype(float))),
-                is_baseline=True,
-            )
-            panel.set_status("Team cost loaded from CSV", 'green')
-        except Exception as e:
-            traceback.print_exc()
-            panel.set_status(f"CSV load error: {e}", 'red')
-
     def _derive_age_dist(platform: str, widget_panel):
         if installs is None:
             widget_panel._age_dist_status.value = (
@@ -327,7 +321,6 @@ def setup_callbacks(
     panel.on_save(save_current_scenario)
     panel.on_load(load_saved_scenario)
     panel.on_set_anchor(set_anchor_from_actuals)
-    panel.team_cost_panel.on_load_csv(load_team_cost_from_csv)
     panel.retention_actuals_panel.on_load(lambda: _load_single_curve('retention'))
     panel.conversion_actuals_panel.on_load(lambda: _load_single_curve('conversion'))
     panel.arpdau_actuals_panel.on_load(load_arpdau_from_actuals)

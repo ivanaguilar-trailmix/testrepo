@@ -29,9 +29,10 @@ class PlatformInputs:
     monthly_ad_arpdau: dict        # {"2026-05": 0.02, ...}
     monthly_ua_spend: dict         # {"2026-05": 100_000, ...}
     anchor_dau: Optional[float] = None        # last observed DAU (organic base anchor)
-    anchor_offset_pct: float = 0.0           # % adjustment applied to anchor_dau before simulation (+/-)
+    anchor_offset_pct: float = 0.0            # % adjustment applied to anchor_dau before simulation (+/-)
     avg_base_age: int = 90                    # fallback: single-age approximation when no distribution
     age_distribution: Optional[dict] = None  # {dx: fraction} derived from install history; overrides avg_base_age
+    monthly_installs_boost_pct: Optional[dict] = None  # {"2026-05": 5.0, ...} — extra installs as % of organic DAU
 
 
 @dataclass
@@ -198,17 +199,12 @@ def _organic_base_decay_multi(
 # ---------------------------------------------------------------------------
 
 def _run_platform(inputs: PlatformInputs, start_date: date, n_days: int) -> PlatformResults:
-    daily_spend   = _monthly_to_daily(inputs.monthly_ua_spend,   start_date, n_days)
-    daily_cpi     = _monthly_lookup(inputs.monthly_cpi,          start_date, n_days)
-    daily_iap     = _monthly_lookup(inputs.monthly_iap_arpdau,   start_date, n_days)
-    daily_ad      = _monthly_lookup(inputs.monthly_ad_arpdau,    start_date, n_days)
+    daily_spend = _monthly_to_daily(inputs.monthly_ua_spend, start_date, n_days)
+    daily_cpi   = _monthly_lookup(inputs.monthly_cpi,        start_date, n_days)
+    daily_iap   = _monthly_lookup(inputs.monthly_iap_arpdau, start_date, n_days)
+    daily_ad    = _monthly_lookup(inputs.monthly_ad_arpdau,  start_date, n_days)
 
-    daily_installs = np.where(daily_cpi > 0, daily_spend / daily_cpi, 0.0)
-
-    new_cohort_dau, payer_dau = _cohort_dau_and_payers(
-        daily_installs, inputs.retention_curve, inputs.conversion_curve, n_days
-    )
-
+    # Organic base decay first — boost installs depend on it.
     effective_anchor = (inputs.anchor_dau or 0) * (1 + inputs.anchor_offset_pct / 100)
     if effective_anchor > 0:
         if inputs.age_distribution:
@@ -221,6 +217,21 @@ def _run_platform(inputs: PlatformInputs, start_date: date, n_days: int) -> Plat
             )
     else:
         organic_dau = np.zeros(n_days)
+
+    ua_installs = np.where(daily_cpi > 0, daily_spend / daily_cpi, 0.0)
+
+    # External boost installs: % of organic DAU added as extra daily installs.
+    if inputs.monthly_installs_boost_pct:
+        daily_boost_pct = _monthly_lookup(inputs.monthly_installs_boost_pct, start_date, n_days) / 100
+        boost_installs  = organic_dau * daily_boost_pct
+    else:
+        boost_installs = np.zeros(n_days)
+
+    daily_installs = ua_installs + boost_installs
+
+    new_cohort_dau, payer_dau = _cohort_dau_and_payers(
+        daily_installs, inputs.retention_curve, inputs.conversion_curve, n_days
+    )
 
     dau         = new_cohort_dau + organic_dau
     iap_revenue = dau * daily_iap
@@ -269,17 +280,18 @@ class SimulationEngine:
 
 def _inputs_to_dict(inputs: PlatformInputs) -> dict:
     return {
-        "platform":           inputs.platform,
-        "retention_curve":    inputs.retention_curve.tolist(),
-        "conversion_curve":   inputs.conversion_curve.tolist(),
-        "monthly_cpi":        inputs.monthly_cpi,
-        "monthly_iap_arpdau": inputs.monthly_iap_arpdau,
-        "monthly_ad_arpdau":  inputs.monthly_ad_arpdau,
-        "monthly_ua_spend":   inputs.monthly_ua_spend,
-        "anchor_dau":         inputs.anchor_dau,
-        "anchor_offset_pct":  inputs.anchor_offset_pct,
-        "avg_base_age":       inputs.avg_base_age,
-        "age_distribution":   {str(k): v for k, v in inputs.age_distribution.items()} if inputs.age_distribution else None,
+        "platform":                    inputs.platform,
+        "retention_curve":             inputs.retention_curve.tolist(),
+        "conversion_curve":            inputs.conversion_curve.tolist(),
+        "monthly_cpi":                 inputs.monthly_cpi,
+        "monthly_iap_arpdau":          inputs.monthly_iap_arpdau,
+        "monthly_ad_arpdau":           inputs.monthly_ad_arpdau,
+        "monthly_ua_spend":            inputs.monthly_ua_spend,
+        "anchor_dau":                  inputs.anchor_dau,
+        "anchor_offset_pct":           inputs.anchor_offset_pct,
+        "avg_base_age":                inputs.avg_base_age,
+        "age_distribution":            {str(k): v for k, v in inputs.age_distribution.items()} if inputs.age_distribution else None,
+        "monthly_installs_boost_pct":  inputs.monthly_installs_boost_pct or {},
     }
 
 
@@ -287,6 +299,7 @@ def _inputs_from_dict(d: dict) -> PlatformInputs:
     age_dist = d.get("age_distribution")
     if age_dist is not None:
         age_dist = {int(k): float(v) for k, v in age_dist.items()}
+    boost = d.get("monthly_installs_boost_pct") or {}
     return PlatformInputs(
         platform=d["platform"],
         retention_curve=np.array(d["retention_curve"]),
@@ -299,6 +312,7 @@ def _inputs_from_dict(d: dict) -> PlatformInputs:
         anchor_offset_pct=d.get("anchor_offset_pct", 0.0),
         avg_base_age=d.get("avg_base_age", 90),
         age_distribution=age_dist,
+        monthly_installs_boost_pct=boost if boost else None,
     )
 
 
@@ -316,24 +330,26 @@ def save_scenario(
     historical_marketing: dict = None,
     monthly_ua_budget: dict = None,
     monthly_ios_pct: dict = None,
+    monthly_iap_net_factor: dict = None,
 ) -> Path:
     SCENARIOS_DIR.mkdir(exist_ok=True)
     safe_name = name.replace(" ", "_").lower()
     path = SCENARIOS_DIR / f"{safe_name}.json"
     payload = {
-        "name":                 name,
-        "forecast_start":       str(forecast_start),
-        "n_months":             n_months,
-        "curve_anchors":        curve_anchors,
-        "actuals_range":        actuals_range,
-        "monthly_team_cost":    monthly_team_cost,
-        "actuals_from":         actuals_from,
-        "selected_charts":      selected_charts,
-        "historical_marketing": historical_marketing,
-        "monthly_ua_budget":    monthly_ua_budget,
-        "monthly_ios_pct":      monthly_ios_pct,
-        "ios":                  _inputs_to_dict(ios_inputs),
-        "android":              _inputs_to_dict(android_inputs),
+        "name":                    name,
+        "forecast_start":          str(forecast_start),
+        "n_months":                n_months,
+        "curve_anchors":           curve_anchors,
+        "actuals_range":           actuals_range,
+        "monthly_team_cost":       monthly_team_cost,
+        "actuals_from":            actuals_from,
+        "selected_charts":         selected_charts,
+        "historical_marketing":    historical_marketing,
+        "monthly_ua_budget":       monthly_ua_budget,
+        "monthly_ios_pct":         monthly_ios_pct,
+        "monthly_iap_net_factor":  monthly_iap_net_factor,
+        "ios":                     _inputs_to_dict(ios_inputs),
+        "android":                 _inputs_to_dict(android_inputs),
     }
     path.write_text(json.dumps(payload, indent=2))
     return path
@@ -359,6 +375,7 @@ def load_scenario(name: str) -> tuple:
         payload.get("historical_marketing"),
         payload.get("monthly_ua_budget"),
         payload.get("monthly_ios_pct"),
+        payload.get("monthly_iap_net_factor"),
     )
 
 
