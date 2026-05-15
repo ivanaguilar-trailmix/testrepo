@@ -143,10 +143,11 @@ def monthly_table(
     df['iap_net_factor'] = df.apply(_iap_net, axis=1)
     df['revenue_net']    = df['iap_revenue'] * df['iap_net_factor'] + df['ad_revenue'] * AD_NET_FACTOR
 
-    # DAU actuals map: all available actuals grouped by month (sum platforms per day, then avg days).
+    # Actuals maps: all available months, all platforms combined.
     _all = actuals.copy()
     _all['dt'] = pd.to_datetime(_all['dt'])
     _all['month_str'] = _all['dt'].dt.strftime('%Y-%m')
+
     dau_actuals_map = (
         _all.groupby(['dt', 'month_str'])['dau'].sum()
         .reset_index()
@@ -154,7 +155,18 @@ def monthly_table(
         .round().astype(int)
         .to_dict()
     )
-    df['dau_actuals'] = df['month_str'].map(dau_actuals_map)
+
+    _rev_monthly = _all.groupby('month_str').agg(
+        iap=('iap_revenue', 'sum'), ad=('ad_revenue', 'sum')
+    )
+    rev_gross_actuals_map = (_rev_monthly['iap'] + _rev_monthly['ad']).to_dict()
+    rev_net_actuals_map   = (
+        _rev_monthly['iap'] * IAP_NET_FACTOR + _rev_monthly['ad'] * AD_NET_FACTOR
+    ).to_dict()
+
+    df['dau_actuals']       = df['month_str'].map(dau_actuals_map)
+    df['rev_gross_actuals'] = df['month_str'].map(rev_gross_actuals_map)
+    df['rev_net_actuals']   = df['month_str'].map(rev_net_actuals_map)
 
     def _mkt(row):
         m = row['month_str']
@@ -174,15 +186,17 @@ def monthly_table(
         return f'{int(x):,}' if pd.notna(x) else '—'
 
     disp = pd.DataFrame({
-        'Date':            df['date'].dt.strftime('%Y-%m-%d'),
-        'DAU Actuals':     df['dau_actuals'],
-        'DAU':             df['avg_dau'].round().astype(int),
-        'ARPDAU':          df['arpdau'],
-        'Revenue (Gross)': df['revenue_gross'],
-        'Revenue (Net)':   df['revenue_net'],
-        'Marketing Cost':  df['marketing_cost'],
-        'Game Margin':     df['game_margin'],
-        '_fc':             df['is_forecast'],
+        'Date':              df['date'].dt.strftime('%Y-%m-%d'),
+        'DAU Actuals':       df['dau_actuals'],
+        'DAU':               df['avg_dau'].round().astype(int),
+        'ARPDAU':            df['arpdau'],
+        'Gross Rev (Act)':   df['rev_gross_actuals'],
+        'Revenue (Gross)':   df['revenue_gross'],
+        'Net Rev (Act)':     df['rev_net_actuals'],
+        'Revenue (Net)':     df['revenue_net'],
+        'Marketing Cost':    df['marketing_cost'],
+        'Game Margin':       df['game_margin'],
+        '_fc':               df['is_forecast'],
     })
     is_fc = disp['_fc'].tolist()
     disp  = disp.drop(columns=['_fc'])
@@ -199,7 +213,9 @@ def monthly_table(
             'DAU Actuals':     _fmt_dau,
             'DAU':             '{:,}',
             'ARPDAU':          '${:.2f}',
+            'Gross Rev (Act)': _fmt,
             'Revenue (Gross)': _fmt,
+            'Net Rev (Act)':   _fmt,
             'Revenue (Net)':   _fmt,
             'Marketing Cost':  _fmt,
             'Game Margin':     _fmt,
