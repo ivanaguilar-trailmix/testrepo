@@ -164,9 +164,16 @@ def monthly_table(
         _rev_monthly['iap'] * IAP_NET_FACTOR + _rev_monthly['ad'] * AD_NET_FACTOR
     ).to_dict()
 
-    df['dau_actuals']       = df['month_str'].map(dau_actuals_map)
-    df['rev_gross_actuals'] = df['month_str'].map(rev_gross_actuals_map)
-    df['rev_net_actuals']   = df['month_str'].map(rev_net_actuals_map)
+    df['dau_actuals']        = df['month_str'].map(dau_actuals_map)
+    df['rev_gross_actuals']  = df['month_str'].map(rev_gross_actuals_map)
+    df['rev_net_actuals']    = df['month_str'].map(rev_net_actuals_map)
+
+    # Marketing cost actuals (historical UA spend only — NaN for forecast months).
+    mkt_actuals_map = {}
+    if historical_marketing:
+        mkt_actuals_map = {m: float(v) for m, v in historical_marketing.items()}
+    df['mkt_actuals'] = df['month_str'].map(mkt_actuals_map)
+    df['game_margin_actuals'] = df['rev_net_actuals'] - df['mkt_actuals'].fillna(0)
 
     def _mkt(row):
         m = row['month_str']
@@ -186,17 +193,18 @@ def monthly_table(
         return f'{int(x):,}' if pd.notna(x) else '—'
 
     disp = pd.DataFrame({
-        'Date':              df['date'].dt.strftime('%Y-%m-%d'),
-        'DAU Actuals':       df['dau_actuals'],
-        'DAU':               df['avg_dau'].round().astype(int),
-        'ARPDAU':            df['arpdau'],
-        'Gross Rev (Act)':   df['rev_gross_actuals'],
-        'Revenue (Gross)':   df['revenue_gross'],
-        'Net Rev (Act)':     df['rev_net_actuals'],
-        'Revenue (Net)':     df['revenue_net'],
-        'Marketing Cost':    df['marketing_cost'],
-        'Game Margin':       df['game_margin'],
-        '_fc':               df['is_forecast'],
+        'Date':               df['date'].dt.strftime('%Y-%m-%d'),
+        'DAU Actuals':        df['dau_actuals'],
+        'DAU':                df['avg_dau'].round().astype(int),
+        'ARPDAU':             df['arpdau'],
+        'Gross Rev (Act)':    df['rev_gross_actuals'],
+        'Revenue (Gross)':    df['revenue_gross'],
+        'Net Rev (Act)':      df['rev_net_actuals'],
+        'Revenue (Net)':      df['revenue_net'],
+        'Marketing Cost':     df['marketing_cost'],
+        'Game Margin (Act)':  df['game_margin_actuals'],
+        'Game Margin':        df['game_margin'],
+        '_fc':                df['is_forecast'],
     })
     is_fc = disp['_fc'].tolist()
     disp  = disp.drop(columns=['_fc'])
@@ -208,17 +216,18 @@ def monthly_table(
     styler = (
         disp.style
         .apply(_row_bg, axis=1)
-        .map(lambda _: f'background-color: {_GREEN}', subset=['Game Margin'])
+        .map(lambda _: f'background-color: {_GREEN}', subset=['Game Margin (Act)', 'Game Margin'])
         .format({
-            'DAU Actuals':     _fmt_dau,
-            'DAU':             '{:,}',
-            'ARPDAU':          '${:.2f}',
-            'Gross Rev (Act)': _fmt,
-            'Revenue (Gross)': _fmt,
-            'Net Rev (Act)':   _fmt,
-            'Revenue (Net)':   _fmt,
-            'Marketing Cost':  _fmt,
-            'Game Margin':     _fmt,
+            'DAU Actuals':      _fmt_dau,
+            'DAU':              '{:,}',
+            'ARPDAU':           '${:.2f}',
+            'Gross Rev (Act)':  _fmt,
+            'Revenue (Gross)':  _fmt,
+            'Net Rev (Act)':    _fmt,
+            'Revenue (Net)':    _fmt,
+            'Marketing Cost':   _fmt,
+            'Game Margin (Act)': _fmt,
+            'Game Margin':      _fmt,
         })
         .set_table_styles([
             {'selector': 'th',

@@ -93,8 +93,6 @@ def setup_callbacks(
 
             curve_anchors = panel.get_curve_anchors()
             chart_ws = {k: build_chart_widget(name, k) for k in ('dau', 'installs', 'revenue', 'monthly')}
-            chart_ws['retention']  = build_curve_widget(curve_anchors, 'retention')
-            chart_ws['conversion'] = build_curve_widget(curve_anchors, 'conversion')
             arpdau_vals = panel.get_arpdau()
             table_html = monthly_table(
                 name, filtered,
