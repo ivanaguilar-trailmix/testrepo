@@ -42,12 +42,7 @@ def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict,
         is_baseline=True,
     )
 
-    tc_df = sheet_inputs.get('team_cost')
-    if tc_df is not None:
-        panel.team_cost_panel.set_values(
-            dict(zip(tc_df['month'], tc_df['team_cost'].astype(float))),
-            is_baseline=True,
-        )
+
 
 
 def setup_callbacks(
