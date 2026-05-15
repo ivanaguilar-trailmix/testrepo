@@ -1244,18 +1244,20 @@ class ScenarioPanel:
         self.arpdau_actuals_panel     = ActualsRangePanel('arpdau')
 
         # ---- DAU tab layout ----
-        _sec = widgets.Layout(border='1px solid #e0e0e0', padding='8px', margin='4px 0')
+        _sec = widgets.Layout(border='1px solid #e0e0e0', padding='8px', margin='4px')
         dau_tab_content = widgets.VBox([
             widgets.HBox([self.ios_panel.anchor_widget(), self.android_panel.anchor_widget()]),
-            widgets.VBox([
-                _header("Organic Base Decay"),
-                widgets.HBox([self.ios_panel.organic_widget(), self.android_panel.organic_widget()]),
-            ], layout=_sec),
-            widgets.VBox([
-                _header("External Installs Boost"),
-                widgets.HTML("<span style='font-size:11px;color:#888'>% of organic DAU added as extra installs per month. Range matches UA Budget.</span>"),
-                widgets.HBox([self.ios_panel.boost_widget(), self.android_panel.boost_widget()]),
-            ], layout=_sec),
+            widgets.HBox([
+                widgets.VBox([
+                    _header("Organic Base Decay"),
+                    widgets.HBox([self.ios_panel.organic_widget(), self.android_panel.organic_widget()]),
+                ], layout=_sec),
+                widgets.VBox([
+                    _header("External Installs Boost"),
+                    widgets.HTML("<span style='font-size:11px;color:#888'>% of organic DAU added as extra installs per month. Range matches UA Budget.</span>"),
+                    widgets.HBox([self.ios_panel.boost_widget(), self.android_panel.boost_widget()]),
+                ], layout=_sec),
+            ], layout=widgets.Layout(align_items='flex-start')),
         ])
 
         # ---- tabbed input area ----
