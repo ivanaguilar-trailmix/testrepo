@@ -12,7 +12,9 @@ WITH active_users as (
   from trailmixgames-game-1.merger_prod_fact.fact_dt_user_activity
   join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device using (user_id)
   join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_session using (user_id)
+  LEFT JOIN trailmixgames-game-1.merger_prod_dimensions.dim_users_to_exclude ute using(user_id)
   where 1=1
+  and ute.user_id is null
   and dt >= start_date
   and dt < CURRENT_DATE()
   and platform in ('AND', 'IOS')
@@ -51,7 +53,9 @@ WITH active_users as (
     count(distinct user_id) as dau,
     count(distinct new_user_id) as new_installs,
     sum(gross_usd_iap_revenue) as iap_revenue,
-    sum(gross_usd_ad_revenue) as ad_revenue
+    sum(net_usd_iap_revenue) as iap_net_revenue,
+    sum(gross_usd_ad_revenue) as ad_revenue,
+    sum(net_usd_ad_revenue) as ad_net_revenue,
   from active_users
   left join ad_rev using (user_id, dt)
   left join iap_rev using (user_id, dt)

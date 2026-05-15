@@ -552,29 +552,66 @@ class ARPDAUPanel:
             'ios':     {'iap': [], 'ad': []},
             'android': {'iap': [], 'ad': []},
         }
+        self._uplift_inputs: dict[str, dict[str, list]] = {
+            'ios':     {'iap': [], 'ad': []},
+            'android': {'iap': [], 'ad': []},
+        }
         self._iap_net_inputs: list[widgets.BoundedFloatText] = []
         self._month_labels: list[widgets.Label] = []
+        self._net_labels:   list[widgets.Label] = []
         self._data_rows:    list[widgets.HBox]  = []
+        self._net_rows:     list[widgets.HBox]  = []
 
-        ios_iap_fill = _fill_btn()
-        ios_ad_fill  = _fill_btn()
-        and_iap_fill = _fill_btn()
-        and_ad_fill  = _fill_btn()
-        net_fill     = _fill_btn()
+        ios_iap_fill  = _fill_btn()
+        ios_ad_fill   = _fill_btn()
+        and_iap_fill  = _fill_btn()
+        and_ad_fill   = _fill_btn()
+        net_fill      = _fill_btn()
 
-        def _col_hdr(text, btn, width="110px"):
-            return widgets.VBox(
-                [widgets.HTML(f"<b>{text}</b>"), btn],
-                layout=widgets.Layout(width=width),
+        def _apply_btn():
+            return widgets.Button(
+                description='Apply ↑',
+                layout=widgets.Layout(width='58px', height='22px'),
+                style=widgets.ButtonStyle(font_size='10px'),
             )
 
-        header_row = widgets.HBox([
-            widgets.HTML("<b>Month</b>",          layout=widgets.Layout(width="90px")),
-            _col_hdr("iOS IAP ($)",   ios_iap_fill),
-            _col_hdr("iOS Ad ($)",    ios_ad_fill),
-            _col_hdr("And IAP ($)",   and_iap_fill),
-            _col_hdr("And Ad ($)",    and_ad_fill),
-            _col_hdr("IAP Net Factor", net_fill, "110px"),
+        ios_iap_apply  = _apply_btn()
+        ios_ad_apply   = _apply_btn()
+        and_iap_apply  = _apply_btn()
+        and_ad_apply   = _apply_btn()
+
+        _w110 = widgets.Layout(width="110px")
+        _w65  = widgets.Layout(width="65px")
+        _w90  = widgets.Layout(width="90px")
+
+        for btn in (ios_iap_fill, ios_ad_fill, and_iap_fill, and_ad_fill, net_fill):
+            btn.layout.width = "110px"
+        for btn in (ios_iap_apply, ios_ad_apply, and_iap_apply, and_ad_apply):
+            btn.layout.width = "65px"
+
+        def _h(text, w):
+            return widgets.HTML(f"<b>{text}</b>", layout=widgets.Layout(width=w))
+
+        header_row = widgets.VBox([
+            widgets.HBox([
+                _h("Month",       "90px"),
+                _h("iOS IAP ($)", "110px"), _h("Uplift %", "65px"),
+                _h("iOS Ad ($)",  "110px"), _h("Uplift %", "65px"),
+                _h("And IAP ($)", "110px"), _h("Uplift %", "65px"),
+                _h("And Ad ($)",  "110px"), _h("Uplift %", "65px"),
+            ]),
+            widgets.HBox([
+                widgets.HTML("", layout=_w90),
+                ios_iap_fill, ios_iap_apply,
+                ios_ad_fill,  ios_ad_apply,
+                and_iap_fill, and_iap_apply,
+                and_ad_fill,  and_ad_apply,
+            ]),
+        ])
+
+        net_header_row = widgets.VBox([
+            widgets.HBox([_h("Month", "90px"), _h("IAP Net Factor", "110px")]),
+            widgets.HBox([widgets.HTML("", layout=_w90), net_fill]),
         ])
 
         def _make_fill(platform, metric):
@@ -587,16 +624,30 @@ class ARPDAUPanel:
                         w.value = v
             return _fill
 
-        ios_iap_fill.on_click(_make_fill('ios',     'iap'))
-        ios_ad_fill.on_click( _make_fill('ios',     'ad'))
-        and_iap_fill.on_click(_make_fill('android', 'iap'))
-        and_ad_fill.on_click( _make_fill('android', 'ad'))
+        def _make_apply(platform, metric):
+            def _apply(_):
+                inp = self._inputs[platform][metric]
+                upl = self._uplift_inputs[platform][metric]
+                n   = len(self._months)
+                for i in range(1, n):
+                    inp[i].value = round(inp[i - 1].value * (1 + upl[i].value / 100), 4)
+            return _apply
+
+        ios_iap_fill.on_click( _make_fill('ios',     'iap'))
+        ios_ad_fill.on_click(  _make_fill('ios',     'ad'))
+        and_iap_fill.on_click( _make_fill('android', 'iap'))
+        and_ad_fill.on_click(  _make_fill('android', 'ad'))
+        ios_iap_apply.on_click( _make_apply('ios',     'iap'))
+        ios_ad_apply.on_click(  _make_apply('ios',     'ad'))
+        and_iap_apply.on_click( _make_apply('android', 'iap'))
+        and_ad_apply.on_click(  _make_apply('android', 'ad'))
         net_fill.on_click(lambda _: [
             w.__setattr__("value", self._iap_net_inputs[0].value)
             for i, w in enumerate(self._iap_net_inputs) if 0 < i < len(self._months)
         ])
 
-        self._rows_box = widgets.VBox([])
+        self._rows_box     = widgets.VBox([])
+        self._net_rows_box = widgets.VBox([])
         self._apply_months(self._months)
 
         paste_section = _make_paste_section(
@@ -610,42 +661,75 @@ class ARPDAUPanel:
             self._months,
         )
 
-        self._box = widgets.VBox([
-            _header("Revenue — Monthly Inputs"),
-            widgets.HTML("<span style='font-size:11px;color:#888'>IAP and Ad ARPDAU per platform per month. IAP Net Factor = store cut (default 0.70).</span>"),
+        _sec = widgets.Layout(border='1px solid #e0e0e0', padding='8px', margin='4px')
+
+        arpdau_section = widgets.VBox([
+            widgets.HTML("<b style='font-size:12px'>ARPDAU</b>"),
             header_row,
             self._rows_box,
+        ], layout=_sec)
+
+        net_section = widgets.VBox([
+            widgets.HTML("<b style='font-size:12px'>IAP Net Factor</b>"),
+            net_header_row,
+            self._net_rows_box,
+        ], layout=_sec)
+
+        self._box = widgets.VBox([
+            _header("Revenue — Monthly Inputs"),
+            widgets.HBox([arpdau_section, net_section], layout=widgets.Layout(align_items='flex-start')),
             paste_section,
         ], layout=widgets.Layout(padding="10px"))
 
     def _create_row(self) -> None:
         i = len(self._data_rows)
+        _dw = {'description_width': '0px'}
         lbl           = widgets.Label("", layout=widgets.Layout(width="90px"))
-        ios_iap_w     = widgets.BoundedFloatText(value=0,    min=0,   max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
-        ios_ad_w      = widgets.BoundedFloatText(value=0,    min=0,   max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
-        and_iap_w     = widgets.BoundedFloatText(value=0,    min=0,   max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
-        and_ad_w      = widgets.BoundedFloatText(value=0,    min=0,   max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
-        net_factor_w  = widgets.BoundedFloatText(value=0.70, min=0.0, max=1.0, step=0.01, layout=widgets.Layout(width="110px"))
+        ios_iap_w     = widgets.BoundedFloatText(value=0,    min=0,    max=1e9,  step=0.01, layout=widgets.Layout(width="110px"), style=_dw)
+        ios_iap_upl   = widgets.BoundedFloatText(value=0.0,  min=-100, max=500,  step=0.1,  layout=widgets.Layout(width="65px"),  style=_dw)
+        ios_ad_w      = widgets.BoundedFloatText(value=0,    min=0,    max=1e9,  step=0.01, layout=widgets.Layout(width="110px"), style=_dw)
+        ios_ad_upl    = widgets.BoundedFloatText(value=0.0,  min=-100, max=500,  step=0.1,  layout=widgets.Layout(width="65px"),  style=_dw)
+        and_iap_w     = widgets.BoundedFloatText(value=0,    min=0,    max=1e9,  step=0.01, layout=widgets.Layout(width="110px"), style=_dw)
+        and_iap_upl   = widgets.BoundedFloatText(value=0.0,  min=-100, max=500,  step=0.1,  layout=widgets.Layout(width="65px"),  style=_dw)
+        and_ad_w      = widgets.BoundedFloatText(value=0,    min=0,    max=1e9,  step=0.01, layout=widgets.Layout(width="110px"), style=_dw)
+        and_ad_upl    = widgets.BoundedFloatText(value=0.0,  min=-100, max=500,  step=0.1,  layout=widgets.Layout(width="65px"),  style=_dw)
+        net_factor_w  = widgets.BoundedFloatText(value=0.70, min=0.0,  max=1.0,  step=0.01, layout=widgets.Layout(width="110px"), style=_dw)
 
         ios_iap_w.observe(lambda ch, _i=i: self._on_change_idx(_i, 'ios',     'iap', ch), names='value')
         ios_ad_w.observe( lambda ch, _i=i: self._on_change_idx(_i, 'ios',     'ad',  ch), names='value')
         and_iap_w.observe(lambda ch, _i=i: self._on_change_idx(_i, 'android', 'iap', ch), names='value')
         and_ad_w.observe( lambda ch, _i=i: self._on_change_idx(_i, 'android', 'ad',  ch), names='value')
 
+        net_lbl = widgets.Label("", layout=widgets.Layout(width="90px"))
+
         self._inputs['ios']['iap'].append(ios_iap_w)
         self._inputs['ios']['ad'].append(ios_ad_w)
         self._inputs['android']['iap'].append(and_iap_w)
         self._inputs['android']['ad'].append(and_ad_w)
+        self._uplift_inputs['ios']['iap'].append(ios_iap_upl)
+        self._uplift_inputs['ios']['ad'].append(ios_ad_upl)
+        self._uplift_inputs['android']['iap'].append(and_iap_upl)
+        self._uplift_inputs['android']['ad'].append(and_ad_upl)
         self._iap_net_inputs.append(net_factor_w)
         self._month_labels.append(lbl)
-        self._data_rows.append(widgets.HBox([lbl, ios_iap_w, ios_ad_w, and_iap_w, and_ad_w, net_factor_w]))
+        self._net_labels.append(net_lbl)
+        self._data_rows.append(widgets.HBox([
+            lbl,
+            ios_iap_w, ios_iap_upl,
+            ios_ad_w,  ios_ad_upl,
+            and_iap_w, and_iap_upl,
+            and_ad_w,  and_ad_upl,
+        ]))
+        self._net_rows.append(widgets.HBox([net_lbl, net_factor_w]))
 
     def _apply_months(self, months: list[str]):
         while len(self._data_rows) < len(months):
             self._create_row()
         for i, m in enumerate(months):
             self._month_labels[i].value = m
-        self._rows_box.children = tuple(self._data_rows[:len(months)])
+            self._net_labels[i].value   = m
+        self._rows_box.children     = tuple(self._data_rows[:len(months)])
+        self._net_rows_box.children = tuple(self._net_rows[:len(months)])
 
     def _on_change_idx(self, i: int, platform: str, metric: str, change):
         if self._loading or i >= len(self._months):
@@ -666,28 +750,40 @@ class ARPDAUPanel:
         old: dict[str, dict] = {}
         for i, m in enumerate(self._months):
             old[m] = {
-                'ios_iap': self._inputs['ios']['iap'][i].value,
-                'ios_ad':  self._inputs['ios']['ad'][i].value,
-                'and_iap': self._inputs['android']['iap'][i].value,
-                'and_ad':  self._inputs['android']['ad'][i].value,
-                'net':     self._iap_net_inputs[i].value,
+                'ios_iap':     self._inputs['ios']['iap'][i].value,
+                'ios_ad':      self._inputs['ios']['ad'][i].value,
+                'and_iap':     self._inputs['android']['iap'][i].value,
+                'and_ad':      self._inputs['android']['ad'][i].value,
+                'net':         self._iap_net_inputs[i].value,
+                'upl_ios_iap': self._uplift_inputs['ios']['iap'][i].value,
+                'upl_ios_ad':  self._uplift_inputs['ios']['ad'][i].value,
+                'upl_and_iap': self._uplift_inputs['android']['iap'][i].value,
+                'upl_and_ad':  self._uplift_inputs['android']['ad'][i].value,
             }
         self._months[:] = new_months
         self._apply_months(new_months)
         self._loading = True
         try:
             for i, m in enumerate(new_months):
-                v       = old.get(m, {})
-                ios_iap = v.get('ios_iap', 0)
-                ios_ad  = v.get('ios_ad',  0)
-                and_iap = v.get('and_iap', 0)
-                and_ad  = v.get('and_ad',  0)
-                net     = v.get('net',     0.70)
-                if self._inputs['ios']['iap'][i].value     != ios_iap: self._inputs['ios']['iap'][i].value     = ios_iap
-                if self._inputs['ios']['ad'][i].value      != ios_ad:  self._inputs['ios']['ad'][i].value      = ios_ad
-                if self._inputs['android']['iap'][i].value != and_iap: self._inputs['android']['iap'][i].value = and_iap
-                if self._inputs['android']['ad'][i].value  != and_ad:  self._inputs['android']['ad'][i].value  = and_ad
-                if self._iap_net_inputs[i].value           != net:     self._iap_net_inputs[i].value           = net
+                v           = old.get(m, {})
+                ios_iap     = v.get('ios_iap',     0)
+                ios_ad      = v.get('ios_ad',      0)
+                and_iap     = v.get('and_iap',     0)
+                and_ad      = v.get('and_ad',      0)
+                net         = v.get('net',         0.70)
+                upl_ios_iap = v.get('upl_ios_iap', 0.0)
+                upl_ios_ad  = v.get('upl_ios_ad',  0.0)
+                upl_and_iap = v.get('upl_and_iap', 0.0)
+                upl_and_ad  = v.get('upl_and_ad',  0.0)
+                if self._inputs['ios']['iap'][i].value            != ios_iap:     self._inputs['ios']['iap'][i].value            = ios_iap
+                if self._inputs['ios']['ad'][i].value             != ios_ad:      self._inputs['ios']['ad'][i].value             = ios_ad
+                if self._inputs['android']['iap'][i].value        != and_iap:     self._inputs['android']['iap'][i].value        = and_iap
+                if self._inputs['android']['ad'][i].value         != and_ad:      self._inputs['android']['ad'][i].value         = and_ad
+                if self._iap_net_inputs[i].value                  != net:         self._iap_net_inputs[i].value                  = net
+                if self._uplift_inputs['ios']['iap'][i].value     != upl_ios_iap: self._uplift_inputs['ios']['iap'][i].value     = upl_ios_iap
+                if self._uplift_inputs['ios']['ad'][i].value      != upl_ios_ad:  self._uplift_inputs['ios']['ad'][i].value      = upl_ios_ad
+                if self._uplift_inputs['android']['iap'][i].value != upl_and_iap: self._uplift_inputs['android']['iap'][i].value = upl_and_iap
+                if self._uplift_inputs['android']['ad'][i].value  != upl_and_ad:  self._uplift_inputs['android']['ad'][i].value  = upl_and_ad
         finally:
             self._loading = False
 
@@ -1305,7 +1401,23 @@ class ScenarioPanel:
 
         divider = widgets.HTML("<span style='color:#ccc;padding:0 8px'>│</span>")
 
+        _kb_fix = widgets.HTML("""
+<script>
+(function(){
+  function stopIfInput(e){
+    var t = e.target;
+    if(t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA')){
+      e.stopPropagation();
+    }
+  }
+  document.addEventListener('keydown', stopIfInput, true);
+  document.addEventListener('keyup',   stopIfInput, true);
+})();
+</script>
+""")
+
         self._box = widgets.VBox([
+            _kb_fix,
             _header("Game Simulator"),
             widgets.HBox([
                 self.scenario_name, self.forecast_start,
