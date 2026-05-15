@@ -143,7 +143,8 @@ class PlatformPanel:
 
     def __init__(self, platform: str, n_months: int = 12, start_month: Optional[str] = None):
         self.platform = platform
-        self._months  = _month_sequence(n_months, start_month)
+        self._months       = _month_sequence(n_months, start_month)
+        self._boost_months = _month_sequence(n_months, start_month)
         self._loading = False
 
         self.anchor_dau   = _float_input(0.0, "DAU", step=1)
@@ -208,6 +209,7 @@ class PlatformPanel:
         self._rows_box       = widgets.VBox([])
         self._boost_rows_box = widgets.VBox([])
         self._apply_months(self._months)
+        self._apply_boost_months(self._boost_months)
 
         paste_section = _make_paste_section(
             [("CPI ($)", self._cpi_inputs)],
@@ -225,54 +227,65 @@ class PlatformPanel:
     def _create_row(self) -> None:
         i        = len(self._data_rows)
         lbl      = widgets.Label("", layout=widgets.Layout(width="90px"))
-        cpi_w    = widgets.BoundedFloatText(value=0,   min=0,   max=1e9,  step=0.01, layout=widgets.Layout(width="110px"))
+        cpi_w    = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=0.01, layout=widgets.Layout(width="110px"))
         inst_lbl = widgets.HTML("—", layout=widgets.Layout(width="100px", padding="4px 0 0 4px"))
-
-        boost_lbl = widgets.Label("", layout=widgets.Layout(width="90px"))
-        boost_w   = widgets.BoundedFloatText(value=0.0, min=0.0, max=200.0, step=0.1, layout=widgets.Layout(width="110px"))
-
         cpi_w.observe(lambda change, _i=i: self._refresh_installs_row(_i), names='value')
-
         self._month_labels.append(lbl)
         self._cpi_inputs.append(cpi_w)
         self._installs_labels.append(inst_lbl)
+        self._data_rows.append(widgets.HBox([lbl, cpi_w, inst_lbl]))
+
+    def _create_boost_row(self) -> None:
+        boost_lbl = widgets.Label("", layout=widgets.Layout(width="90px"))
+        boost_w   = widgets.BoundedFloatText(value=0.0, min=0.0, max=200.0, step=0.1, layout=widgets.Layout(width="110px"))
         self._boost_labels.append(boost_lbl)
         self._boost_inputs.append(boost_w)
-        self._data_rows.append(widgets.HBox([lbl, cpi_w, inst_lbl]))
 
     def _apply_months(self, months: list[str]):
         while len(self._data_rows) < len(months):
             self._create_row()
         for i, m in enumerate(months):
-            self._month_labels[i].value  = m
-            self._boost_labels[i].value  = m
-        self._rows_box.children       = tuple(self._data_rows[:len(months)])
+            self._month_labels[i].value = m
+        self._rows_box.children = tuple(self._data_rows[:len(months)])
+
+    def _apply_boost_months(self, months: list[str]):
+        while len(self._boost_inputs) < len(months):
+            self._create_boost_row()
+        for i, m in enumerate(months):
+            self._boost_labels[i].value = m
         boost_rows = [widgets.HBox([self._boost_labels[i], self._boost_inputs[i]]) for i in range(len(months))]
         self._boost_rows_box.children = tuple(boost_rows)
 
     def update_months(self, start_month: str, n_months: int):
-        new_months  = _month_sequence(n_months, start_month)
-        old_cpi     = {m: self._cpi_inputs[i].value   for i, m in enumerate(self._months)}
-        old_boost   = {m: self._boost_inputs[i].value for i, m in enumerate(self._months)}
+        new_months = _month_sequence(n_months, start_month)
+        old_cpi    = {m: self._cpi_inputs[i].value for i, m in enumerate(self._months)}
         self._months[:] = new_months
         self._apply_months(new_months)
         self._loading = True
         try:
             for i, m in enumerate(new_months):
-                new_cpi   = old_cpi.get(m, 0)
-                new_boost = old_boost.get(m, 0.0)
-                if self._cpi_inputs[i].value   != new_cpi:   self._cpi_inputs[i].value   = new_cpi
-                if self._boost_inputs[i].value != new_boost: self._boost_inputs[i].value = new_boost
+                new_cpi = old_cpi.get(m, 0)
+                if self._cpi_inputs[i].value != new_cpi: self._cpi_inputs[i].value = new_cpi
         finally:
             self._loading = False
         for i in range(len(self._months)):
             self._refresh_installs_row(i)
 
+    def update_boost_months(self, start_month: str, n_months: int):
+        new_months = _month_sequence(n_months, start_month)
+        old_boost  = {m: self._boost_inputs[i].value for i, m in enumerate(self._boost_months)}
+        self._boost_months[:] = new_months
+        self._apply_boost_months(new_months)
+        for i, m in enumerate(new_months):
+            new_val = old_boost.get(m, 0.0)
+            if self._boost_inputs[i].value != new_val:
+                self._boost_inputs[i].value = new_val
+
     @property
     def values(self) -> dict:
         return {
-            "monthly_cpi":                {m: round(w.value, 2)  for m, w in zip(self._months, self._cpi_inputs)},
-            "monthly_installs_boost_pct": {m: round(w.value, 2)  for m, w in zip(self._months, self._boost_inputs)},
+            "monthly_cpi":                {m: round(w.value, 2) for m, w in zip(self._months,       self._cpi_inputs)},
+            "monthly_installs_boost_pct": {m: round(w.value, 2) for m, w in zip(self._boost_months, self._boost_inputs)},
             "anchor_dau":                 round(self.anchor_dau.value, 2),
             "anchor_offset_pct":          round(self.anchor_offset_pct.value, 2),
             "avg_base_age":               int(self.avg_base_age.value),
@@ -333,10 +346,12 @@ class PlatformPanel:
     def set_monthly_values(self, monthly_cpi: dict, monthly_boost_pct: dict = None):
         for i, m in enumerate(self._months):
             if m in monthly_cpi: self._cpi_inputs[i].value = round(float(monthly_cpi[m]), 2)
-            if monthly_boost_pct and m in monthly_boost_pct:
-                self._boost_inputs[i].value = round(float(monthly_boost_pct[m]), 2)
         for i in range(len(self._months)):
             self._refresh_installs_row(i)
+        if monthly_boost_pct:
+            for i, m in enumerate(self._boost_months):
+                if m in monthly_boost_pct:
+                    self._boost_inputs[i].value = round(float(monthly_boost_pct[m]), 2)
 
     def _refresh_installs_row(self, i: int):
         if i >= len(self._months):
@@ -351,10 +366,18 @@ class PlatformPanel:
         for i in range(len(self._months)):
             self._refresh_installs_row(i)
 
-    def dau_widget(self) -> widgets.VBox:
+    def anchor_widget(self) -> widgets.VBox:
         platform_label = "iOS" if self.platform == "ios" else "Android"
-        organic_group = widgets.VBox([
-            widgets.HTML("<b style='font-size:12px'>Organic Base Decay</b>"),
+        return widgets.VBox([
+            _header(platform_label),
+            widgets.HBox([self.anchor_dau, self.anchor_offset_pct, self._set_anchor_btn],
+                         layout=widgets.Layout(align_items='center')),
+        ], layout=widgets.Layout(border="1px solid #ddd", padding="8px", margin="4px"))
+
+    def organic_widget(self) -> widgets.VBox:
+        platform_label = "iOS" if self.platform == "ios" else "Android"
+        return widgets.VBox([
+            widgets.HTML(f"<b style='font-size:12px'>{platform_label}</b>"),
             widgets.HBox(
                 [self.avg_base_age,
                  widgets.HTML("<span style='color:#999;font-size:11px;padding:6px 0 0 8px'>fallback when no distribution</span>")],
@@ -363,32 +386,23 @@ class PlatformPanel:
             widgets.HTML("<span style='font-size:11px;color:#666;margin-top:4px'>Age distribution from install history:</span>"),
             widgets.HBox([self._derive_btn], layout=widgets.Layout(margin='4px 0 2px 0')),
             self._age_dist_status,
-        ], layout=widgets.Layout(
-            border='1px solid #ccc', padding='8px', margin='6px 0 0 0',
-        ))
+        ], layout=widgets.Layout(border='1px solid #eee', padding='8px', margin='4px', min_width='360px'))
+
+    def boost_widget(self) -> widgets.VBox:
+        platform_label = "iOS" if self.platform == "ios" else "Android"
         boost_fill = _fill_btn()
         boost_fill.on_click(lambda _: [
             w.__setattr__("value", self._boost_inputs[0].value)
-            for i, w in enumerate(self._boost_inputs) if 0 < i < len(self._months)
+            for i, w in enumerate(self._boost_inputs) if 0 < i < len(self._boost_months)
         ])
-        boost_group = widgets.VBox([
-            widgets.HTML("<b style='font-size:12px'>External Installs Boost</b>"),
-            widgets.HTML("<span style='font-size:11px;color:#888'>% of organic DAU added as extra installs per month.</span>"),
+        return widgets.VBox([
+            widgets.HTML(f"<b style='font-size:12px'>{platform_label}</b>"),
             widgets.HBox([
-                widgets.HTML("<b>Month</b>",   layout=widgets.Layout(width="90px")),
+                widgets.HTML("<b>Month</b>",  layout=widgets.Layout(width="90px")),
                 widgets.VBox([widgets.HTML("<b>Boost %</b>"), boost_fill], layout=widgets.Layout(width="110px")),
             ]),
             self._boost_rows_box,
-        ], layout=widgets.Layout(
-            border='1px solid #ccc', padding='8px', margin='6px 0 0 0',
-        ))
-        return widgets.VBox([
-            _header(f"{platform_label} — Simulation Parameters"),
-            widgets.HBox([self.anchor_dau, self.anchor_offset_pct, self._set_anchor_btn],
-                         layout=widgets.Layout(align_items='center')),
-            organic_group,
-            boost_group,
-        ], layout=widgets.Layout(border="1px solid #ddd", padding="10px", margin="4px"))
+        ], layout=widgets.Layout(border='1px solid #eee', padding='8px', margin='4px', min_width='220px'))
 
     def widget(self) -> widgets.VBox:
         return self._box
@@ -1229,9 +1243,24 @@ class ScenarioPanel:
         self.conversion_actuals_panel = ActualsRangePanel('conversion')
         self.arpdau_actuals_panel     = ActualsRangePanel('arpdau')
 
+        # ---- DAU tab layout ----
+        _sec = widgets.Layout(border='1px solid #e0e0e0', padding='8px', margin='4px 0')
+        dau_tab_content = widgets.VBox([
+            widgets.HBox([self.ios_panel.anchor_widget(), self.android_panel.anchor_widget()]),
+            widgets.VBox([
+                _header("Organic Base Decay"),
+                widgets.HBox([self.ios_panel.organic_widget(), self.android_panel.organic_widget()]),
+            ], layout=_sec),
+            widgets.VBox([
+                _header("External Installs Boost"),
+                widgets.HTML("<span style='font-size:11px;color:#888'>% of organic DAU added as extra installs per month. Range matches UA Budget.</span>"),
+                widgets.HBox([self.ios_panel.boost_widget(), self.android_panel.boost_widget()]),
+            ], layout=_sec),
+        ])
+
         # ---- tabbed input area ----
         input_tab = widgets.Tab(children=[
-            widgets.HBox([self.ios_panel.dau_widget(), self.android_panel.dau_widget()]),
+            dau_tab_content,
             widgets.HBox([self.ios_panel.widget(), self.android_panel.widget()]),
             widgets.VBox([self.retention_actuals_panel.widget(),  self.retention_panel.widget()]),
             widgets.VBox([self.conversion_actuals_panel.widget(), self.conversion_panel.widget()]),
@@ -1425,6 +1454,8 @@ class ScenarioPanel:
         forecast_end_ym = _month_offset(forecast_ym, n_forecast - 1)
         n_extended = _month_count_inclusive(actuals_ym, forecast_end_ym)
         self.ua_budget_panel.update_months(actuals_ym, n_extended)
+        self.ios_panel.update_boost_months(actuals_ym, n_extended)
+        self.android_panel.update_boost_months(actuals_ym, n_extended)
         self._sync_installs()
 
     def _sync_installs(self):
