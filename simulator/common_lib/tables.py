@@ -188,7 +188,7 @@ def monthly_table(
 
     disp = pd.DataFrame({
         'Date':               df['date'].dt.strftime('%Y-%m-%d'),
-        'DAU Actuals':        df['dau_actuals'],
+        'DAU Actuals (avg)':  df['dau_actuals'],
         'DAU':                df['avg_dau'].round().astype(int),
         'ARPDAU':             df['arpdau'],
         'Gross Rev (Act)':    df['rev_gross_actuals'],
@@ -212,7 +212,7 @@ def monthly_table(
         .apply(_row_bg, axis=1)
         .map(lambda _: f'background-color: {_GREEN}', subset=['Game Margin (Act)', 'Game Margin'])
         .format({
-            'DAU Actuals':      _fmt_dau,
+            'DAU Actuals (avg)': _fmt_dau,
             'DAU':              '{:,}',
             'ARPDAU':           '${:.2f}',
             'Gross Rev (Act)':  _fmt,
