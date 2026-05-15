@@ -94,13 +94,40 @@ def setup_callbacks(
             curve_anchors = panel.get_curve_anchors()
             chart_ws = {k: build_chart_widget(name, k) for k in ('dau', 'installs', 'revenue', 'monthly')}
             arpdau_vals = panel.get_arpdau()
-            table_html = monthly_table(
+            table_styler, table_df = monthly_table(
                 name, filtered,
                 historical_marketing=panel.get_historical_marketing(),
                 n_actuals=n_actuals,
                 monthly_iap_net_factor=arpdau_vals.get('iap_net_factor'),
-            ).to_html()
-            table_w = _w.HTML(f'<div style="overflow-x:auto">{table_html}</div>')
+            )
+            table_html = table_styler.to_html()
+
+            from pathlib import Path as _Path
+            _exports_dir = _Path(__file__).parent.parent / 'exports'
+            _exports_dir.mkdir(exist_ok=True)
+            export_btn    = _w.Button(description="Export CSV", button_style="",
+                                      layout=_w.Layout(width="110px"))
+            export_status = _w.HTML("")
+            _df_ref = [table_df]
+
+            def _on_export(_):
+                try:
+                    path = _exports_dir / f"{name}_pl_table.csv"
+                    _df_ref[0].to_csv(path, index=False)
+                    export_status.value = (
+                        f"<span style='color:green;font-size:11px'>Saved: {path.name}</span>"
+                    )
+                except Exception as exc:
+                    export_status.value = (
+                        f"<span style='color:red;font-size:11px'>Error: {exc}</span>"
+                    )
+
+            export_btn.on_click(_on_export)
+            table_w = _w.VBox([
+                _w.HBox([export_btn, export_status],
+                        layout=_w.Layout(align_items='center', margin='0 0 6px 0')),
+                _w.HTML(f'<div style="overflow-x:auto">{table_html}</div>'),
+            ])
 
             panel.set_chart_results(chart_ws, table_w)
             panel.set_status(f"Done — {name}  |  save the scenario to persist inputs", 'green')

@@ -240,4 +240,4 @@ def monthly_table(
              'props': [('text-align', 'left')]},
         ])
     )
-    return styler
+    return styler, disp
