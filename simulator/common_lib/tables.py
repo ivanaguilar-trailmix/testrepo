@@ -164,16 +164,9 @@ def monthly_table(
         _rev_monthly['iap'] * IAP_NET_FACTOR + _rev_monthly['ad'] * AD_NET_FACTOR
     ).to_dict()
 
-    df['dau_actuals']        = df['month_str'].map(dau_actuals_map)
-    df['rev_gross_actuals']  = df['month_str'].map(rev_gross_actuals_map)
-    df['rev_net_actuals']    = df['month_str'].map(rev_net_actuals_map)
-
-    # Marketing cost actuals (historical UA spend only — NaN for forecast months).
-    mkt_actuals_map = {}
-    if historical_marketing:
-        mkt_actuals_map = {m: float(v) for m, v in historical_marketing.items()}
-    df['mkt_actuals'] = df['month_str'].map(mkt_actuals_map)
-    df['game_margin_actuals'] = df['rev_net_actuals'] - df['mkt_actuals'].fillna(0)
+    df['dau_actuals']       = df['month_str'].map(dau_actuals_map)
+    df['rev_gross_actuals'] = df['month_str'].map(rev_gross_actuals_map)
+    df['rev_net_actuals']   = df['month_str'].map(rev_net_actuals_map)
 
     def _mkt(row):
         m = row['month_str']
@@ -183,8 +176,9 @@ def monthly_table(
             return historical_marketing.get(m, float('nan'))
         return float('nan')
 
-    df['marketing_cost'] = df.apply(_mkt, axis=1)
-    df['game_margin']    = df['revenue_net'] - df['marketing_cost'].fillna(0)
+    df['marketing_cost']      = df.apply(_mkt, axis=1)
+    df['game_margin']         = df['revenue_net']    - df['marketing_cost'].fillna(0)
+    df['game_margin_actuals'] = df['rev_net_actuals'] - df['marketing_cost'].fillna(0)
 
     def _fmt(x):
         return f'${x:,.0f}' if pd.notna(x) else '—'
