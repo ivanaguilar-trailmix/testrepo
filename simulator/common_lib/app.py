@@ -9,6 +9,7 @@ import ipywidgets as _w
 import pandas as pd
 
 from datetime import timedelta
+from IPython.display import display as _display, Javascript as _Javascript
 
 from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve, derive_age_distribution
 from common_lib.plots import build_chart_widget, build_curve_widget, build_curve_preview, configure as _configure_plots
@@ -55,6 +56,20 @@ def setup_callbacks(
     installs: pd.DataFrame = None,
 ) -> None:
     """Wire all panel buttons to their callback functions."""
+    _display(_Javascript("""
+(function(){
+  if(window._inputCopyPasteFixed) return;
+  window._inputCopyPasteFixed = true;
+  function stopIfInput(e){
+    var t = e.target;
+    if(t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA')){
+      e.stopPropagation();
+    }
+  }
+  document.addEventListener('keydown', stopIfInput, true);
+  document.addEventListener('keyup',   stopIfInput, true);
+})();
+"""))
 
     def _build_inputs(platform: str, overrides: dict) -> PlatformInputs:
         anchors = panel.get_curve_anchors()

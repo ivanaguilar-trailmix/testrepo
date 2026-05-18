@@ -1401,23 +1401,7 @@ class ScenarioPanel:
 
         divider = widgets.HTML("<span style='color:#ccc;padding:0 8px'>│</span>")
 
-        _kb_fix = widgets.HTML("""
-<script>
-(function(){
-  function stopIfInput(e){
-    var t = e.target;
-    if(t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA')){
-      e.stopPropagation();
-    }
-  }
-  document.addEventListener('keydown', stopIfInput, true);
-  document.addEventListener('keyup',   stopIfInput, true);
-})();
-</script>
-""")
-
         self._box = widgets.VBox([
-            _kb_fix,
             _header("Game Simulator"),
             widgets.HBox([
                 self.scenario_name, self.forecast_start,

@@ -179,6 +179,7 @@ def monthly_table(
     df['marketing_cost']      = df.apply(_mkt, axis=1)
     df['game_margin']         = df['revenue_net']    - df['marketing_cost'].fillna(0)
     df['game_margin_actuals'] = df['rev_net_actuals'] - df['marketing_cost'].fillna(0)
+    df['cumulative_margin']   = df['game_margin'].cumsum()
 
     def _fmt(x):
         return f'${x:,.0f}' if pd.notna(x) else '—'
@@ -198,6 +199,7 @@ def monthly_table(
         'Marketing Cost':     df['marketing_cost'],
         'Game Margin (Act)':  df['game_margin_actuals'],
         'Game Margin':        df['game_margin'],
+        'Cumul. Margin':      df['cumulative_margin'],
         '_fc':                df['is_forecast'],
     })
     is_fc = disp['_fc'].tolist()
@@ -210,7 +212,7 @@ def monthly_table(
     styler = (
         disp.style
         .apply(_row_bg, axis=1)
-        .map(lambda _: f'background-color: {_GREEN}', subset=['Game Margin (Act)', 'Game Margin'])
+        .map(lambda _: f'background-color: {_GREEN}', subset=['Game Margin (Act)', 'Game Margin', 'Cumul. Margin'])
         .format({
             'DAU Actuals (avg)': _fmt_dau,
             'DAU (avg)':        '{:,}',
@@ -222,6 +224,7 @@ def monthly_table(
             'Marketing Cost':   _fmt,
             'Game Margin (Act)': _fmt,
             'Game Margin':      _fmt,
+            'Cumul. Margin':    _fmt,
         })
         .set_table_styles([
             {'selector': 'th',
