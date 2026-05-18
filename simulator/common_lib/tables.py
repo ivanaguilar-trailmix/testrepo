@@ -4,9 +4,13 @@ Monthly P&L summary table: actuals + forecast combined.
 from __future__ import annotations
 
 import calendar
+from pathlib import Path
+
 import pandas as pd
 
-from common_lib.simulation import load_result, load_scenario
+from common_lib.simulation import load_result, load_scenario, list_scenarios
+
+_EXPORTS_DIR = Path(__file__).parent.parent / "exports"
 
 IAP_NET_FACTOR = 0.70   # fallback for actuals rows (no per-month input available)
 AD_NET_FACTOR  = 0.85
@@ -238,3 +242,115 @@ def monthly_table(
         ])
     )
     return styler, disp
+
+
+def comparison_table(
+    months=('2027-03', '2027-12'),
+    actuals: pd.DataFrame = None,
+) -> pd.DataFrame:
+    """
+    Compare DAU and cumulative game margin across all selectable scenarios at
+    specific months.
+
+    Calls monthly_table for each scenario so the numbers are guaranteed to match
+    the P&L table exactly (same actuals base, same partial-month blending, same
+    IAP net factor). historical_marketing and n_actuals are read from the scenario
+    JSON so no extra parameters are needed.
+    """
+    from datetime import date as _date
+
+    rows = []
+    for name in list_scenarios():
+        try:
+            scenario_tuple         = load_scenario(name)
+            forecast_start         = scenario_tuple[1]
+            actuals_from_str       = scenario_tuple[8]
+            historical_marketing   = scenario_tuple[10] or None
+            monthly_iap_net_factor = scenario_tuple[13] or None
+
+            # Derive n_actuals from actuals_from stored in the scenario JSON.
+            if actuals_from_str and actuals is not None:
+                af    = _date.fromisoformat(actuals_from_str)
+                n_act = max(1, (forecast_start.year - af.year) * 12
+                               + (forecast_start.month - af.month))
+            else:
+                n_act = 6
+
+            _, disp = monthly_table(
+                scenario=name,
+                actuals=actuals,
+                historical_marketing=historical_marketing,
+                n_actuals=n_act,
+                monthly_iap_net_factor=monthly_iap_net_factor,
+            )
+
+            disp = disp.copy()
+            disp['_month'] = disp['Date'].str[:7]
+
+            row = {'Scenario': name}
+            for m in months:
+                sub = disp[disp['_month'] == m]
+                if not sub.empty:
+                    row[f'DAU {m}']          = sub['DAU (avg)'].iloc[0]
+                    row[f'Cumul Margin {m}']  = sub['Cumul. Margin'].iloc[0]
+                else:
+                    row[f'DAU {m}']          = None
+                    row[f'Cumul Margin {m}']  = None
+            rows.append(row)
+        except Exception as e:
+            rows.append({'Scenario': name, 'note': str(e)})
+
+    return pd.DataFrame(rows).set_index('Scenario')
+
+
+def export_all_tables(
+    actuals: pd.DataFrame,
+    months=('2027-03', '2027-12'),
+) -> Path:
+    """
+    Export every selectable scenario's P&L table plus the comparison summary to CSV.
+
+    Files written to exports/:
+      <scenario_name>_pl_table.csv  — one per scenario (same data as the P&L tab)
+      comparison_table.csv          — cross-scenario summary
+
+    Returns the exports directory path.
+    """
+    from datetime import date as _date
+
+    _EXPORTS_DIR.mkdir(exist_ok=True)
+
+    for name in list_scenarios():
+        try:
+            scenario_tuple         = load_scenario(name)
+            forecast_start         = scenario_tuple[1]
+            actuals_from_str       = scenario_tuple[8]
+            historical_marketing   = scenario_tuple[10] or None
+            monthly_iap_net_factor = scenario_tuple[13] or None
+
+            if actuals_from_str:
+                af    = _date.fromisoformat(actuals_from_str)
+                n_act = max(1, (forecast_start.year - af.year) * 12
+                               + (forecast_start.month - af.month))
+            else:
+                n_act = 6
+
+            _, disp = monthly_table(
+                scenario=name,
+                actuals=actuals,
+                historical_marketing=historical_marketing,
+                n_actuals=n_act,
+                monthly_iap_net_factor=monthly_iap_net_factor,
+            )
+
+            safe_name = name.replace(' ', '_').replace('/', '-')
+            disp.to_csv(_EXPORTS_DIR / f"{safe_name}_pl_table.csv", index=False)
+            print(f"  saved: {safe_name}_pl_table.csv")
+        except Exception as e:
+            print(f"  skipped {name!r}: {e}")
+
+    comparison_table(actuals=actuals, months=months).to_csv(_EXPORTS_DIR / "comparison_table.csv")
+    print(f"  saved: comparison_table.csv")
+
+    print(f"\nAll exports written to: {_EXPORTS_DIR}")
+    return _EXPORTS_DIR

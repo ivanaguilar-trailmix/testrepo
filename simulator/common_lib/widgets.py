@@ -413,7 +413,7 @@ class PlatformPanel:
 # ---------------------------------------------------------------------------
 
 class CurvePanel:
-    DX_POINTS = [1, 3, 7, 14, 30, 60, 90, 180, 365, 1000, 1800]
+    DX_POINTS = [1, 3, 7, 14, 21, 30, 60, 90, 180, 365, 1000, 1800]
 
     def __init__(self, metric: str):
         self.metric = metric
@@ -488,7 +488,7 @@ class CurvePanel:
     def values(self) -> dict:
         result = {}
         for platform in ('ios', 'android'):
-            anchors = {dx: round(w.value / 100, 4) for dx, w in zip(self.DX_POINTS, self._inputs[platform])}
+            anchors = {dx: round(w.value / 100, 4) for dx, w in zip(self.DX_POINTS, self._inputs[platform]) if w.value > 0}
             if self.metric == 'retention':
                 anchors[0] = 1.0
             result[platform] = anchors

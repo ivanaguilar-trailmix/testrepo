@@ -38,7 +38,7 @@ cohort_activity AS (
     COUNT(DISTINCT a.user_id) AS retained
   FROM installs i
   JOIN activity a ON a.user_id = i.user_id
-   AND DATE_DIFF(a.dt, i.install_dt, DAY) IN (0, 1, 3, 7, 14, 30, 60, 90, 180, 365, 1000, 1800)
+   AND DATE_DIFF(a.dt, i.install_dt, DAY) IN (0, 1, 3, 7, 14, 21, 30, 60, 90, 180, 365, 1000, 1800)
    AND DATE_DIFF(current_date-1, i.install_dt, DAY) >= DATE_DIFF(a.dt, i.install_dt, DAY)
   GROUP BY 1, 2, 3
 )
