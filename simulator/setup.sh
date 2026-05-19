@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+echo "Setting up Game Simulator environment..."
+
+if ! command -v python3 &>/dev/null; then
+    echo "ERROR: python3 not found. Install Python 3.11+ from https://www.python.org/downloads/"
+    exit 1
+fi
+
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip --quiet
+pip install -r requirements.txt --quiet
+
+echo ""
+echo "Setup complete. Run ./run.sh to start the simulator."
