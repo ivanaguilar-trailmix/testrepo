@@ -1328,7 +1328,7 @@ class ScenarioPanel:
             style={"description_width": "120px"}, layout=widgets.Layout(width="280px"),
         )
         self.forecast_months = widgets.BoundedIntText(
-            value=12, min=1, max=24, step=1,
+            value=12, min=1, max=50, step=1,
             description="Months:",
             style={"description_width": "60px"}, layout=widgets.Layout(width="130px"),
         )
