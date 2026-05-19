@@ -421,29 +421,62 @@ class CurvePanel:
         label = "Retention" if is_retention else "Conversion"
         note  = "D0 is always 100%. " if is_retention else ""
 
-        self._inputs:   dict[str, list[widgets.BoundedFloatText]] = {'ios': [], 'android': []}
+        self._inputs:       dict[str, list[widgets.BoundedFloatText]] = {'ios': [], 'android': []}
+        self._delta_inputs: dict[str, list[widgets.BoundedFloatText]] = {'ios': [], 'android': []}
         self._baseline: dict[str, dict[int, float]] = {'ios': {}, 'android': {}}
         self._loading = False
         self._change_callbacks: list[Callable] = []
 
+        _dw = {'description_width': '0px'}
+
         header = widgets.HBox([
             widgets.HTML("<b>Day</b>",         layout=widgets.Layout(width="60px")),
             widgets.HTML("<b>iOS (%)</b>",     layout=widgets.Layout(width="130px")),
+            widgets.HTML("<b>iOS Δ%</b>",      layout=widgets.Layout(width="80px")),
             widgets.HTML("<b>Android (%)</b>", layout=widgets.Layout(width="130px")),
+            widgets.HTML("<b>Android Δ%</b>",  layout=widgets.Layout(width="80px")),
         ])
         rows = [header]
 
         for i, dx in enumerate(self.DX_POINTS):
-            ios_w = widgets.BoundedFloatText(value=0, min=0, max=100, step=0.01, layout=widgets.Layout(width="130px"))
-            and_w = widgets.BoundedFloatText(value=0, min=0, max=100, step=0.01, layout=widgets.Layout(width="130px"))
+            ios_w = widgets.BoundedFloatText(value=0, min=0,    max=100, step=0.01, layout=widgets.Layout(width="130px"))
+            ios_d = widgets.BoundedFloatText(value=0, min=-100, max=500, step=0.1,  layout=widgets.Layout(width="80px"), style=_dw)
+            and_w = widgets.BoundedFloatText(value=0, min=0,    max=100, step=0.01, layout=widgets.Layout(width="130px"))
+            and_d = widgets.BoundedFloatText(value=0, min=-100, max=500, step=0.1,  layout=widgets.Layout(width="80px"), style=_dw)
             self._inputs['ios'].append(ios_w)
+            self._delta_inputs['ios'].append(ios_d)
             self._inputs['android'].append(and_w)
+            self._delta_inputs['android'].append(and_d)
             ios_w.observe(lambda change, _dx=dx, _p='ios':     self._on_change(_dx, _p, change), names='value')
             and_w.observe(lambda change, _dx=dx, _p='android': self._on_change(_dx, _p, change), names='value')
             rows.append(widgets.HBox([
                 widgets.Label(f'D{dx}', layout=widgets.Layout(width="60px")),
-                ios_w, and_w,
+                ios_w, ios_d, and_w, and_d,
             ]))
+
+        def _make_apply_delta(platform):
+            def _apply(_):
+                cumulative = 1.0
+                for i in range(len(self.DX_POINTS)):
+                    delta = self._delta_inputs[platform][i].value
+                    cumulative *= (1 + delta / 100)
+                    if abs(cumulative - 1.0) > 1e-9 and self._inputs[platform][i].value > 0:
+                        self._inputs[platform][i].value = min(100.0, round(
+                            self._inputs[platform][i].value * cumulative, 2
+                        ))
+                    self._delta_inputs[platform][i].value = 0.0
+            return _apply
+
+        ios_apply_btn = widgets.Button(
+            description="Apply iOS Δ%", button_style="warning",
+            layout=widgets.Layout(width="120px", height="28px"),
+        )
+        and_apply_btn = widgets.Button(
+            description="Apply And Δ%", button_style="warning",
+            layout=widgets.Layout(width="120px", height="28px"),
+        )
+        ios_apply_btn.on_click(_make_apply_delta('ios'))
+        and_apply_btn.on_click(_make_apply_delta('android'))
 
         self._preview_callbacks: list[Callable] = []
         self._preview_btn = widgets.Button(
@@ -456,8 +489,9 @@ class CurvePanel:
         table_col = widgets.VBox([
             widgets.HTML(f"<span style='font-size:11px;color:#888'>{note}Values as %. PCHIP-interpolated to D1–D1800.</span>"),
             *rows,
-            widgets.HBox([self._preview_btn], layout=widgets.Layout(margin='8px 0 4px 0')),
-        ], layout=widgets.Layout(min_width='340px'))
+            widgets.HBox([ios_apply_btn, and_apply_btn, self._preview_btn],
+                         layout=widgets.Layout(margin='8px 0 4px 0', gap='8px')),
+        ], layout=widgets.Layout(min_width='500px'))
 
         self._box = widgets.VBox([
             _header(f"{label} Curve Anchors"),

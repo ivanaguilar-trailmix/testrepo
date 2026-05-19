@@ -4,11 +4,14 @@ Monthly P&L summary table: actuals + forecast combined.
 from __future__ import annotations
 
 import calendar
+import io
+import zipfile
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 
-from common_lib.simulation import load_result, load_scenario, list_scenarios
+from common_lib.simulation import load_result, load_scenario, list_scenarios, SCENARIOS_DIR
 
 _EXPORTS_DIR = Path(__file__).parent.parent / "exports"
 
@@ -308,49 +311,63 @@ def export_all_tables(
     months=('2027-03', '2027-12'),
 ) -> Path:
     """
-    Export every selectable scenario's P&L table plus the comparison summary to CSV.
+    Export every selectable scenario's P&L table plus the comparison summary,
+    bundled with the source scenario JSON files, into a timestamped zip.
 
-    Files written to exports/:
-      <scenario_name>_pl_table.csv  — one per scenario (same data as the P&L tab)
-      comparison_table.csv          — cross-scenario summary
+    Zip contents:
+      <scenario_name>_pl_table.csv  — one per scenario
+      comparison_table.csv          — cross-scenario DAU + cumulative margin
+      scenarios/<scenario>.json     — source scenario files
 
-    Returns the exports directory path.
+    Returns the path to the zip file.
     """
     from datetime import date as _date
 
     _EXPORTS_DIR.mkdir(exist_ok=True)
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    zip_path  = _EXPORTS_DIR / f"export_{timestamp}.zip"
 
-    for name in list_scenarios():
-        try:
-            scenario_tuple         = load_scenario(name)
-            forecast_start         = scenario_tuple[1]
-            actuals_from_str       = scenario_tuple[8]
-            historical_marketing   = scenario_tuple[10] or None
-            monthly_iap_net_factor = scenario_tuple[13] or None
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
 
-            if actuals_from_str:
-                af    = _date.fromisoformat(actuals_from_str)
-                n_act = max(1, (forecast_start.year - af.year) * 12
-                               + (forecast_start.month - af.month))
-            else:
-                n_act = 6
+        for name in list_scenarios():
+            try:
+                scenario_tuple         = load_scenario(name)
+                forecast_start         = scenario_tuple[1]
+                actuals_from_str       = scenario_tuple[8]
+                historical_marketing   = scenario_tuple[10] or None
+                monthly_iap_net_factor = scenario_tuple[13] or None
 
-            _, disp = monthly_table(
-                scenario=name,
-                actuals=actuals,
-                historical_marketing=historical_marketing,
-                n_actuals=n_act,
-                monthly_iap_net_factor=monthly_iap_net_factor,
-            )
+                if actuals_from_str:
+                    af    = _date.fromisoformat(actuals_from_str)
+                    n_act = max(1, (forecast_start.year - af.year) * 12
+                                   + (forecast_start.month - af.month))
+                else:
+                    n_act = 6
 
-            safe_name = name.replace(' ', '_').replace('/', '-')
-            disp.to_csv(_EXPORTS_DIR / f"{safe_name}_pl_table.csv", index=False)
-            print(f"  saved: {safe_name}_pl_table.csv")
-        except Exception as e:
-            print(f"  skipped {name!r}: {e}")
+                _, disp = monthly_table(
+                    scenario=name,
+                    actuals=actuals,
+                    historical_marketing=historical_marketing,
+                    n_actuals=n_act,
+                    monthly_iap_net_factor=monthly_iap_net_factor,
+                )
 
-    comparison_table(actuals=actuals, months=months).to_csv(_EXPORTS_DIR / "comparison_table.csv")
-    print(f"  saved: comparison_table.csv")
+                safe_name = name.replace(' ', '_').replace('/', '-')
+                buf = io.StringIO()
+                disp.to_csv(buf, index=False)
+                zf.writestr(f"{safe_name}_pl_table.csv", buf.getvalue())
+                print(f"  added: {safe_name}_pl_table.csv")
+            except Exception as e:
+                print(f"  skipped {name!r}: {e}")
 
-    print(f"\nAll exports written to: {_EXPORTS_DIR}")
-    return _EXPORTS_DIR
+        buf = io.StringIO()
+        comparison_table(actuals=actuals, months=months).to_csv(buf)
+        zf.writestr("comparison_table.csv", buf.getvalue())
+        print(f"  added: comparison_table.csv")
+
+        for json_path in sorted(SCENARIOS_DIR.glob("*.json")):
+            zf.write(json_path, f"scenarios/{json_path.name}")
+            print(f"  added: scenarios/{json_path.name}")
+
+    print(f"\nExport written to: {zip_path}")
+    return zip_path
