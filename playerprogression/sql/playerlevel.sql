@@ -6,10 +6,12 @@ with active_users as (
     dt,
     cast(install_ts as date) as install_dt,
     user_id,
-    platform,
+    d.platform,
+    ua.acquisition_type
   from trailmixgames-game-1.merger_prod_fact.fact_dt_user_activity
-  join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device using (user_id)
-  join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_session using (user_id)
+  join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device d using (user_id)
+  join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_session i using (user_id)
+  join trailmixgames-game-1.merger_prod_dimensions.dimchange_user_install_ua ua USING (user_id)
   where 1=1
   and dt>=start_date
   and cast(install_ts as date)>=start_date
@@ -52,7 +54,8 @@ date_trunc(a.install_dt, week) as install_dt_week,
 date_trunc(a.install_dt, month) as install_dt_month,
 date_diff(a.dt, a.install_dt, day) as days_since_install,
 pl.max_level,
-gd.max_gameday
+gd.max_gameday,
+a.acquisition_type
 from active_users a
 join player_level_all pl using (dt, user_id)
 join gameday_all gd using (dt, user_id)

@@ -12,19 +12,24 @@ Forecast DAU, revenue, and P&L over a 12-month horizon by adjusting UA spend, CP
 
 ## Setup
 
-**1. Create a virtual environment**
+**1. Make the scripts executable** *(Mac / Linux only — skip if cloned from git)*
+```bash
+chmod +x setup.sh run.sh
+```
+
+**2. Create a virtual environment**
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate        # Mac / Linux
 # .venv\Scripts\activate         # Windows
 ```
 
-**2. Install dependencies**
+**3. Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-**3. Add the data files**
+**4. Add the data files**
 
 Place the following files inside the `data/` folder (shared separately):
 ```

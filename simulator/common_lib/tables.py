@@ -248,7 +248,7 @@ def monthly_table(
 
 
 def comparison_table(
-    months=('2027-03', '2027-12'),
+    months=('2027-03', '2027-12', '2029-12'),
     actuals: pd.DataFrame = None,
 ) -> pd.DataFrame:
     """
@@ -308,7 +308,7 @@ def comparison_table(
 
 def export_all_tables(
     actuals: pd.DataFrame,
-    months=('2027-03', '2027-12'),
+    months=('2027-03', '2027-12', '2029-12'),
 ) -> Path:
     """
     Export every selectable scenario's P&L table plus the comparison summary,

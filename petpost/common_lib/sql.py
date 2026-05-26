@@ -1,6 +1,12 @@
 #%%
 import logging
 import pandas as pd
+from google.cloud import bigquery
+import google.auth
+from google.cloud.exceptions import NotFound
+from google.oauth2 import service_account
+#import os
+#os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="auth.json"
 import re
 
 logger = logging.getLogger('BQC')
@@ -12,16 +18,12 @@ def list_to_filter(x: list) -> str:
 
 class BigQueryConnector:
     def __init__(self):
-        from google.cloud import bigquery
-        import google.auth
-
         credentials, project = google.auth.default(
             scopes=["https://www.googleapis.com/auth/drive",
                     "https://www.googleapis.com/auth/cloud-platform"
                     ])
 
         self.client = bigquery.Client(credentials=credentials, project=project)
-        self._bigquery = bigquery
 
     map_dytpes_sql_create = {'Int64': 'INT64',
                              'int64': 'INT64',
@@ -73,7 +75,7 @@ class BigQueryConnector:
         """
         query = self.reformat_query(query=query, is_path=is_path, query_parameters=query_parameters)
         logger.debug(f'Querying...\n{query}')
-        query_job = self.client.query(query=query, job_config=self._bigquery.QueryJobConfig(dry_run=True))
+        query_job = self.client.query(query=query, job_config=bigquery.QueryJobConfig(dry_run=True))
         logger.info(
             f'This query will process {round(query_job.total_bytes_processed * 9.31 * 10 ** -10, 3)} GB ~'
             f' ${round(query_job.total_bytes_processed * 10.0 ** -12 * 6.25, 4)}')
@@ -119,7 +121,6 @@ class BigQueryConnector:
 
     def exists(self, table_name: str) -> bool:
         """Returns True if the input table_name exists. """
-        from google.cloud.exceptions import NotFound
         try:
             self.client.get_table(table_name)
             return True
@@ -249,7 +250,7 @@ class BigQueryConnector:
         
         # Run dry run to estimate bytes
         logger.debug(f'Running dry run...\n{query}')
-        query_job = self.client.query(query=query, job_config=self._bigquery.QueryJobConfig(dry_run=True))
+        query_job = self.client.query(query=query, job_config=bigquery.QueryJobConfig(dry_run=True))
         
         bytes_processed = query_job.total_bytes_processed
         gb_processed = round(bytes_processed * 9.31 * 10 ** -10, 3)

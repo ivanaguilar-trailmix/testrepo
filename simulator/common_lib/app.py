@@ -3,10 +3,20 @@ Panel setup and callback wiring for the game simulator notebook.
 """
 from __future__ import annotations
 
+import logging
 import traceback
+from pathlib import Path
 
 import ipywidgets as _w
 import pandas as pd
+
+_log_path = Path(__file__).parent.parent / 'simulator.log'
+_handler  = logging.FileHandler(_log_path, encoding='utf-8')
+_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+_logger   = logging.getLogger('simulator')
+_logger.setLevel(logging.DEBUG)
+if not _logger.handlers:
+    _logger.addHandler(_handler)
 
 from datetime import timedelta
 from IPython.display import display as _display, Javascript as _Javascript
@@ -92,6 +102,7 @@ def setup_callbacks(
 
     def run_simulation():
         try:
+            panel.set_status("Running simulation...", "blue")
             name        = panel.scenario_name.value
             start       = panel.get_forecast_start()
             n_months    = int(panel.forecast_months.value)
@@ -147,8 +158,8 @@ def setup_callbacks(
             panel.set_chart_results(chart_ws, table_w)
             panel.set_status(f"Done — {name}  |  save the scenario to persist inputs", 'green')
         except Exception:
-            traceback.print_exc()
-            panel.set_status("Error — see cell output", "red")
+            _logger.exception("run_simulation failed")
+            panel.set_status(f"Error — see {_log_path.name}", "red")
 
     def save_current_scenario():
         try:
@@ -178,11 +189,12 @@ def setup_callbacks(
             panel.set_status(f'Saved to {path.name}', 'green')
             panel.load_dropdown.options = ['— new scenario —'] + list_scenarios()
         except Exception:
-            traceback.print_exc()
-            panel.set_status("Save error — see cell output", "red")
+            _logger.exception("save_scenario failed")
+            panel.set_status(f"Save error — see {_log_path.name}", "red")
 
     def load_saved_scenario(name: str):
         try:
+            panel.set_status(f"Loading {name}...", "blue")
             (_, start, n_months, ios_inp, and_inp,
              curve_anchors, actuals_range, monthly_team_cost,
              actuals_from, selected_charts, historical_marketing,
@@ -251,8 +263,8 @@ def setup_callbacks(
 
             panel.set_status(f'Loaded: {name}', 'blue')
         except Exception:
-            traceback.print_exc()
-            panel.set_status("Load error — see cell output", "red")
+            _logger.exception("load_scenario failed")
+            panel.set_status(f"Load error — see {_log_path.name}", "red")
 
     def set_anchor_from_actuals():
         start     = panel.get_forecast_start()
@@ -299,7 +311,7 @@ def setup_callbacks(
             curve_panel.set_values(ios=anchors['ios'], android=anchors['android'], is_baseline=True)
             actuals_panel.set_status(f"Loaded from {start} – {end}  |  yellow = overridden", 'green')
         except Exception as e:
-            traceback.print_exc()
+            _logger.exception("load_curve failed (%s)", metric)
             actuals_panel.set_status(f"Error: {e}", 'red')
 
     def load_arpdau_from_actuals():
@@ -321,7 +333,7 @@ def setup_callbacks(
                 f"Avg from {start} – {end} applied to all months  |  yellow = overridden", 'green'
             )
         except Exception as e:
-            traceback.print_exc()
+            _logger.exception("load_arpdau_from_actuals failed")
             panel.arpdau_actuals_panel.set_status(f"Error: {e}", 'red')
 
     def _derive_age_dist(platform: str, widget_panel):
@@ -340,7 +352,7 @@ def setup_callbacks(
             dist       = derive_age_distribution(installs, platform, retention, anchor_date)
             widget_panel.set_age_distribution(dist)
         except Exception as e:
-            traceback.print_exc()
+            _logger.exception("derive_age_dist failed (%s)", platform)
             widget_panel._age_dist_status.value = f"<span style='color:red;font-size:11px'>Error: {e}</span>"
 
     def _preview_curve(metric: str):

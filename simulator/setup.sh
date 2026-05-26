@@ -11,7 +11,7 @@ fi
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip --quiet
-pip install -r requirements.txt --quiet
+pip install -r requirements.txt --quiet --no-cache-dir
 
 echo ""
 echo "Setup complete. Run ./run.sh to start the simulator."
