@@ -1,9 +1,9 @@
-  -- A/B test start date (defaults to yesterday)
-  DECLARE abteststartdate DATE DEFAULT current_date-1;
-  -- Date range for averaging metrics (defaults to last {lookback_days} days)                                                                                                                                         
-  DECLARE daterange_start DATE DEFAULT abteststartdate-{lookback_days};                                                                                                                                                  
-  DECLARE daterange_end DATE DEFAULT abteststartdate;                                                                                                                                                     
-  -- Base64-encoded JSON defining bucket weight ranges for each variant group (50/50 split)                                                                                                              
+-- A/B test start date (defaults to yesterday)
+DECLARE abteststartdate DATE DEFAULT current_date-1;
+-- Date range for averaging metrics (defaults to last {lookback_days} days)                                                                                                                                         
+DECLARE daterange_start DATE DEFAULT abteststartdate-{lookback_days};                                                                                                                                                  
+DECLARE daterange_end DATE DEFAULT abteststartdate;                                                                                                                                                     
+-- Base64-encoded JSON defining bucket weight ranges for each variant group (50/50 split)                                                                                                              
 DECLARE abTestWeightedBucketsBase64 STRING DEFAULT TO_BASE64(CAST('[[{{"min":0,"max":49}}],[{{"min":50,"max":99}}]]' AS BYTES));
                                                                         
   -- Holds the array of random salts used to simulate multiple randomization seeds                                                                                                                       
