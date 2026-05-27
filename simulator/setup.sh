@@ -12,6 +12,8 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip --quiet
 pip install -r requirements.txt --quiet --no-cache-dir
+jupyter trust game_simulator.ipynb
+python3 -m compileall common_lib/ -q
 
 echo ""
 echo "Setup complete. Run ./run.sh to start the simulator."

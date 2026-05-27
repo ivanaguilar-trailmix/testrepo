@@ -7,4 +7,5 @@ if [ ! -d ".venv" ]; then
 fi
 
 source .venv/bin/activate
-voila game_simulator.ipynb
+python3 -c "from common_lib.version import VERSION; print(f'Game Simulator v{VERSION}')"
+voila game_simulator.ipynb --ServerApp.disable_check_xsrf=True --VoilaExecutor.iopub_timeout=120 --VoilaExecutor.startup_timeout=120

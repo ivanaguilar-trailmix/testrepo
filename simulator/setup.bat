@@ -12,6 +12,8 @@ python -m venv .venv
 call .venv\Scripts\activate
 pip install --upgrade pip --quiet
 pip install -r requirements.txt --quiet
+jupyter trust game_simulator.ipynb
+python -m compileall common_lib/ -q
 
 echo.
 echo Setup complete. Run run.bat to start the simulator.
