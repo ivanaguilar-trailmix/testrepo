@@ -15,6 +15,10 @@ from common_lib.version import VERSION
 
 _wlog = logging.getLogger('simulator.widgets')
 
+# Rows pre-created in background after display so scenario loads don't need new comm-opens.
+# Must exceed forecast_months.max (50) + actuals_months.max (48) = 98.
+_MAX_ROWS = 100
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -294,11 +298,13 @@ class PlatformPanel:
                 self._rows_timer.cancel()
         else:
             if self._rows_timer is None:
+                _wlog.debug("CPI(%s) immediate n=%d (rows pre-existed)", self.platform, n)
                 self._rows_box.children = tuple(self._data_rows[:n])
                 return
             self._rows_timer.cancel()
         nf = self._rows_new_from
         plat = self.platform
+        _wlog.debug("CPI(%s) deferred scheduled n=%d nf=%d (new rows needed)", plat, n, nf)
         def _deferred(_n=n, _nf=nf):
             try:
                 self._rows_box.children = tuple(self._data_rows[:_n])
@@ -313,7 +319,7 @@ class PlatformPanel:
                 self._rows_timer = None
         try:
             loop = asyncio.get_running_loop()
-            self._rows_timer = loop.call_later(1.0, _deferred)
+            self._rows_timer = loop.call_later(4.0, _deferred)
         except RuntimeError:
             self._rows_box.children = tuple(self._data_rows[:n])
             self._rows_timer = None
@@ -357,7 +363,7 @@ class PlatformPanel:
                 self._boost_rows_timer = None
         try:
             loop = asyncio.get_running_loop()
-            self._boost_rows_timer = loop.call_later(1.0, _deferred)
+            self._boost_rows_timer = loop.call_later(4.0, _deferred)
         except RuntimeError:
             self._boost_rows_box.children = tuple(self._boost_rows[:n])
             self._boost_rows_timer = None
@@ -952,7 +958,7 @@ class ARPDAUPanel:
                 self._rows_timer = None
         try:
             loop = asyncio.get_running_loop()
-            self._rows_timer = loop.call_later(1.0, _deferred)
+            self._rows_timer = loop.call_later(4.0, _deferred)
         except RuntimeError:
             self._rows_box.children     = tuple(self._data_rows[:n])
             self._net_rows_box.children = tuple(self._net_rows[:n])
@@ -1179,7 +1185,7 @@ class TeamCostPanel:
                 self._rows_timer = None
         try:
             loop = asyncio.get_running_loop()
-            self._rows_timer = loop.call_later(0.5, _deferred)
+            self._rows_timer = loop.call_later(4.0, _deferred)
         except RuntimeError:
             self._rows_box.children = tuple(self._data_rows[:n])
             self._rows_timer = None
@@ -1372,7 +1378,7 @@ class UABudgetPanel:
                 self._rows_timer = None
         try:
             loop = asyncio.get_running_loop()
-            self._rows_timer = loop.call_later(1.0, _deferred)
+            self._rows_timer = loop.call_later(4.0, _deferred)
         except RuntimeError:
             self._rows_box.children = tuple(self._data_rows[:n])
             self._rows_timer = None
@@ -1888,6 +1894,38 @@ class ScenarioPanel:
             ap._from_date.send_state()
             ap._to_date.send_state()
 
+    async def _precreate_rows_bg(self) -> None:
+        """After display, gradually pre-create rows up to _MAX_ROWS per panel.
+        Staggered in small batches (2 rows × 6 panels per 0.2 s) so the browser
+        registers models before any scenario load. Once done, _apply_months sees
+        new_rows=False and sets children immediately — no timing dependency."""
+        await asyncio.sleep(1.0)
+        _wlog.debug("precreate: start ios=%d arpdau=%d ua=%d",
+                    len(self.ios_panel._data_rows),
+                    len(self.arpdau_panel._data_rows),
+                    len(self.ua_budget_panel._data_rows))
+        panel_ops = [
+            (self.ios_panel,       '_data_rows',  '_create_row'),
+            (self.ios_panel,       '_boost_rows', '_create_boost_row'),
+            (self.android_panel,   '_data_rows',  '_create_row'),
+            (self.android_panel,   '_boost_rows', '_create_boost_row'),
+            (self.arpdau_panel,    '_data_rows',  '_create_row'),
+            (self.ua_budget_panel, '_data_rows',  '_create_row'),
+        ]
+        while True:
+            made_any = False
+            for panel, rows_attr, create_meth in panel_ops:
+                for _ in range(2):
+                    if len(getattr(panel, rows_attr)) < _MAX_ROWS:
+                        getattr(panel, create_meth)()
+                        made_any = True
+            if not made_any:
+                break
+            await asyncio.sleep(0.2)
+        _wlog.debug("precreate: done ios=%d ios_boost=%d arpdau=%d ua=%d",
+                    len(self.ios_panel._data_rows), len(self.ios_panel._boost_rows),
+                    len(self.arpdau_panel._data_rows), len(self.ua_budget_panel._data_rows))
+
     def display(self):
         if getattr(self, '_displayed', False):
             return
@@ -1898,6 +1936,10 @@ class ScenarioPanel:
         self.ua_budget_panel._live = True
         _wlog.debug("ScenarioPanel displayed — all panels now live")
         display(self._box)
+        try:
+            asyncio.ensure_future(self._precreate_rows_bg())
+        except RuntimeError:
+            pass  # no event loop (e.g. test context)
 
     # ---- private ----
 

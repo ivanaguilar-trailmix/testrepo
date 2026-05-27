@@ -267,7 +267,7 @@ def setup_callbacks(
             try:
                 asyncio.get_running_loop()
                 async def _wait_and_show_status(_name=name):
-                    for _ in range(40):  # poll up to 4 s
+                    for _ in range(60):  # poll up to 6 s
                         await asyncio.sleep(0.1)
                         if not any([
                             panel.ios_panel._rows_timer,
