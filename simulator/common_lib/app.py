@@ -3,6 +3,7 @@ Panel setup and callback wiring for the game simulator notebook.
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import traceback
 from pathlib import Path
@@ -194,6 +195,7 @@ def setup_callbacks(
 
     def load_saved_scenario(name: str):
         try:
+            _logger.debug("load_saved_scenario START name=%s", name)
             panel.set_status(f"Loading {name}...", "blue")
             (_, start, n_months, ios_inp, and_inp,
              curve_anchors, actuals_range, monthly_team_cost,
@@ -261,7 +263,27 @@ def setup_callbacks(
                 if combined_budget:
                     panel.ua_budget_panel.set_values(combined_budget, combined_ios_pct, is_baseline=True)
 
-            panel.set_status(f'Loaded: {name}', 'blue')
+            _logger.debug("load_saved_scenario COMPLETE name=%s", name)
+            try:
+                asyncio.get_running_loop()
+                async def _wait_and_show_status(_name=name):
+                    for _ in range(40):  # poll up to 4 s
+                        await asyncio.sleep(0.1)
+                        if not any([
+                            panel.ios_panel._rows_timer,
+                            panel.android_panel._rows_timer,
+                            panel.ios_panel._boost_rows_timer,
+                            panel.android_panel._boost_rows_timer,
+                            panel.arpdau_panel._rows_timer,
+                            panel.ua_budget_panel._rows_timer,
+                        ]):
+                            break
+                    panel.resync_header_widgets()
+                    await asyncio.sleep(0.2)  # let browser process send_state messages
+                    panel.set_status(f'Loaded: {_name}', 'blue')
+                asyncio.ensure_future(_wait_and_show_status())
+            except RuntimeError:
+                panel.set_status(f'Loaded: {name}', 'blue')
         except Exception:
             _logger.exception("load_scenario failed")
             panel.set_status(f"Load error — see {_log_path.name}", "red")

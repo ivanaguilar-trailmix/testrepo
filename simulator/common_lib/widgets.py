@@ -3,11 +3,17 @@ ipywidgets UI components for the game simulator.
 """
 from __future__ import annotations
 
+import asyncio
+import logging
 from datetime import date, datetime, timedelta
 from typing import Callable, Optional
 
 import ipywidgets as widgets
 from IPython.display import display
+
+from common_lib.version import VERSION
+
+_wlog = logging.getLogger('simulator.widgets')
 
 
 # ---------------------------------------------------------------------------
@@ -190,10 +196,16 @@ class PlatformPanel:
         self._cpi_inputs:       list[widgets.BoundedFloatText] = []
         self._boost_inputs:     list[widgets.BoundedFloatText] = []
         self._boost_labels:     list[widgets.Label]            = []
+        self._boost_rows:       list[widgets.HBox]             = []
         self._installs_labels:  list[widgets.HTML]             = []
         self._month_labels:     list[widgets.Label]            = []
         self._data_rows:        list[widgets.HBox]             = []
         self._monthly_ua:       dict                           = {}
+        self._rows_timer:       Optional[object]      = None
+        self._boost_rows_timer: Optional[object]      = None
+        self._rows_new_from:    int                   = 0
+        self._boost_new_from:   int                   = 0
+        self._live:             bool                  = False
 
         cpi_fill = _fill_btn()
 
@@ -249,32 +261,106 @@ class PlatformPanel:
         self._data_rows.append(widgets.HBox([lbl, cpi_w, cpi_fill, inst_lbl]))
 
     def _create_boost_row(self) -> None:
+        i         = len(self._boost_labels)
         boost_lbl = widgets.Label("", layout=widgets.Layout(width="90px"))
         boost_w   = widgets.BoundedFloatText(value=0.0, min=0.0, max=200.0, step=0.1, layout=widgets.Layout(width="110px"))
+        btn       = _row_fill_btn()
+        btn.on_click(lambda _, _i=i: [
+            w.__setattr__("value", self._boost_inputs[_i].value)
+            for w in self._boost_inputs[_i + 1:len(self._boost_months)]
+        ])
         self._boost_labels.append(boost_lbl)
         self._boost_inputs.append(boost_w)
+        self._boost_rows.append(widgets.HBox([boost_lbl, boost_w, btn]))
 
     def _apply_months(self, months: list[str]):
+        existing = len(self._data_rows)
         while len(self._data_rows) < len(months):
             self._create_row()
         for i, m in enumerate(months):
             self._month_labels[i].value = m
-        self._rows_box.children = tuple(self._data_rows[:len(months)])
+        n = len(months)
+        if not self._live:
+            if self._rows_timer is not None:
+                self._rows_timer.cancel()
+                self._rows_timer = None
+            self._rows_box.children = tuple(self._data_rows[:n])
+            return
+        new_rows = len(self._data_rows) > existing
+        if new_rows:
+            if self._rows_timer is None:
+                self._rows_new_from = existing
+            if self._rows_timer is not None:
+                self._rows_timer.cancel()
+        else:
+            if self._rows_timer is None:
+                self._rows_box.children = tuple(self._data_rows[:n])
+                return
+            self._rows_timer.cancel()
+        nf = self._rows_new_from
+        plat = self.platform
+        def _deferred(_n=n, _nf=nf):
+            try:
+                self._rows_box.children = tuple(self._data_rows[:_n])
+                sample = {self._months[i]: self._cpi_inputs[i].value for i in range(_nf, min(_nf + 3, _n))}
+                _wlog.debug("CPI(%s) deferred fired n=%d nf=%d sample_cpi=%s", plat, _n, _nf, sample)
+                for i in range(_n):
+                    self._cpi_inputs[i].send_state()
+                    self._installs_labels[i].send_state()
+            except Exception:
+                _wlog.exception("CPI(%s) deferred error n=%d nf=%d", plat, _n, _nf)
+            finally:
+                self._rows_timer = None
+        try:
+            loop = asyncio.get_running_loop()
+            self._rows_timer = loop.call_later(1.0, _deferred)
+        except RuntimeError:
+            self._rows_box.children = tuple(self._data_rows[:n])
+            self._rows_timer = None
 
     def _apply_boost_months(self, months: list[str]):
-        while len(self._boost_inputs) < len(months):
+        existing = len(self._boost_rows)
+        while len(self._boost_rows) < len(months):
             self._create_boost_row()
         for i, m in enumerate(months):
             self._boost_labels[i].value = m
-        boost_rows = []
-        for i in range(len(months)):
-            btn = _row_fill_btn()
-            btn.on_click(lambda _, _i=i: [
-                w.__setattr__("value", self._boost_inputs[_i].value)
-                for w in self._boost_inputs[_i + 1:len(self._boost_months)]
-            ])
-            boost_rows.append(widgets.HBox([self._boost_labels[i], self._boost_inputs[i], btn]))
-        self._boost_rows_box.children = tuple(boost_rows)
+        n = len(months)
+        if not self._live:
+            if self._boost_rows_timer is not None:
+                self._boost_rows_timer.cancel()
+                self._boost_rows_timer = None
+            self._boost_rows_box.children = tuple(self._boost_rows[:n])
+            return
+        new_rows = len(self._boost_rows) > existing
+        if new_rows:
+            if self._boost_rows_timer is None:
+                self._boost_new_from = existing
+            if self._boost_rows_timer is not None:
+                self._boost_rows_timer.cancel()
+        else:
+            if self._boost_rows_timer is None:
+                self._boost_rows_box.children = tuple(self._boost_rows[:n])
+                return
+            self._boost_rows_timer.cancel()
+        nf = self._boost_new_from
+        plat = self.platform
+        def _deferred(_n=n, _nf=nf):
+            try:
+                self._boost_rows_box.children = tuple(self._boost_rows[:_n])
+                sample = {self._boost_months[i]: self._boost_inputs[i].value for i in range(_nf, min(_nf + 3, _n))}
+                _wlog.debug("Boost(%s) deferred fired n=%d nf=%d sample_boost=%s", plat, _n, _nf, sample)
+                for i in range(_n):
+                    self._boost_inputs[i].send_state()
+            except Exception:
+                _wlog.exception("Boost(%s) deferred error n=%d nf=%d", plat, _n, _nf)
+            finally:
+                self._boost_rows_timer = None
+        try:
+            loop = asyncio.get_running_loop()
+            self._boost_rows_timer = loop.call_later(1.0, _deferred)
+        except RuntimeError:
+            self._boost_rows_box.children = tuple(self._boost_rows[:n])
+            self._boost_rows_timer = None
 
     def update_months(self, start_month: str, n_months: int):
         new_months = _month_sequence(n_months, start_month)
@@ -621,10 +707,13 @@ class ARPDAUPanel:
             'android': {'iap': [], 'ad': []},
         }
         self._iap_net_inputs: list[widgets.BoundedFloatText] = []
-        self._month_labels: list[widgets.Label] = []
-        self._net_labels:   list[widgets.Label] = []
-        self._data_rows:    list[widgets.HBox]  = []
-        self._net_rows:     list[widgets.HBox]  = []
+        self._month_labels:   list[widgets.Label]            = []
+        self._net_labels:     list[widgets.Label]            = []
+        self._data_rows:      list[widgets.HBox]             = []
+        self._net_rows:       list[widgets.HBox]             = []
+        self._rows_timer:     Optional[object]      = None
+        self._rows_new_from:  int                   = 0
+        self._live:           bool                  = False
 
         ios_iap_fill  = _fill_btn()
         ios_ad_fill   = _fill_btn()
@@ -818,13 +907,56 @@ class ARPDAUPanel:
         self._net_rows.append(widgets.HBox([net_lbl, net_factor_w, net_rfill]))
 
     def _apply_months(self, months: list[str]):
+        existing = len(self._data_rows)
         while len(self._data_rows) < len(months):
             self._create_row()
         for i, m in enumerate(months):
             self._month_labels[i].value = m
             self._net_labels[i].value   = m
-        self._rows_box.children     = tuple(self._data_rows[:len(months)])
-        self._net_rows_box.children = tuple(self._net_rows[:len(months)])
+        n = len(months)
+        if not self._live:
+            if self._rows_timer is not None:
+                self._rows_timer.cancel()
+                self._rows_timer = None
+            self._rows_box.children     = tuple(self._data_rows[:n])
+            self._net_rows_box.children = tuple(self._net_rows[:n])
+            return
+        new_rows = len(self._data_rows) > existing
+        if new_rows:
+            if self._rows_timer is None:
+                self._rows_new_from = existing
+            if self._rows_timer is not None:
+                self._rows_timer.cancel()
+        else:
+            if self._rows_timer is None:
+                self._rows_box.children     = tuple(self._data_rows[:n])
+                self._net_rows_box.children = tuple(self._net_rows[:n])
+                return
+            self._rows_timer.cancel()
+        nf = self._rows_new_from
+        def _deferred(_n=n, _nf=nf):
+            try:
+                self._rows_box.children     = tuple(self._data_rows[:_n])
+                self._net_rows_box.children = tuple(self._net_rows[:_n])
+                sample = {self._months[i]: self._inputs['ios']['iap'][i].value for i in range(_nf, min(_nf + 3, _n))}
+                _wlog.debug("ARPDAU deferred fired n=%d nf=%d sample_ios_iap=%s", _n, _nf, sample)
+                for i in range(_n):
+                    self._inputs['ios']['iap'][i].send_state()
+                    self._inputs['ios']['ad'][i].send_state()
+                    self._inputs['android']['iap'][i].send_state()
+                    self._inputs['android']['ad'][i].send_state()
+                    self._iap_net_inputs[i].send_state()
+            except Exception:
+                _wlog.exception("ARPDAU deferred error n=%d nf=%d", _n, _nf)
+            finally:
+                self._rows_timer = None
+        try:
+            loop = asyncio.get_running_loop()
+            self._rows_timer = loop.call_later(1.0, _deferred)
+        except RuntimeError:
+            self._rows_box.children     = tuple(self._data_rows[:n])
+            self._net_rows_box.children = tuple(self._net_rows[:n])
+            self._rows_timer = None
 
     def _on_change_idx(self, i: int, platform: str, metric: str, change):
         if self._loading or i >= len(self._months):
@@ -951,6 +1083,9 @@ class TeamCostPanel:
         self._inputs:       list[widgets.BoundedFloatText] = []
         self._month_labels: list[widgets.Label]            = []
         self._data_rows:    list[widgets.HBox]             = []
+        self._rows_timer:    Optional[object]      = None
+        self._rows_new_from: int                   = 0
+        self._live:          bool                  = False
 
         fill_btn = _fill_btn()
         self._load_csv_btn = widgets.Button(
@@ -1011,11 +1146,43 @@ class TeamCostPanel:
         self._data_rows.append(widgets.HBox([lbl, w, fill_w]))
 
     def _apply_months(self, months: list[str]):
+        existing = len(self._data_rows)
         while len(self._data_rows) < len(months):
             self._create_row()
         for i, m in enumerate(months):
             self._month_labels[i].value = m
-        self._rows_box.children = tuple(self._data_rows[:len(months)])
+        n = len(months)
+        if not self._live:
+            if self._rows_timer is not None:
+                self._rows_timer.cancel()
+                self._rows_timer = None
+            self._rows_box.children = tuple(self._data_rows[:n])
+            return
+        new_rows = len(self._data_rows) > existing
+        if new_rows:
+            if self._rows_timer is None:
+                self._rows_new_from = existing
+            if self._rows_timer is not None:
+                self._rows_timer.cancel()
+        else:
+            if self._rows_timer is None:
+                self._rows_box.children = tuple(self._data_rows[:n])
+                return
+            self._rows_timer.cancel()
+        nf = self._rows_new_from
+        def _deferred(_n=n, _nf=nf):
+            try:
+                self._rows_box.children = tuple(self._data_rows[:_n])
+                for i in range(_n):
+                    self._inputs[i].send_state()
+            finally:
+                self._rows_timer = None
+        try:
+            loop = asyncio.get_running_loop()
+            self._rows_timer = loop.call_later(0.5, _deferred)
+        except RuntimeError:
+            self._rows_box.children = tuple(self._data_rows[:n])
+            self._rows_timer = None
 
     def _on_change_idx(self, i: int, change):
         if self._loading or i >= len(self._months):
@@ -1090,6 +1257,9 @@ class UABudgetPanel:
         self._month_labels:         list[widgets.Label]            = []
         self._data_rows:            list[widgets.HBox]             = []
         self._change_callbacks:     list[Callable]                 = []
+        self._rows_timer:           Optional[object]               = None
+        self._rows_new_from:        int                            = 0
+        self._live:                 bool                           = False
 
         budget_fill  = _fill_btn()
         ios_pct_fill = _fill_btn()
@@ -1162,11 +1332,50 @@ class UABudgetPanel:
         self._data_rows.append(widgets.HBox([lbl, budget_w, budget_fill, ios_pct_w, ios_pct_fill, ios_spend_lbl, android_spend_lbl]))
 
     def _apply_months(self, months: list[str]):
+        existing = len(self._data_rows)
         while len(self._data_rows) < len(months):
             self._create_row()
         for i, m in enumerate(months):
             self._month_labels[i].value = m
-        self._rows_box.children = tuple(self._data_rows[:len(months)])
+        n = len(months)
+        if not self._live:
+            if self._rows_timer is not None:
+                self._rows_timer.cancel()
+                self._rows_timer = None
+            self._rows_box.children = tuple(self._data_rows[:n])
+            return
+        new_rows = len(self._data_rows) > existing
+        if new_rows:
+            if self._rows_timer is None:
+                self._rows_new_from = existing
+            if self._rows_timer is not None:
+                self._rows_timer.cancel()
+        else:
+            if self._rows_timer is None:
+                self._rows_box.children = tuple(self._data_rows[:n])
+                return
+            self._rows_timer.cancel()
+        nf = self._rows_new_from
+        def _deferred(_n=n, _nf=nf):
+            try:
+                self._rows_box.children = tuple(self._data_rows[:_n])
+                sample = {self._months[i]: self._budget_inputs[i].value for i in range(_nf, min(_nf + 3, _n))}
+                _wlog.debug("UABudget deferred fired n=%d nf=%d sample_budget=%s", _n, _nf, sample)
+                for i in range(_n):
+                    self._budget_inputs[i].send_state()
+                    self._ios_pct_inputs[i].send_state()
+                    self._ios_spend_labels[i].send_state()
+                    self._android_spend_labels[i].send_state()
+            except Exception:
+                _wlog.exception("UABudget deferred error n=%d nf=%d", _n, _nf)
+            finally:
+                self._rows_timer = None
+        try:
+            loop = asyncio.get_running_loop()
+            self._rows_timer = loop.call_later(1.0, _deferred)
+        except RuntimeError:
+            self._rows_box.children = tuple(self._data_rows[:n])
+            self._rows_timer = None
 
     def _on_change_idx(self, i: int, col: str, change):
         if self._loading or i >= len(self._months):
@@ -1532,7 +1741,13 @@ class ScenarioPanel:
         ], layout=widgets.Layout(margin='6px 0 10px 0'))
 
         self._box = widgets.VBox([
-            _header("Game Simulator"),
+            widgets.HBox([
+                _header("Game Simulator"),
+                widgets.HTML(
+                    f"<span style='color:#999;font-size:11px;margin-left:10px;line-height:2.2'>"
+                    f"v{VERSION}</span>"
+                ),
+            ]),
             controls,
             input_tab,
         ])
@@ -1646,10 +1861,42 @@ class ScenarioPanel:
         if w is not None:
             self._result_display.children = (w,)
 
+    def resync_header_widgets(self) -> None:
+        """Re-push all non-row widget states to the browser after a scenario load."""
+        # Top controls
+        self.scenario_name.send_state()
+        self.forecast_start.send_state()
+        self.forecast_months.send_state()
+        self._actuals_months.send_state()
+        # DAU tab — platform header inputs
+        for p in (self.ios_panel, self.android_panel):
+            p.anchor_dau.send_state()
+            p.anchor_offset_pct.send_state()
+            p.avg_base_age.send_state()
+            p._age_dist_status.send_state()
+        # Retention / Conversion curve anchor inputs
+        for curve in (self.retention_panel, self.conversion_panel):
+            for platform in ('ios', 'android'):
+                for w in curve._inputs[platform]:
+                    w.send_state()
+        # Actuals range controls (Retention / Conversion / Revenue tabs)
+        for ap in (self.retention_actuals_panel,
+                   self.conversion_actuals_panel,
+                   self.arpdau_actuals_panel):
+            ap._mode.send_state()
+            ap._days_back.send_state()
+            ap._from_date.send_state()
+            ap._to_date.send_state()
+
     def display(self):
         if getattr(self, '_displayed', False):
             return
         self._displayed = True
+        self.ios_panel._live       = True
+        self.android_panel._live   = True
+        self.arpdau_panel._live    = True
+        self.ua_budget_panel._live = True
+        _wlog.debug("ScenarioPanel displayed — all panels now live")
         display(self._box)
 
     # ---- private ----
