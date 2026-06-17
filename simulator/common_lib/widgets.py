@@ -1537,7 +1537,7 @@ class ScenarioPanel:
             widgets.HBox([self.ios_panel.anchor_widget(), self.android_panel.anchor_widget()]),
             widgets.HBox([
                 widgets.VBox([
-                    _header("Organic Base Decay"),
+                    _header("Age Distribution"),
                     widgets.HBox([self.ios_panel.organic_widget(), self.android_panel.organic_widget()]),
                 ], layout=_sec),
                 widgets.VBox([
