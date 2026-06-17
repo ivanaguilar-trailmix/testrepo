@@ -267,9 +267,9 @@ def comparison_table(
         try:
             scenario_tuple         = load_scenario(name)
             forecast_start         = scenario_tuple[1]
-            actuals_from_str       = scenario_tuple[8]
-            historical_marketing   = scenario_tuple[10] or None
-            monthly_iap_net_factor = scenario_tuple[13] or None
+            actuals_from_str       = scenario_tuple[7]
+            historical_marketing   = scenario_tuple[9] or None
+            monthly_iap_net_factor = scenario_tuple[12] or None
 
             # Derive n_actuals from actuals_from stored in the scenario JSON.
             if actuals_from_str and actuals is not None:
