@@ -397,8 +397,8 @@ def setup_callbacks(
             agg = aggregate_marketing(marketing)
             ua_df = agg['ua_spend']
             panel.ua_budget_panel.set_values(
-                monthly_budget  = dict(zip(ua_df['month'], ua_df['total_budget'].astype(float))),
-                monthly_ios_pct = dict(zip(ua_df['month'], ua_df['ios_pct'].astype(float))),
+                monthly_budget  = dict(zip(ua_df['month'], ua_df['total_budget'].round(0).astype(float))),
+                monthly_ios_pct = dict(zip(ua_df['month'], ua_df['ios_pct'].round(2).astype(float))),
                 is_baseline=True,
             )
         except Exception:

@@ -1123,10 +1123,10 @@ class UABudgetPanel:
 
         header_row = widgets.HBox([
             widgets.HTML("<b>Month</b>",     layout=widgets.Layout(width="90px")),
-            _col_hdr("Total Budget ($)",     budget_fill,  "130px"),
-            _col_hdr("iOS %",                ios_pct_fill, "80px"),
-            widgets.HTML("<b>iOS $</b>",     layout=widgets.Layout(width="100px")),
-            widgets.HTML("<b>Android $</b>", layout=widgets.Layout(width="100px")),
+            _col_hdr("Total Budget ($)",     budget_fill,  "152px"),
+            _col_hdr("iOS %",                ios_pct_fill, "102px"),
+            widgets.HTML("<b>iOS $</b>",     layout=widgets.Layout(width="100px", padding="4px 0 0 8px")),
+            widgets.HTML("<b>Android $</b>", layout=widgets.Layout(width="100px", padding="4px 0 0 8px")),
         ])
 
         budget_fill.on_click(lambda _: [
