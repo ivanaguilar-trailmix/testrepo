@@ -1562,19 +1562,19 @@ class ScenarioPanel:
         # ---- tabbed input area ----
         input_tab = widgets.Tab(children=[
             dau_tab_content,
-            widgets.HBox([self.ios_panel.widget(), self.android_panel.widget()]),
             widgets.VBox([self.retention_actuals_panel.widget(),  self.retention_panel.widget()]),
-            widgets.VBox([self.conversion_actuals_panel.widget(), _conversion_note, self.conversion_panel.widget()]),
             widgets.VBox([self.arpdau_actuals_panel.widget(),     self.arpdau_panel.widget()]),
             self.ua_budget_panel.widget(),
+            widgets.HBox([self.ios_panel.widget(), self.android_panel.widget()]),
+            widgets.VBox([self.conversion_actuals_panel.widget(), _conversion_note, self.conversion_panel.widget()]),
             widgets.VBox([self._chart_btns_box, self._result_display]),
         ])
         input_tab.set_title(0, 'DAU')
-        input_tab.set_title(1, 'CPI')
-        input_tab.set_title(2, 'Retention')
-        input_tab.set_title(3, 'Conversion')
-        input_tab.set_title(4, 'Revenue')
-        input_tab.set_title(5, 'UA Budget')
+        input_tab.set_title(1, 'Retention')
+        input_tab.set_title(2, 'Revenue')
+        input_tab.set_title(3, 'UA Budget')
+        input_tab.set_title(4, 'CPI')
+        input_tab.set_title(5, 'Conversion')
         input_tab.set_title(6, 'Results')
         self._input_tab = input_tab
         input_tab.observe(self._on_tab_change, names='selected_index')
