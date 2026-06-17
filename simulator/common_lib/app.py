@@ -327,10 +327,11 @@ def setup_callbacks(
 
     def load_arpdau_from_actuals():
         try:
-            start, end = panel.arpdau_actuals_panel.get_range(forecast_start=panel.get_forecast_start())
+            start = actuals['dt'].dt.date.min()
+            end   = actuals['dt'].dt.date.max()
             monthly = monthly_arpdau_from_actuals(actuals, start, end)
             if not monthly['ios']['iap'] and not monthly['android']['iap']:
-                panel.arpdau_actuals_panel.set_status(f"No actuals data in {start} – {end}", 'orange')
+                panel.arpdau_actuals_panel.set_status("No actuals data available", 'orange')
                 return
             panel.arpdau_panel.set_values(
                 ios_iap     = monthly['ios']['iap'],
@@ -341,7 +342,7 @@ def setup_callbacks(
             )
             n = max(len(monthly['ios']['iap']), len(monthly['android']['iap']))
             panel.arpdau_actuals_panel.set_status(
-                f"Loaded {n} months from {start} – {end}  |  yellow = overridden", 'green'
+                f"Loaded {n} months  |  yellow = overridden", 'green'
             )
         except Exception as e:
             _logger.exception("load_arpdau_from_actuals failed")
