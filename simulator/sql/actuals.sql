@@ -2,6 +2,7 @@
 -- Used to anchor the forecast start point
 
 DECLARE start_date DATE DEFAULT cast('{start_date}' as date);
+DECLARE end_date DATE DEFAULT cast('{end_date}' as date);
 
 WITH active_users as (
   select 
@@ -16,7 +17,7 @@ WITH active_users as (
   where 1=1
   and ute.user_id is null
   and dt >= start_date
-  and dt < CURRENT_DATE()
+  and dt <= end_date
   and platform in ('AND', 'IOS')
   and active = 1
   group by all
@@ -32,6 +33,7 @@ WITH active_users as (
   FROM trailmixgames-game-1.merger_prod_fact.fact_dt_user_ad_revenue
   WHERE 1=1
   and dt>=start_date
+  and dt<=end_date
 )
 
 -- IAP REV
@@ -45,6 +47,7 @@ WITH active_users as (
   FROM trailmixgames-game-1.merger_prod_fact.fact_dt_user_iap_revenue
   WHERE 1=1
   and dt>=start_date
+  and dt<=end_date
 )
 
   select 

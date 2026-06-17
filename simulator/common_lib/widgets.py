@@ -186,16 +186,14 @@ class PlatformPanel:
         self._set_anchor_btn.on_click(lambda _: [cb() for cb in self._set_anchor_callbacks])
 
         self._age_distribution: dict = {}
-        self._dist_stale: bool = False
+        self._dist_retention_snapshot: Optional[dict] = None
         self._derive_btn = widgets.Button(
-            description="Derive from installs", button_style="info",
+            description="Update Distribution", button_style="info",
             layout=widgets.Layout(width="170px"),
         )
         self._derive_callbacks: list[Callable] = []
         self._derive_btn.on_click(lambda _: [cb() for cb in self._derive_callbacks])
-        self._age_dist_status = widgets.HTML(
-            "<span style='color:#999;font-size:11px'>Not derived — using avg base age fallback</span>"
-        )
+        self._age_dist_display = widgets.HTML("")
 
         self._cpi_inputs:       list[widgets.BoundedFloatText] = []
         self._boost_inputs:     list[widgets.BoundedFloatText] = []
@@ -410,21 +408,23 @@ class PlatformPanel:
     def on_derive(self, callback: Callable):
         self._derive_callbacks = [callback]
 
-    def set_age_distribution(self, dist: dict):
+    def set_age_distribution(self, dist: dict, retention_snapshot: dict = None):
         self._age_distribution = {int(k): float(v) for k, v in dist.items()}
-        self._dist_stale = False
-        self._refresh_dist_display()
+        if retention_snapshot is not None:
+            self._dist_retention_snapshot = {int(k): round(float(v), 6) for k, v in retention_snapshot.items()}
+        self._refresh_dist_display(stale=False)
 
-    def mark_distribution_stale(self):
-        if self._age_distribution:
-            self._dist_stale = True
-            self._refresh_dist_display()
+    def check_dist_freshness(self, current_retention: dict):
+        """Compare current retention to the snapshot taken at last derive; show ⚠ if changed."""
+        if not self._age_distribution or self._dist_retention_snapshot is None:
+            return
+        current = {int(k): round(float(v), 6) for k, v in current_retention.items()}
+        stale = current != self._dist_retention_snapshot
+        self._refresh_dist_display(stale=stale)
 
-    def _refresh_dist_display(self):
+    def _refresh_dist_display(self, stale: bool = False):
         if not self._age_distribution:
-            self._age_dist_status.value = (
-                "<span style='color:#999;font-size:11px'>Not derived — using avg base age fallback</span>"
-            )
+            self._age_dist_display.value = ""
             return
         bands = [
             (1,    6,    'D1–6'),
@@ -444,16 +444,16 @@ class PlatformPanel:
                     f"<td style='text-align:right'>{pct:.1f}%</td></tr>"
                 )
         table = (
-            "<table style='font-size:11px;border-collapse:collapse;margin-top:4px'>"
+            "<table style='font-size:11px;border-collapse:collapse'>"
             "<tr><th style='text-align:left;padding:1px 16px 1px 0;color:#555'>Age band</th>"
             "<th style='text-align:right;color:#555'>Share</th></tr>"
             f"{rows_html}</table>"
         )
-        if self._dist_stale:
-            header = "<div style='color:orange;font-size:11px;margin-bottom:2px'>⚠ Retention changed — re-derive to update</div>"
-        else:
-            header = "<div style='color:green;font-size:11px;margin-bottom:2px'>✓ Derived from installs</div>"
-        self._age_dist_status.value = header + table
+        warning = (
+            "<div style='color:orange;font-size:11px;margin-bottom:4px'>"
+            "⚠ Retention changed — click ↻ Update Distribution to sync</div>"
+        ) if stale else ""
+        self._age_dist_display.value = warning + table
 
     def set_monthly_values(self, monthly_cpi: dict, monthly_boost_pct: dict = None):
         for i, m in enumerate(self._months):
@@ -495,9 +495,9 @@ class PlatformPanel:
                  widgets.HTML("<span style='color:#999;font-size:11px;padding:6px 0 0 8px'>fallback when no distribution</span>")],
                 layout=widgets.Layout(align_items='center'),
             ),
-            widgets.HTML("<span style='font-size:11px;color:#666;margin-top:4px'>Age distribution from install history:</span>"),
+            widgets.HTML("<span style='font-size:11px;color:#666;margin-top:4px'>Age distribution:</span>"),
             widgets.HBox([self._derive_btn], layout=widgets.Layout(margin='4px 0 2px 0')),
-            self._age_dist_status,
+            self._age_dist_display,
         ], layout=widgets.Layout(border='1px solid #eee', padding='8px', margin='4px', min_width='360px'))
 
     def boost_widget(self) -> widgets.VBox:
@@ -598,11 +598,15 @@ class CurvePanel:
         self._preview_btn.on_click(lambda _: [cb() for cb in self._preview_callbacks])
         self._preview_box = widgets.VBox([])
 
+        btn_row = widgets.HBox(
+            [self._ios_apply_btn, self._and_apply_btn, self._preview_btn],
+            layout=widgets.Layout(margin='8px 0 4px 0', gap='8px'),
+        )
+
         table_col = widgets.VBox([
             widgets.HTML(f"<span style='font-size:11px;color:#888'>{note}Values as %. PCHIP-interpolated to D1–D1800.</span>"),
             *rows,
-            widgets.HBox([self._ios_apply_btn, self._and_apply_btn, self._preview_btn],
-                         layout=widgets.Layout(margin='8px 0 4px 0', gap='8px')),
+            btn_row,
         ], layout=widgets.Layout(min_width='500px'))
 
         self._box = widgets.VBox([
@@ -1604,10 +1608,11 @@ class ActualsRangePanel:
 # ---------------------------------------------------------------------------
 
 class ScenarioPanel:
-    def __init__(self, saved_scenarios: list[str] = None):
-        self._run_callbacks:  list[Callable] = []
-        self._save_callbacks: list[Callable] = []
-        self._load_callbacks: list[Callable] = []
+    def __init__(self, saved_scenarios: list[str] = None, last_actuals_date: date = None):
+        self._run_callbacks:            list[Callable] = []
+        self._save_callbacks:           list[Callable] = []
+        self._load_callbacks:           list[Callable] = []
+        self._forecast_start_callbacks: list[Callable] = []
 
         # ---- top bar ----
         self.scenario_name = widgets.Text(
@@ -1641,16 +1646,13 @@ class ScenarioPanel:
         self.android_panel = PlatformPanel("android", n_months=12, start_month=start_month)
 
         self.forecast_start.observe(self._on_forecast_params_change, names='value')
+        self.forecast_start.observe(self._on_forecast_start_change, names='value')
         self.forecast_months.observe(self._on_forecast_params_change, names='value')
 
         # ---- curve panels ----
         self.retention_panel  = CurvePanel('retention')
         self.conversion_panel = CurvePanel('conversion')
 
-        def _on_retention_changed():
-            self.ios_panel.mark_distribution_stale()
-            self.android_panel.mark_distribution_stale()
-        self.retention_panel.on_change(_on_retention_changed)
 
         # ---- ARPDAU panel ----
         self.arpdau_panel = ARPDAUPanel(n_months=12, start_month=start_month)
@@ -1712,6 +1714,7 @@ class ScenarioPanel:
         input_tab.set_title(5, 'UA Budget')
         input_tab.set_title(6, 'Results')
         self._input_tab = input_tab
+        input_tab.observe(self._on_tab_change, names='selected_index')
 
         # ---- actuals history depth ----
         self._actuals_months = widgets.BoundedIntText(
@@ -1746,23 +1749,31 @@ class ScenarioPanel:
             ),
         ], layout=widgets.Layout(margin='6px 0 10px 0'))
 
+        _date_str = last_actuals_date.strftime('%d %b %Y')
+        _header_row_items = [
+            _header("Game Simulator"),
+            widgets.HTML(
+                f"<span style='color:#999;font-size:11px;margin-left:10px;line-height:2.2'>"
+                f"v{VERSION}</span>"
+            ),
+            widgets.HTML(
+                f"<span style='color:#888;font-size:11px;margin-left:10px;line-height:2.2'>"
+                f"│&nbsp;&nbsp;Actuals to: {_date_str}</span>"
+            ),
+        ]
+
         self._box = widgets.VBox([
-            widgets.HBox([
-                _header("Game Simulator"),
-                widgets.HTML(
-                    f"<span style='color:#999;font-size:11px;margin-left:10px;line-height:2.2'>"
-                    f"v{VERSION}</span>"
-                ),
-            ]),
+            widgets.HBox(_header_row_items),
             controls,
             input_tab,
         ])
 
     # ---- public API ----
 
-    def on_run(self, callback: Callable):  self._run_callbacks  = [callback]
-    def on_save(self, callback: Callable): self._save_callbacks = [callback]
-    def on_load(self, callback: Callable): self._load_callbacks = [callback]
+    def on_run(self, callback: Callable):                   self._run_callbacks            = [callback]
+    def on_save(self, callback: Callable):                  self._save_callbacks           = [callback]
+    def on_load(self, callback: Callable):                  self._load_callbacks           = [callback]
+    def on_forecast_start_change(self, callback: Callable): self._forecast_start_callbacks = [callback]
 
     def on_set_anchor(self, callback: Callable):
         self.ios_panel.on_set_anchor(callback)
@@ -1879,7 +1890,7 @@ class ScenarioPanel:
             p.anchor_dau.send_state()
             p.anchor_offset_pct.send_state()
             p.avg_base_age.send_state()
-            p._age_dist_status.send_state()
+            p._age_dist_display.send_state()
         # Retention / Conversion curve anchor inputs
         for curve in (self.retention_panel, self.conversion_panel):
             for platform in ('ios', 'android'):
@@ -1972,6 +1983,19 @@ class ScenarioPanel:
         forecast_ym = self.get_forecast_start().strftime("%Y-%m")
         self.ios_panel.set_ua_for_installs(self.ua_budget_panel.get_ios_ua(forecast_ym))
         self.android_panel.set_ua_for_installs(self.ua_budget_panel.get_android_ua(forecast_ym))
+
+    def _on_tab_change(self, change):
+        if change['new'] == 0:  # DAU tab
+            self._check_dist_freshness()
+
+    def _check_dist_freshness(self):
+        anchors = self.get_curve_anchors()
+        self.ios_panel.check_dist_freshness(anchors['ios']['retention'])
+        self.android_panel.check_dist_freshness(anchors['android']['retention'])
+
+    def _on_forecast_start_change(self, _):
+        for cb in self._forecast_start_callbacks:
+            cb()
 
     def _on_run(self, _):
         import traceback

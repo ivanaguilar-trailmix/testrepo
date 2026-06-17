@@ -2,6 +2,7 @@
 
 
 DECLARE start_date DATE DEFAULT cast('{start_date}' as date);
+DECLARE end_date DATE DEFAULT cast('{end_date}' as date);
 
 WITH installs AS (
   SELECT DISTINCT 
@@ -17,7 +18,7 @@ WITH installs AS (
     AND cast(install_ts as date)>=start_date
     AND dt>=start_date
     AND cast(install_ts as date) = dt
-    and dt < CURRENT_DATE()
+    and dt <= end_date
     and platform in ('AND', 'IOS')
     and active = 1
   )

@@ -238,6 +238,11 @@ def setup_callbacks(
                 panel.conversion_panel.set_values(
                     ios=curve_anchors['ios']['conversion'], android=curve_anchors['android']['conversion'],
                 )
+                for _platform, _wp in [('ios', panel.ios_panel), ('android', panel.android_panel)]:
+                    _wp._dist_retention_snapshot = {
+                        int(k): round(float(v), 6)
+                        for k, v in curve_anchors[_platform]['retention'].items()
+                    }
             if actuals_range:
                 panel.set_actuals_range(actuals_range)
             if actuals_from:
@@ -360,9 +365,6 @@ def setup_callbacks(
 
     def _derive_age_dist(platform: str, widget_panel):
         if installs is None:
-            widget_panel._age_dist_status.value = (
-                "<span style='color:red;font-size:11px'>installs data not loaded — pass installs= to setup_callbacks()</span>"
-            )
             return
         try:
             start       = panel.get_forecast_start()
@@ -372,10 +374,10 @@ def setup_callbacks(
             anchors    = panel.get_curve_anchors()
             retention  = build_curve(anchors[platform]['retention'])
             dist       = derive_age_distribution(installs, platform, retention, anchor_date)
-            widget_panel.set_age_distribution(dist)
+            if dist:
+                widget_panel.set_age_distribution(dist, retention_snapshot=anchors[platform]['retention'])
         except Exception as e:
             _logger.exception("derive_age_dist failed (%s)", platform)
-            widget_panel._age_dist_status.value = f"<span style='color:red;font-size:11px'>Error: {e}</span>"
 
     def _preview_curve(metric: str):
         curve_panel = panel.retention_panel if metric == 'retention' else panel.conversion_panel
@@ -386,10 +388,16 @@ def setup_callbacks(
     panel.retention_panel.on_preview(lambda: _preview_curve('retention'))
     panel.conversion_panel.on_preview(lambda: _preview_curve('conversion'))
 
+    def _on_forecast_start_changed():
+        set_anchor_from_actuals()
+        _derive_age_dist('ios',     panel.ios_panel)
+        _derive_age_dist('android', panel.android_panel)
+
     panel.on_run(run_simulation)
     panel.on_save(save_current_scenario)
     panel.on_load(load_saved_scenario)
     panel.on_set_anchor(set_anchor_from_actuals)
+    panel.on_forecast_start_change(_on_forecast_start_changed)
     panel.retention_actuals_panel.on_load(lambda: _load_single_curve('retention'))
     panel.conversion_actuals_panel.on_load(lambda: _load_single_curve('conversion'))
     panel.arpdau_actuals_panel.on_load(load_arpdau_from_actuals)
