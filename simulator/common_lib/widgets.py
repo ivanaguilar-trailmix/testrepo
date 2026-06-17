@@ -195,6 +195,13 @@ class PlatformPanel:
         self._derive_btn.on_click(lambda _: [cb() for cb in self._derive_callbacks])
         self._age_dist_display = widgets.HTML("")
 
+        self._get_cpi_btn = widgets.Button(
+            description="Get from actuals", button_style="info",
+            layout=widgets.Layout(width="150px"),
+        )
+        self._get_cpi_callbacks: list[Callable] = []
+        self._get_cpi_btn.on_click(lambda _: [cb() for cb in self._get_cpi_callbacks])
+
         self._cpi_inputs:       list[widgets.BoundedFloatText] = []
         self._boost_inputs:     list[widgets.BoundedFloatText] = []
         self._boost_labels:     list[widgets.Label]            = []
@@ -241,6 +248,7 @@ class PlatformPanel:
         platform_label = "iOS" if platform == "ios" else "Android"
         self._box = widgets.VBox([
             _header(f"{platform_label} — CPI"),
+            widgets.HBox([self._get_cpi_btn], layout=widgets.Layout(margin='0 0 4px 0')),
             header_row,
             self._rows_box,
             paste_section,
@@ -407,6 +415,9 @@ class PlatformPanel:
 
     def on_derive(self, callback: Callable):
         self._derive_callbacks = [callback]
+
+    def on_get_cpi_actuals(self, callback: Callable):
+        self._get_cpi_callbacks = [callback]
 
     def set_age_distribution(self, dist: dict, retention_snapshot: dict = None):
         self._age_distribution = {int(k): float(v) for k, v in dist.items()}
@@ -1079,176 +1090,6 @@ class ARPDAUPanel:
 
 
 # ---------------------------------------------------------------------------
-# Team cost panel — single-column monthly inputs
-# ---------------------------------------------------------------------------
-
-class TeamCostPanel:
-
-    def __init__(self, n_months: int = 12, start_month: Optional[str] = None,
-                 label: str = "Team Cost"):
-        self._months   = _month_sequence(n_months, start_month)
-        self._baseline: dict[str, float] = {}
-        self._loading  = False
-
-        self._inputs:       list[widgets.BoundedFloatText] = []
-        self._month_labels: list[widgets.Label]            = []
-        self._data_rows:    list[widgets.HBox]             = []
-        self._rows_timer:    Optional[object]      = None
-        self._rows_new_from: int                   = 0
-        self._live:          bool                  = False
-
-        fill_btn = _fill_btn()
-        self._load_csv_btn = widgets.Button(
-            description="Load from CSV", button_style="info",
-            layout=widgets.Layout(width="130px"),
-        )
-        self._load_csv_callbacks: list[Callable] = []
-        self._load_csv_btn.on_click(lambda _: [cb() for cb in self._load_csv_callbacks])
-
-        def _col_hdr(text, btn):
-            return widgets.VBox(
-                [widgets.HTML(f"<b>{text}</b>"), btn],
-                layout=widgets.Layout(width="150px"),
-            )
-
-        header_row = widgets.HBox([
-            widgets.HTML("<b>Month</b>", layout=widgets.Layout(width="90px")),
-            _col_hdr(f"{label} ($)",    fill_btn),
-        ])
-
-        fill_btn.on_click(lambda _: [
-            w.__setattr__("value", self._inputs[0].value)
-            for i, w in enumerate(self._inputs) if 0 < i < len(self._months)
-        ])
-
-        self._rows_box = widgets.VBox([])
-        self._apply_months(self._months)
-
-        paste_section = _make_paste_section(
-            [(f"{label} ($)", self._inputs)],
-            self._months,
-        )
-
-        self._box = widgets.VBox([
-            _header(f"{label} — Monthly Inputs"),
-            widgets.HBox([
-                widgets.HTML("<span style='font-size:11px;color:#888'>Monthly cost inputs.</span>"),
-                self._load_csv_btn,
-            ]),
-            header_row,
-            self._rows_box,
-            paste_section,
-        ], layout=widgets.Layout(padding="10px"))
-
-    def _create_row(self) -> None:
-        i = len(self._data_rows)
-        lbl = widgets.Label("", layout=widgets.Layout(width="90px"))
-        w   = widgets.BoundedFloatText(value=0, min=0, max=1e9, step=1000,
-                                       layout=widgets.Layout(width="150px"))
-        w.observe(lambda change, _i=i: self._on_change_idx(_i, change), names='value')
-        fill_w = _row_fill_btn()
-        fill_w.on_click(lambda _, _i=i: [
-            inp.__setattr__("value", self._inputs[_i].value)
-            for inp in self._inputs[_i + 1:len(self._months)]
-        ])
-        self._month_labels.append(lbl)
-        self._inputs.append(w)
-        self._data_rows.append(widgets.HBox([lbl, w, fill_w]))
-
-    def _apply_months(self, months: list[str]):
-        existing = len(self._data_rows)
-        while len(self._data_rows) < len(months):
-            self._create_row()
-        for i, m in enumerate(months):
-            self._month_labels[i].value = m
-        n = len(months)
-        if not self._live:
-            if self._rows_timer is not None:
-                self._rows_timer.cancel()
-                self._rows_timer = None
-            self._rows_box.children = tuple(self._data_rows[:n])
-            return
-        new_rows = len(self._data_rows) > existing
-        if new_rows:
-            if self._rows_timer is None:
-                self._rows_new_from = existing
-            if self._rows_timer is not None:
-                self._rows_timer.cancel()
-        else:
-            if self._rows_timer is None:
-                self._rows_box.children = tuple(self._data_rows[:n])
-                return
-            self._rows_timer.cancel()
-        nf = self._rows_new_from
-        def _deferred(_n=n, _nf=nf):
-            try:
-                self._rows_box.children = tuple(self._data_rows[:_n])
-                for i in range(_n):
-                    self._inputs[i].send_state()
-            finally:
-                self._rows_timer = None
-        try:
-            loop = asyncio.get_running_loop()
-            self._rows_timer = loop.call_later(4.0, _deferred)
-        except RuntimeError:
-            self._rows_box.children = tuple(self._data_rows[:n])
-            self._rows_timer = None
-
-    def _on_change_idx(self, i: int, change):
-        if self._loading or i >= len(self._months):
-            return
-        m  = self._months[i]
-        bv = self._baseline.get(m)
-        _highlight(self._inputs[i], bv is not None and abs(round(change['new'], 0) - round(bv, 0)) > 0.5)
-
-    def _clear_highlights(self):
-        for w in self._inputs:
-            _highlight(w, False)
-
-    def update_months(self, start_month: str, n_months: int):
-        new_months = _month_sequence(n_months, start_month)
-        old = {m: self._inputs[i].value for i, m in enumerate(self._months)}
-        self._months[:] = new_months
-        self._apply_months(new_months)
-        self._loading = True
-        try:
-            for i, m in enumerate(new_months):
-                new_val = old.get(m, 0)
-                if self._inputs[i].value != new_val:
-                    self._inputs[i].value = new_val
-        finally:
-            self._loading = False
-
-    @property
-    def values(self) -> dict:
-        return {m: round(w.value, 0) for m, w in zip(self._months, self._inputs)}
-
-    def on_load_csv(self, callback: Callable):
-        self._load_csv_callbacks = [callback]
-
-    def set_values(self, monthly_team_cost: dict, is_baseline: bool = False):
-        self._loading = True
-        try:
-            for i, m in enumerate(self._months):
-                if m in monthly_team_cost:
-                    self._inputs[i].value = round(float(monthly_team_cost[m]), 0)
-        finally:
-            self._loading = False
-        if is_baseline:
-            self._baseline = {m: monthly_team_cost.get(m, 0) for m in self._months}
-            self._clear_highlights()
-        else:
-            for i, m in enumerate(self._months):
-                if m in monthly_team_cost:
-                    bv = self._baseline.get(m)
-                    _highlight(self._inputs[i],
-                               bv is not None and abs(round(self._inputs[i].value, 0) - round(bv, 0)) > 0.5)
-
-    def widget(self) -> widgets.VBox:
-        return self._box
-
-
-# ---------------------------------------------------------------------------
 # Combined UA budget panel (total monthly spend + per-month iOS/Android split)
 # ---------------------------------------------------------------------------
 
@@ -1297,6 +1138,13 @@ class UABudgetPanel:
             for i, w in enumerate(self._ios_pct_inputs) if 0 < i < len(self._months)
         ])
 
+        self._get_actuals_btn = widgets.Button(
+            description="Get from actuals", button_style="info",
+            layout=widgets.Layout(width="150px"),
+        )
+        self._get_actuals_callbacks: list[Callable] = []
+        self._get_actuals_btn.on_click(lambda _: [cb() for cb in self._get_actuals_callbacks])
+
         self._rows_box = widgets.VBox([])
         self._apply_months(self._months)
 
@@ -1308,6 +1156,7 @@ class UABudgetPanel:
         self._box = widgets.VBox([
             _header("UA Budget — Monthly Inputs"),
             widgets.HTML("<span style='font-size:11px;color:#888'>Total UA spend per month. iOS% drives the platform split; Android gets the remainder.</span>"),
+            widgets.HBox([self._get_actuals_btn], layout=widgets.Layout(margin='4px 0 4px 0')),
             header_row,
             self._rows_box,
             paste_section,
@@ -1411,6 +1260,9 @@ class UABudgetPanel:
 
     def on_change(self, callback: Callable):
         self._change_callbacks.append(callback)
+
+    def on_get_actuals(self, callback: Callable):
+        self._get_actuals_callbacks = [callback]
 
     def _clear_highlights(self):
         for w in self._budget_inputs:  _highlight(w, False)

@@ -24,7 +24,7 @@ from IPython.display import display as _display, Javascript as _Javascript
 
 from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve, derive_age_distribution
 from common_lib.plots import build_chart_widget, build_curve_widget, build_curve_preview, configure as _configure_plots
-from common_lib.sheets import load_inputs
+from common_lib.sheets import aggregate_marketing
 from common_lib.simulation import (
     PlatformInputs, SimulationEngine,
     load_scenario, list_scenarios,
@@ -33,26 +33,10 @@ from common_lib.simulation import (
 from common_lib.tables import monthly_table
 
 
-def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict,
-                  sheet_inputs: dict) -> None:
-    """Populate panel with last-observed anchor DAU and CSV CPI/UA/team-cost inputs."""
+def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict) -> None:
+    """Populate panel with last-observed anchor DAU from actuals."""
     panel.ios_panel.anchor_dau.value     = float(anchor_dau.get('ios',     0))
     panel.android_panel.anchor_dau.value = float(anchor_dau.get('android', 0))
-
-    cpi_df = sheet_inputs['cpi']
-    ua_df  = sheet_inputs['ua_spend']
-
-    for platform, widget_panel in [('ios', panel.ios_panel), ('android', panel.android_panel)]:
-        cpi_sub = cpi_df[cpi_df['platform'] == platform].dropna(subset=['cpi'])
-        widget_panel.set_monthly_values(
-            monthly_cpi=dict(zip(cpi_sub['month'], cpi_sub['cpi'].astype(float))),
-        )
-
-    panel.ua_budget_panel.set_values(
-        monthly_budget  = dict(zip(ua_df['month'], ua_df['total_budget'].astype(float))),
-        monthly_ios_pct = dict(zip(ua_df['month'], ua_df['ios_pct'].astype(float))),
-        is_baseline=True,
-    )
 
 
 
@@ -65,6 +49,7 @@ def setup_callbacks(
     live_conversion: pd.DataFrame = None,
     default_scenario: str = None,
     installs: pd.DataFrame = None,
+    marketing: pd.DataFrame = None,
 ) -> None:
     """Wire all panel buttons to their callback functions."""
     _display(_Javascript("""
@@ -179,7 +164,6 @@ def setup_callbacks(
                 n_months=n_months,
                 curve_anchors=curve_anchors,
                 actuals_range=actuals_range,
-                monthly_team_cost=None,
                 actuals_from=str(actuals_from) if actuals_from else None,
                 selected_charts=None,
                 historical_marketing=panel.get_historical_marketing(),
@@ -198,7 +182,7 @@ def setup_callbacks(
             _logger.debug("load_saved_scenario START name=%s", name)
             panel.set_status(f"Loading {name}...", "blue")
             (_, start, n_months, ios_inp, and_inp,
-             curve_anchors, actuals_range, monthly_team_cost,
+             curve_anchors, actuals_range,
              actuals_from, selected_charts, historical_marketing,
              monthly_ua_budget, monthly_ios_pct,
              monthly_iap_net_factor) = load_scenario(name)
@@ -393,6 +377,33 @@ def setup_callbacks(
         _derive_age_dist('ios',     panel.ios_panel)
         _derive_age_dist('android', panel.android_panel)
 
+    def _load_cpi_from_actuals(platform: str, widget_panel):
+        if marketing is None:
+            return
+        try:
+            agg = aggregate_marketing(marketing)
+            cpi_sub = agg['cpi']
+            cpi_sub = cpi_sub[cpi_sub['platform'] == platform].dropna(subset=['cpi'])
+            widget_panel.set_monthly_values(
+                monthly_cpi=dict(zip(cpi_sub['month'], cpi_sub['cpi'].astype(float))),
+            )
+        except Exception:
+            _logger.exception("load_cpi_from_actuals failed (%s)", platform)
+
+    def _load_ua_from_actuals():
+        if marketing is None:
+            return
+        try:
+            agg = aggregate_marketing(marketing)
+            ua_df = agg['ua_spend']
+            panel.ua_budget_panel.set_values(
+                monthly_budget  = dict(zip(ua_df['month'], ua_df['total_budget'].astype(float))),
+                monthly_ios_pct = dict(zip(ua_df['month'], ua_df['ios_pct'].astype(float))),
+                is_baseline=True,
+            )
+        except Exception:
+            _logger.exception("load_ua_from_actuals failed")
+
     panel.on_run(run_simulation)
     panel.on_save(save_current_scenario)
     panel.on_load(load_saved_scenario)
@@ -403,6 +414,9 @@ def setup_callbacks(
     panel.arpdau_actuals_panel.on_load(load_arpdau_from_actuals)
     panel.ios_panel.on_derive(lambda: _derive_age_dist('ios',     panel.ios_panel))
     panel.android_panel.on_derive(lambda: _derive_age_dist('android', panel.android_panel))
+    panel.ios_panel.on_get_cpi_actuals(lambda: _load_cpi_from_actuals('ios',     panel.ios_panel))
+    panel.android_panel.on_get_cpi_actuals(lambda: _load_cpi_from_actuals('android', panel.android_panel))
+    panel.ua_budget_panel.on_get_actuals(_load_ua_from_actuals)
 
     if default_scenario:
         load_saved_scenario(default_scenario)
