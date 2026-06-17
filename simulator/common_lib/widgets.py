@@ -193,7 +193,8 @@ class PlatformPanel:
         )
         self._derive_callbacks: list[Callable] = []
         self._derive_btn.on_click(lambda _: [cb() for cb in self._derive_callbacks])
-        self._age_dist_display = widgets.HTML("")
+        self._age_dist_display  = widgets.HTML("")
+        self._age_dist_header   = widgets.HTML("<span style='font-size:11px;color:#666'>DAU age distribution</span>")
 
         self._get_cpi_btn = widgets.Button(
             description="Get from actuals", button_style="info",
@@ -501,15 +502,14 @@ class PlatformPanel:
         platform_label = "iOS" if self.platform == "ios" else "Android"
         return widgets.VBox([
             widgets.HTML(f"<b style='font-size:12px'>{platform_label}</b>"),
-            widgets.HBox(
-                [self.avg_base_age,
-                 widgets.HTML("<span style='color:#999;font-size:11px;padding:6px 0 0 8px'>fallback when no distribution</span>")],
-                layout=widgets.Layout(align_items='center'),
-            ),
-            widgets.HTML("<span style='font-size:11px;color:#666;margin-top:4px'>Age distribution:</span>"),
+            self._age_dist_header,
             widgets.HBox([self._derive_btn], layout=widgets.Layout(margin='4px 0 2px 0')),
             self._age_dist_display,
         ], layout=widgets.Layout(border='1px solid #eee', padding='8px', margin='4px', min_width='360px'))
+
+    def update_age_dist_label(self, forecast_start) -> None:
+        d = forecast_start.strftime('%Y-%m-%d') if hasattr(forecast_start, 'strftime') else str(forecast_start)
+        self._age_dist_header.value = f"<span style='font-size:11px;color:#666'>DAU age distribution at {d}</span>"
 
     def boost_widget(self) -> widgets.VBox:
         platform_label = "iOS" if self.platform == "ios" else "Android"
@@ -1507,6 +1507,8 @@ class ScenarioPanel:
         start_month = date.today().strftime("%Y-%m")
         self.ios_panel     = PlatformPanel("ios",     n_months=12, start_month=start_month)
         self.android_panel = PlatformPanel("android", n_months=12, start_month=start_month)
+        self.ios_panel.update_age_dist_label(self.forecast_start.value)
+        self.android_panel.update_age_dist_label(self.forecast_start.value)
 
         self.forecast_start.observe(self._on_forecast_params_change, names='value')
         self.forecast_start.observe(self._on_forecast_start_change, names='value')
@@ -1752,7 +1754,6 @@ class ScenarioPanel:
         for p in (self.ios_panel, self.android_panel):
             p.anchor_dau.send_state()
             p.anchor_offset_pct.send_state()
-            p.avg_base_age.send_state()
             p._age_dist_display.send_state()
         # Retention / Conversion curve anchor inputs
         for curve in (self.retention_panel, self.conversion_panel):
@@ -1856,7 +1857,10 @@ class ScenarioPanel:
         self.ios_panel.check_dist_freshness(anchors['ios']['retention'])
         self.android_panel.check_dist_freshness(anchors['android']['retention'])
 
-    def _on_forecast_start_change(self, _):
+    def _on_forecast_start_change(self, change):
+        fs = change['new']
+        self.ios_panel.update_age_dist_label(fs)
+        self.android_panel.update_age_dist_label(fs)
         for cb in self._forecast_start_callbacks:
             cb()
 
