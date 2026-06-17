@@ -1356,32 +1356,11 @@ class ActualsRangePanel:
         'arpdau':     'ARPDAU',
     }
 
-    def __init__(self, metric: str):
-        self._metric = metric
+    def __init__(self, metric: str, show_range: bool = True):
+        self._metric      = metric
+        self._show_range  = show_range
         self._load_callbacks: list[Callable] = []
-        label = self._LABELS.get(metric, metric.capitalize())
 
-        self._mode = widgets.ToggleButtons(
-            options=[('Days back', 'days_back'), ('Date range', 'date_range')],
-            value='days_back',
-            style={'button_width': '100px', 'description_width': '0px'},
-            layout=widgets.Layout(width='220px'),
-        )
-        self._days_back = widgets.BoundedIntText(
-            value=90, min=7, max=1800, step=1,
-            description='Days back:',
-            style={'description_width': '80px'},
-            layout=widgets.Layout(width='180px'),
-        )
-        today = date.today()
-        self._from_date = widgets.DatePicker(
-            value=today - timedelta(days=90), description='From:',
-            style={'description_width': '50px'}, layout=widgets.Layout(width='200px'),
-        )
-        self._to_date = widgets.DatePicker(
-            value=today, description='To:',
-            style={'description_width': '50px'}, layout=widgets.Layout(width='200px'),
-        )
         self._load_btn = widgets.Button(
             description='Get from actuals',
             button_style='info',
@@ -1390,18 +1369,44 @@ class ActualsRangePanel:
         self._load_btn.on_click(self._on_load)
         self._status = widgets.HTML("")
 
-        self._days_back_box  = widgets.HBox([self._days_back])
-        self._date_range_box = widgets.HBox([self._from_date, self._to_date])
+        if show_range:
+            self._mode = widgets.ToggleButtons(
+                options=[('Days back', 'days_back'), ('Date range', 'date_range')],
+                value='days_back',
+                style={'button_width': '100px', 'description_width': '0px'},
+                layout=widgets.Layout(width='220px'),
+            )
+            self._days_back = widgets.BoundedIntText(
+                value=90, min=7, max=1800, step=1,
+                description='Days back:',
+                style={'description_width': '80px'},
+                layout=widgets.Layout(width='180px'),
+            )
+            today = date.today()
+            self._from_date = widgets.DatePicker(
+                value=today - timedelta(days=90), description='From:',
+                style={'description_width': '50px'}, layout=widgets.Layout(width='200px'),
+            )
+            self._to_date = widgets.DatePicker(
+                value=today, description='To:',
+                style={'description_width': '50px'}, layout=widgets.Layout(width='200px'),
+            )
+            self._days_back_box  = widgets.HBox([self._days_back])
+            self._date_range_box = widgets.HBox([self._from_date, self._to_date])
+            self._mode.observe(self._on_mode_change, names='value')
+            self._on_mode_change(None)
 
-        self._mode.observe(self._on_mode_change, names='value')
-        self._on_mode_change(None)
-
-        self._box = widgets.VBox([
-            widgets.HBox([self._mode, self._load_btn]),
-            self._days_back_box,
-            self._date_range_box,
-            self._status,
-        ], layout=widgets.Layout(border='1px solid #b3d9ff', padding='8px', margin='0px 0px 8px 0px'))
+            self._box = widgets.VBox([
+                widgets.HBox([self._mode, self._load_btn]),
+                self._days_back_box,
+                self._date_range_box,
+                self._status,
+            ], layout=widgets.Layout(border='1px solid #b3d9ff', padding='8px', margin='0px 0px 8px 0px'))
+        else:
+            self._box = widgets.VBox([
+                widgets.HBox([self._load_btn, self._status],
+                             layout=widgets.Layout(align_items='center')),
+            ], layout=widgets.Layout(border='1px solid #b3d9ff', padding='8px', margin='0px 0px 8px 0px'))
 
     def _on_mode_change(self, _):
         if self._mode.value == 'days_back':
@@ -1422,6 +1427,8 @@ class ActualsRangePanel:
         self._status.value = f"<span style='color:{color};font-size:11px'>{message}</span>"
 
     def get_range(self, forecast_start: Optional[date] = None) -> tuple[date, date]:
+        if not self._show_range:
+            return date(2020, 1, 1), (forecast_start or date.today()) - timedelta(days=1)
         if self._mode.value == 'days_back':
             ref   = forecast_start or date.today()
             end   = ref - timedelta(days=1)
@@ -1435,6 +1442,8 @@ class ActualsRangePanel:
             return from_val, to_val
 
     def get_state(self) -> dict:
+        if not self._show_range:
+            return {}
         return {
             'mode':      self._mode.value,
             'days_back': int(self._days_back.value),
@@ -1443,6 +1452,8 @@ class ActualsRangePanel:
         }
 
     def set_state(self, state: dict):
+        if not self._show_range or not state:
+            return
         self._mode.value = state.get('mode', 'days_back')
         if state.get('days_back'):
             self._days_back.value = int(state['days_back'])
@@ -1516,7 +1527,7 @@ class ScenarioPanel:
         # ---- actuals range panels ----
         self.retention_actuals_panel  = ActualsRangePanel('retention')
         self.conversion_actuals_panel = ActualsRangePanel('conversion')
-        self.arpdau_actuals_panel     = ActualsRangePanel('arpdau')
+        self.arpdau_actuals_panel     = ActualsRangePanel('arpdau', show_range=False)
 
         # ---- DAU tab layout ----
         _sec = widgets.Layout(border='1px solid #e0e0e0', padding='8px', margin='4px')
