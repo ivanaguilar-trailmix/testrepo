@@ -22,7 +22,7 @@ if not _logger.handlers:
 from datetime import timedelta
 from IPython.display import display as _display, Javascript as _Javascript
 
-from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, build_curve, derive_age_distribution
+from common_lib.curves import average_actuals_anchors, average_arpdau_from_actuals, monthly_arpdau_from_actuals, build_curve, derive_age_distribution
 from common_lib.plots import build_chart_widget, build_curve_widget, build_curve_preview, configure as _configure_plots
 from common_lib.sheets import aggregate_marketing
 from common_lib.simulation import (
@@ -328,20 +328,20 @@ def setup_callbacks(
     def load_arpdau_from_actuals():
         try:
             start, end = panel.arpdau_actuals_panel.get_range(forecast_start=panel.get_forecast_start())
-            avgs = average_arpdau_from_actuals(actuals, start, end)
-            if avgs['ios']['iap'] is None and avgs['android']['iap'] is None:
+            monthly = monthly_arpdau_from_actuals(actuals, start, end)
+            if not monthly['ios']['iap'] and not monthly['android']['iap']:
                 panel.arpdau_actuals_panel.set_status(f"No actuals data in {start} – {end}", 'orange')
                 return
-            months = panel.arpdau_panel._months
             panel.arpdau_panel.set_values(
-                ios_iap     = {m: avgs['ios']['iap']     for m in months} if avgs['ios']['iap']     is not None else {},
-                ios_ad      = {m: avgs['ios']['ad']      for m in months} if avgs['ios']['ad']      is not None else {},
-                android_iap = {m: avgs['android']['iap'] for m in months} if avgs['android']['iap'] is not None else {},
-                android_ad  = {m: avgs['android']['ad']  for m in months} if avgs['android']['ad']  is not None else {},
+                ios_iap     = monthly['ios']['iap'],
+                ios_ad      = monthly['ios']['ad'],
+                android_iap = monthly['android']['iap'],
+                android_ad  = monthly['android']['ad'],
                 is_baseline = True,
             )
+            n = max(len(monthly['ios']['iap']), len(monthly['android']['iap']))
             panel.arpdau_actuals_panel.set_status(
-                f"Avg from {start} – {end} applied to all months  |  yellow = overridden", 'green'
+                f"Loaded {n} months from {start} – {end}  |  yellow = overridden", 'green'
             )
         except Exception as e:
             _logger.exception("load_arpdau_from_actuals failed")

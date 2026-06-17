@@ -1383,9 +1383,9 @@ class ActualsRangePanel:
             style={'description_width': '50px'}, layout=widgets.Layout(width='200px'),
         )
         self._load_btn = widgets.Button(
-            description=f'Load {label} from actuals',
+            description='Get from actuals',
             button_style='info',
-            layout=widgets.Layout(width='210px'),
+            layout=widgets.Layout(width='150px'),
         )
         self._load_btn.on_click(self._on_load)
         self._status = widgets.HTML("")

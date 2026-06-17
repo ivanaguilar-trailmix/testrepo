@@ -112,6 +112,49 @@ def average_arpdau_from_actuals(
     return result
 
 
+def monthly_arpdau_from_actuals(
+    actuals: pd.DataFrame,
+    start_date: date,
+    end_date: date,
+) -> dict:
+    """
+    Compute DAU-weighted ARPDAU per platform per calendar month over [start_date, end_date].
+
+    Only months that have actual data are included in the result dicts.
+
+    Returns: {
+        'ios':     {'iap': {'2026-01': 0.42, ...}, 'ad': {'2026-01': 0.08, ...}},
+        'android': {'iap': {...}, 'ad': {...}},
+    }
+    """
+    df = actuals.copy()
+    df['dt'] = pd.to_datetime(df['dt'])
+    filtered = df[(df['dt'].dt.date >= start_date) & (df['dt'].dt.date <= end_date)]
+    if filtered.empty:
+        return {'ios': {'iap': {}, 'ad': {}}, 'android': {'iap': {}, 'ad': {}}}
+
+    filtered = filtered.copy()
+    filtered['month'] = filtered['dt'].dt.strftime('%Y-%m')
+
+    grouped = (
+        filtered
+        .groupby(['platform', 'month'])[['dau', 'iap_revenue', 'ad_revenue']]
+        .sum()
+        .reset_index()
+    )
+    grouped['iap_arpdau'] = (grouped['iap_revenue'] / grouped['dau'].replace(0, np.nan)).round(4)
+    grouped['ad_arpdau']  = (grouped['ad_revenue']  / grouped['dau'].replace(0, np.nan)).round(4)
+
+    result = {'ios': {'iap': {}, 'ad': {}}, 'android': {'iap': {}, 'ad': {}}}
+    for _, row in grouped.iterrows():
+        p = row['platform']
+        m = row['month']
+        if p in result:
+            if pd.notna(row['iap_arpdau']): result[p]['iap'][m] = float(row['iap_arpdau'])
+            if pd.notna(row['ad_arpdau']):  result[p]['ad'][m]  = float(row['ad_arpdau'])
+    return result
+
+
 def anchors_from_df(df, platform: str, month: str = None) -> dict:
     """
     Extract {dx: value} dict from a DataFrame with columns ['month', 'dx', 'ios', 'android'].
