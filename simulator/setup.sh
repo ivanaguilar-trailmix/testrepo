@@ -11,7 +11,7 @@ fi
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip --quiet
-pip install -r requirements.txt --quiet --no-cache-dir
+pip install -r requirements.txt
 jupyter trust game_simulator.ipynb
 python3 -m compileall common_lib/ -q
 

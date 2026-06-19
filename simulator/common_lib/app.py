@@ -109,6 +109,7 @@ def setup_callbacks(
             table_styler, table_df = monthly_table(
                 name, filtered,
                 historical_marketing=panel.get_historical_marketing(),
+                monthly_ua_budget=panel.ua_budget_panel.values['monthly_budget'],
                 n_actuals=n_actuals,
                 monthly_iap_net_factor=arpdau_vals.get('iap_net_factor'),
             )
@@ -187,90 +188,106 @@ def setup_callbacks(
              monthly_ua_budget, monthly_ios_pct,
              monthly_iap_net_factor) = load_scenario(name)
 
-            panel.forecast_start.value             = start
-            panel.forecast_months.value            = n_months
-            panel.scenario_name.value              = name
-            panel.ios_panel.anchor_dau.value            = ios_inp.anchor_dau or 0
-            panel.android_panel.anchor_dau.value        = and_inp.anchor_dau or 0
-            panel.ios_panel.anchor_offset_pct.value     = ios_inp.anchor_offset_pct
-            panel.android_panel.anchor_offset_pct.value = and_inp.anchor_offset_pct
-            panel.ios_panel.avg_base_age.value          = ios_inp.avg_base_age
-            panel.android_panel.avg_base_age.value      = and_inp.avg_base_age
-            if ios_inp.age_distribution:
-                panel.ios_panel.set_age_distribution(ios_inp.age_distribution)
-            if and_inp.age_distribution:
-                panel.android_panel.set_age_distribution(and_inp.age_distribution)
-            panel.ios_panel.set_monthly_values(
-                monthly_cpi=ios_inp.monthly_cpi,
-                monthly_boost_pct=ios_inp.monthly_installs_boost_pct or {},
-            )
-            panel.android_panel.set_monthly_values(
-                monthly_cpi=and_inp.monthly_cpi,
-                monthly_boost_pct=and_inp.monthly_installs_boost_pct or {},
-            )
-            panel.arpdau_panel.set_values(
-                ios_iap        = ios_inp.monthly_iap_arpdau,
-                ios_ad         = ios_inp.monthly_ad_arpdau,
-                android_iap    = and_inp.monthly_iap_arpdau,
-                android_ad     = and_inp.monthly_ad_arpdau,
-                iap_net_factor = monthly_iap_net_factor,
-            )
-            if curve_anchors:
-                panel.retention_panel.set_values(
-                    ios=curve_anchors['ios']['retention'], android=curve_anchors['android']['retention'],
+            # Suppress forecast-start callbacks during load — the scenario supplies its
+            # own anchor DAU and age distribution; firing set_anchor_from_actuals() here
+            # would overwrite them and also call _derive_age_dist with stale curve values.
+            _saved_fs_cbs = panel._forecast_start_callbacks[:]
+            panel._forecast_start_callbacks = []
+            try:
+                panel.forecast_start.value             = start
+                panel.forecast_months.value            = n_months
+                panel.scenario_name.value              = name
+                panel.ios_panel.anchor_dau.value            = ios_inp.anchor_dau or 0
+                panel.android_panel.anchor_dau.value        = and_inp.anchor_dau or 0
+                panel.ios_panel.anchor_offset_pct.value     = ios_inp.anchor_offset_pct
+                panel.android_panel.anchor_offset_pct.value = and_inp.anchor_offset_pct
+                panel.ios_panel.avg_base_age.value          = ios_inp.avg_base_age
+                panel.android_panel.avg_base_age.value      = and_inp.avg_base_age
+                if ios_inp.age_distribution:
+                    panel.ios_panel.set_age_distribution(ios_inp.age_distribution)
+                if and_inp.age_distribution:
+                    panel.android_panel.set_age_distribution(and_inp.age_distribution)
+                panel.ios_panel.set_monthly_values(
+                    monthly_cpi=ios_inp.monthly_cpi,
+                    monthly_boost_pct=ios_inp.monthly_installs_boost_pct or {},
                 )
-                panel.conversion_panel.set_values(
-                    ios=curve_anchors['ios']['conversion'], android=curve_anchors['android']['conversion'],
+                panel.android_panel.set_monthly_values(
+                    monthly_cpi=and_inp.monthly_cpi,
+                    monthly_boost_pct=and_inp.monthly_installs_boost_pct or {},
                 )
-                for _platform, _wp in [('ios', panel.ios_panel), ('android', panel.android_panel)]:
-                    _wp._dist_retention_snapshot = {
-                        int(k): round(float(v), 6)
-                        for k, v in curve_anchors[_platform]['retention'].items()
-                    }
-            if actuals_range:
-                panel.set_actuals_range(actuals_range)
-            if actuals_from:
-                panel.set_actuals_from(actuals_from)
-            # UA budget: new format takes precedence; fall back to deriving from per-platform UA
-            if monthly_ua_budget is not None:
-                panel.ua_budget_panel.set_values(
-                    monthly_ua_budget,
-                    monthly_ios_pct or {m: 50 for m in monthly_ua_budget},
-                    is_baseline=True,
+                panel.arpdau_panel.set_values(
+                    ios_iap        = ios_inp.monthly_iap_arpdau,
+                    ios_ad         = ios_inp.monthly_ad_arpdau,
+                    android_iap    = and_inp.monthly_iap_arpdau,
+                    android_ad     = and_inp.monthly_ad_arpdau,
+                    iap_net_factor = monthly_iap_net_factor,
                 )
-            else:
-                combined_budget  = {}
-                combined_ios_pct = {}
-                for m, v in (ios_inp.monthly_ua_spend or {}).items():
-                    and_v = (and_inp.monthly_ua_spend or {}).get(m, 0)
-                    total = v + and_v
-                    combined_budget[m]  = total
-                    combined_ios_pct[m] = (v / total * 100) if total > 0 else 50
-                for m, v in (historical_marketing or {}).items():
-                    combined_budget.setdefault(m, v)
-                    combined_ios_pct.setdefault(m, 50)
-                if combined_budget:
-                    panel.ua_budget_panel.set_values(combined_budget, combined_ios_pct, is_baseline=True)
+                if curve_anchors:
+                    panel.retention_panel.set_values(
+                        ios=curve_anchors['ios']['retention'], android=curve_anchors['android']['retention'],
+                    )
+                    panel.conversion_panel.set_values(
+                        ios=curve_anchors['ios']['conversion'], android=curve_anchors['android']['conversion'],
+                    )
+                    for _platform, _wp in [('ios', panel.ios_panel), ('android', panel.android_panel)]:
+                        _wp._dist_retention_snapshot = {
+                            int(k): round(float(v), 6)
+                            for k, v in curve_anchors[_platform]['retention'].items()
+                        }
+                if actuals_range:
+                    panel.set_actuals_range(actuals_range)
+                if actuals_from:
+                    panel.set_actuals_from(actuals_from)
+                # UA budget: new format takes precedence; fall back to deriving from per-platform UA
+                if monthly_ua_budget is not None:
+                    panel.ua_budget_panel.set_values(
+                        monthly_ua_budget,
+                        monthly_ios_pct or {m: 50 for m in monthly_ua_budget},
+                        is_baseline=True,
+                    )
+                else:
+                    combined_budget  = {}
+                    combined_ios_pct = {}
+                    for m, v in (ios_inp.monthly_ua_spend or {}).items():
+                        and_v = (and_inp.monthly_ua_spend or {}).get(m, 0)
+                        total = v + and_v
+                        combined_budget[m]  = total
+                        combined_ios_pct[m] = (v / total * 100) if total > 0 else 50
+                    for m, v in (historical_marketing or {}).items():
+                        combined_budget.setdefault(m, v)
+                        combined_ios_pct.setdefault(m, 50)
+                    if combined_budget:
+                        panel.ua_budget_panel.set_values(combined_budget, combined_ios_pct, is_baseline=True)
+            finally:
+                panel._forecast_start_callbacks = _saved_fs_cbs
 
             _logger.debug("load_saved_scenario COMPLETE name=%s", name)
             try:
                 asyncio.get_running_loop()
                 async def _wait_and_show_status(_name=name):
-                    for _ in range(60):  # poll up to 6 s
-                        await asyncio.sleep(0.1)
-                        if not any([
-                            panel.ios_panel._rows_timer,
-                            panel.android_panel._rows_timer,
-                            panel.ios_panel._boost_rows_timer,
-                            panel.android_panel._boost_rows_timer,
-                            panel.arpdau_panel._rows_timer,
-                            panel.ua_budget_panel._rows_timer,
-                        ]):
-                            break
-                    panel.resync_header_widgets()
-                    await asyncio.sleep(0.2)  # let browser process send_state messages
-                    panel.set_status(f'Loaded: {_name}', 'blue')
-                asyncio.ensure_future(_wait_and_show_status())
+                    try:
+                        _logger.debug("_wait_and_show_status START name=%s", _name)
+                        for _ in range(60):  # poll up to 6 s
+                            await asyncio.sleep(0.1)
+                            timers = [
+                                panel.ios_panel._rows_timer,
+                                panel.android_panel._rows_timer,
+                                panel.ios_panel._boost_rows_timer,
+                                panel.android_panel._boost_rows_timer,
+                                panel.arpdau_panel._rows_timer,
+                                panel.ua_budget_panel._rows_timer,
+                            ]
+                            _logger.debug("_wait_and_show_status poll timers=%s", [t is not None for t in timers])
+                            if not any(timers):
+                                break
+                        panel.resync_header_widgets()
+                        await asyncio.sleep(0.2)
+                        panel.set_status(f'Loaded: {_name}', 'blue')
+                        _logger.debug("_wait_and_show_status DONE name=%s", _name)
+                    except Exception:
+                        _logger.exception("_wait_and_show_status failed name=%s", _name)
+                        panel.set_status(f'Loaded: {_name}', 'blue')
+                asyncio.create_task(_wait_and_show_status())
             except RuntimeError:
                 panel.set_status(f'Loaded: {name}', 'blue')
         except Exception:

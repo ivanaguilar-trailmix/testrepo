@@ -85,6 +85,7 @@ def monthly_table(
     historical_marketing=None,
     n_actuals: int = 6,
     monthly_iap_net_factor: dict = None,
+    monthly_ua_budget: dict = None,
 ) -> 'pd.io.formats.style.Styler':
     """
     Build a styled monthly P&L table combining actuals and forecast.
@@ -101,12 +102,31 @@ def monthly_table(
         How many historical months to show before the forecast start.
     monthly_iap_net_factor : dict {month_str: float}, optional
         Per-month IAP gross-to-net factor for forecast rows. Falls back to 0.70.
+    monthly_ua_budget : dict {month_str: float}, optional
+        Combined (ios+android) UA spend for all months. If provided, used as
+        primary source for forecast-row marketing cost, overriding the
+        per-platform values stored in the scenario file.
     """
-    _, forecast_start, _, ios_inp, and_inp, *_ = load_scenario(scenario)
-    result = load_result(scenario)
+    scenario_data = load_scenario(scenario)
+    forecast_start = scenario_data[1]
+    ios_inp = scenario_data[3]
+    and_inp = scenario_data[4]
+    # Prefer the passed-in budget; fall back to what the scenario file stored.
+    _ua_budget = monthly_ua_budget if monthly_ua_budget is not None else (scenario_data[10] or {})
 
-    act_df = _monthly_actuals(actuals, forecast_start, n_actuals)
+    result = load_result(scenario)
     fct_df = _monthly_forecast(result)
+
+    # Derive the actuals cutoff from the result's actual first period, not the
+    # scenario's saved forecast_start — the two can differ if forecast_start was
+    # changed in the UI after the last save, which would otherwise produce
+    # duplicate rows (one actuals row + one forecast row for the same month).
+    if not fct_df.empty:
+        actuals_before = fct_df['month'].min().to_timestamp()
+    else:
+        actuals_before = forecast_start
+
+    act_df = _monthly_actuals(actuals, actuals_before, n_actuals)
 
     # Blend partial-month actuals into the first forecast row when forecast
     # starts mid-month (e.g. forecast_start = May 11 → add May 1–10 actuals).
@@ -178,6 +198,8 @@ def monthly_table(
     def _mkt(row):
         m = row['month_str']
         if row['is_forecast']:
+            if _ua_budget:
+                return float(_ua_budget.get(m, 0) or 0)
             return (ios_inp.monthly_ua_spend.get(m, 0) or 0) + (and_inp.monthly_ua_spend.get(m, 0) or 0)
         if historical_marketing:
             return historical_marketing.get(m, float('nan'))
@@ -333,9 +355,9 @@ def export_all_tables(
             try:
                 scenario_tuple         = load_scenario(name)
                 forecast_start         = scenario_tuple[1]
-                actuals_from_str       = scenario_tuple[8]
-                historical_marketing   = scenario_tuple[10] or None
-                monthly_iap_net_factor = scenario_tuple[13] or None
+                actuals_from_str       = scenario_tuple[7]
+                historical_marketing   = scenario_tuple[9] or None
+                monthly_iap_net_factor = scenario_tuple[12] or None
 
                 if actuals_from_str:
                     af    = _date.fromisoformat(actuals_from_str)

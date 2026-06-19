@@ -1745,9 +1745,9 @@ class ScenarioPanel:
 
     def resync_header_widgets(self) -> None:
         """Re-push all non-row widget states to the browser after a scenario load."""
-        # Top controls
+        # Top controls (forecast_start intentionally omitted — send_state() on DatePicker
+        # causes a browser round-trip that retriggers the forecast-start observer)
         self.scenario_name.send_state()
-        self.forecast_start.send_state()
         self.forecast_months.send_state()
         self._actuals_months.send_state()
         # DAU tab — platform header inputs
@@ -1812,7 +1812,7 @@ class ScenarioPanel:
         _wlog.debug("ScenarioPanel displayed — all panels now live")
         display(self._box)
         try:
-            asyncio.ensure_future(self._precreate_rows_bg())
+            asyncio.create_task(self._precreate_rows_bg())
         except RuntimeError:
             pass  # no event loop (e.g. test context)
 
