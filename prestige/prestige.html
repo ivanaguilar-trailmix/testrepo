@@ -21335,7 +21335,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=e100ed04">
 <div class="input">
-<div class="prompt input_prompt">In [139]:</div>
+<div class="prompt input_prompt">In [172]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">data_completers_all_events_aggregated</span><span class="p">,</span> 
@@ -21364,7 +21364,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
               <span class="n">hover_data</span><span class="o">=</span><span class="p">{</span><span class="s1">'return_rate_d1_relative_diff'</span><span class="p">:</span> <span class="s1">':.2%'</span><span class="p">},</span>
               <span class="n">text</span><span class="o">=</span><span class="s1">'return_rate_d1_relative_diff'</span><span class="p">)</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span><span class="n">textposition</span><span class="o">=</span><span class="s1">'top center'</span><span class="p">,</span> <span class="n">texttemplate</span><span class="o">=</span><span class="s1">'%</span><span class="si">{text:.4%}</span><span class="s1">%'</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span><span class="n">textposition</span><span class="o">=</span><span class="s1">'top center'</span><span class="p">,</span> <span class="n">texttemplate</span><span class="o">=</span><span class="s1">'%</span><span class="si">{text:.4%}</span><span class="s1">'</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">'Return Rate (%)'</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -21380,7 +21380,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="output_area">
 <div class="prompt"></div>
-<div class="output_html rendered_html output_subarea"><div id="plotly-61-1" style="width:1200px;height:600px;"></div><script>Plotly.newPlot("plotly-61-1",[{"hovertemplate": "set_completed=JoesTastyTravels<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "JoesTastyTravels", "line": {"color": "#636efa", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "JoesTastyTravels", "orientation": "v", "showlegend": true, "text": {"bdata": "AAAAAAAAAADqpFhHgUSJv+/j6pOvHo6/+Z6vnkfhk79JySGsjSqXvw==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}%", "type": "scatter", "x": {"bdata": "AAECAwQ=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "AAAAAAAAAADqpFhHgUSJv+/j6pOvHo6/+Z6vnkfhk79JySGsjSqXvw==", "dtype": "f8"}, "yaxis": "y"}, {"hovertemplate": "set_completed=WinterTales<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "WinterTales", "line": {"color": "#EF553B", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "WinterTales", "orientation": "v", "showlegend": true, "text": {"bdata": "gcgjlLjZdb8AAAAAAAAAABXP1sg47YC/4QaZpUfjjr/4YgfVicSSvw==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}%", "type": "scatter", "x": {"bdata": "/wABAgM=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "gcgjlLjZdb8AAAAAAAAAABXP1sg47YC/4QaZpUfjjr/4YgfVicSSvw==", "dtype": "f8"}, "yaxis": "y"}, {"hovertemplate": "set_completed=AppletonLove<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "AppletonLove", "line": {"color": "#00cc96", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "AppletonLove", "orientation": "v", "showlegend": true, "text": {"bdata": "tv5VkG+Oh7+koA+mPoaAvwAAAAAAAAAAP/NYaX61ib9oMvp+b4GTvw==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}%", "type": "scatter", "x": {"bdata": "/v8AAQI=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "tv5VkG+Oh7+koA+mPoaAvwAAAAAAAAAAP/NYaX61ib9oMvp+b4GTvw==", "dtype": "f8"}, "yaxis": "y"}, {"hovertemplate": "set_completed=Diorama<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "Diorama", "line": {"color": "#ab63fa", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "Diorama", "orientation": "v", "showlegend": true, "text": {"bdata": "ofz3LEC6hb+JDWA4tlp+v+ja0AopU2W/AAAAAAAAAACzJVmFHquHvw==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}%", "type": "scatter", "x": {"bdata": "/f7/AAE=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "ofz3LEC6hb+JDWA4tlp+v+ja0AopU2W/AAAAAAAAAACzJVmFHquHvw==", "dtype": "f8"}, "yaxis": "y"}, {"hovertemplate": "set_completed=ThroughTheAges<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "ThroughTheAges", "line": {"color": "#FFA15A", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "ThroughTheAges", "orientation": "v", "showlegend": true, "text": {"bdata": "gzFMNsvlgb9SxR4dlEJ4v+kuWoFLhGm/617YTKxbX78AAAAAAAAAAA==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}%", "type": "scatter", "x": {"bdata": "/P3+/wA=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "gzFMNsvlgb9SxR4dlEJ4v+kuWoFLhGm/617YTKxbX78AAAAAAAAAAA==", "dtype": "f8"}, "yaxis": "y"}],{"height": 600, "legend": {"title": {"text": "set_completed"}, "tracegroupgap": 0}, "template": {"data": {"bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "bar"}], "barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "barpolar"}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "choropleth": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "choropleth"}], "contour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "contour"}], "contourcarpet": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "contourcarpet"}], "heatmap": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "heatmap"}], "histogram": [{"marker": {"pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "histogram"}], "histogram2d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "histogram2d"}], "histogram2dcontour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "histogram2dcontour"}], "mesh3d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "mesh3d"}], "parcoords": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "parcoords"}], "pie": [{"automargin": true, "type": "pie"}], "scatter": [{"fillpattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}, "type": "scatter"}], "scatter3d": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatter3d"}], "scattercarpet": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattercarpet"}], "scattergeo": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergeo"}], "scattergl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergl"}], "scattermap": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermap"}], "scattermapbox": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermapbox"}], "scatterpolar": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolar"}], "scatterpolargl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolargl"}], "scatterternary": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterternary"}], "surface": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "surface"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}]}, "layout": {"annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "autotypenumbers": "strict", "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]], "sequential": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "sequentialminus": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]]}, "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "geo": {"bgcolor": "white", "lakecolor": "white", "landcolor": "#E5ECF6", "showlakes": true, "showland": true, "subunitcolor": "white"}, "hoverlabel": {"align": "left"}, "hovermode": "closest", "mapbox": {"style": "light"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "ternary": {"aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "title": {"x": 0.05}, "xaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}, "yaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}}}, "title": {"text": "Relative Difference in Return Rate by Completers of Each Event (%)"}, "width": 1200, "xaxis": {"anchor": "y", "domain": [0, 1], "title": {"text": "sequence"}}, "yaxis": {"anchor": "x", "domain": [0, 1], "title": {"text": "Return Rate (%)"}}},{"responsive":false});</script></div>
+<div class="output_html rendered_html output_subarea"><div id="plotly-61-1" style="width:1200px;height:600px;"></div><script>Plotly.newPlot("plotly-61-1",[{"hovertemplate": "set_completed=JoesTastyTravels<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "JoesTastyTravels", "line": {"color": "#636efa", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "JoesTastyTravels", "orientation": "v", "showlegend": true, "text": {"bdata": "AAAAAAAAAADqpFhHgUSJv+/j6pOvHo6/+Z6vnkfhk79JySGsjSqXvw==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}", "type": "scatter", "x": {"bdata": "AAECAwQ=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "AAAAAAAAAADqpFhHgUSJv+/j6pOvHo6/+Z6vnkfhk79JySGsjSqXvw==", "dtype": "f8"}, "yaxis": "y"}, {"hovertemplate": "set_completed=WinterTales<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "WinterTales", "line": {"color": "#EF553B", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "WinterTales", "orientation": "v", "showlegend": true, "text": {"bdata": "gcgjlLjZdb8AAAAAAAAAABXP1sg47YC/4QaZpUfjjr/4YgfVicSSvw==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}", "type": "scatter", "x": {"bdata": "/wABAgM=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "gcgjlLjZdb8AAAAAAAAAABXP1sg47YC/4QaZpUfjjr/4YgfVicSSvw==", "dtype": "f8"}, "yaxis": "y"}, {"hovertemplate": "set_completed=AppletonLove<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "AppletonLove", "line": {"color": "#00cc96", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "AppletonLove", "orientation": "v", "showlegend": true, "text": {"bdata": "tv5VkG+Oh7+koA+mPoaAvwAAAAAAAAAAP/NYaX61ib9oMvp+b4GTvw==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}", "type": "scatter", "x": {"bdata": "/v8AAQI=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "tv5VkG+Oh7+koA+mPoaAvwAAAAAAAAAAP/NYaX61ib9oMvp+b4GTvw==", "dtype": "f8"}, "yaxis": "y"}, {"hovertemplate": "set_completed=Diorama<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "Diorama", "line": {"color": "#ab63fa", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "Diorama", "orientation": "v", "showlegend": true, "text": {"bdata": "ofz3LEC6hb+JDWA4tlp+v+ja0AopU2W/AAAAAAAAAACzJVmFHquHvw==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}", "type": "scatter", "x": {"bdata": "/f7/AAE=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "ofz3LEC6hb+JDWA4tlp+v+ja0AopU2W/AAAAAAAAAACzJVmFHquHvw==", "dtype": "f8"}, "yaxis": "y"}, {"hovertemplate": "set_completed=ThroughTheAges<br>sequence=%{x}<br>return_rate_d1_relative_diff=%{text:.2%}<extra></extra>", "legendgroup": "ThroughTheAges", "line": {"color": "#FFA15A", "dash": "solid"}, "marker": {"symbol": "circle"}, "mode": "lines+markers+text", "name": "ThroughTheAges", "orientation": "v", "showlegend": true, "text": {"bdata": "gzFMNsvlgb9SxR4dlEJ4v+kuWoFLhGm/617YTKxbX78AAAAAAAAAAA==", "dtype": "f8"}, "textposition": "top center", "texttemplate": "%{text:.4%}", "type": "scatter", "x": {"bdata": "/P3+/wA=", "dtype": "i1"}, "xaxis": "x", "y": {"bdata": "gzFMNsvlgb9SxR4dlEJ4v+kuWoFLhGm/617YTKxbX78AAAAAAAAAAA==", "dtype": "f8"}, "yaxis": "y"}],{"height": 600, "legend": {"title": {"text": "set_completed"}, "tracegroupgap": 0}, "template": {"data": {"bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "bar"}], "barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "barpolar"}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "choropleth": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "choropleth"}], "contour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "contour"}], "contourcarpet": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "contourcarpet"}], "heatmap": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "heatmap"}], "histogram": [{"marker": {"pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "histogram"}], "histogram2d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "histogram2d"}], "histogram2dcontour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "histogram2dcontour"}], "mesh3d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "mesh3d"}], "parcoords": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "parcoords"}], "pie": [{"automargin": true, "type": "pie"}], "scatter": [{"fillpattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}, "type": "scatter"}], "scatter3d": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatter3d"}], "scattercarpet": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattercarpet"}], "scattergeo": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergeo"}], "scattergl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergl"}], "scattermap": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermap"}], "scattermapbox": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermapbox"}], "scatterpolar": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolar"}], "scatterpolargl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolargl"}], "scatterternary": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterternary"}], "surface": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "surface"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}]}, "layout": {"annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "autotypenumbers": "strict", "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]], "sequential": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "sequentialminus": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]]}, "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "geo": {"bgcolor": "white", "lakecolor": "white", "landcolor": "#E5ECF6", "showlakes": true, "showland": true, "subunitcolor": "white"}, "hoverlabel": {"align": "left"}, "hovermode": "closest", "mapbox": {"style": "light"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "ternary": {"aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "title": {"x": 0.05}, "xaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}, "yaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}}}, "title": {"text": "Relative Difference in Return Rate by Completers of Each Event (%)"}, "width": 1200, "xaxis": {"anchor": "y", "domain": [0, 1], "title": {"text": "sequence"}}, "yaxis": {"anchor": "x", "domain": [0, 1], "title": {"text": "Return Rate (%)"}}},{"responsive":false});</script></div>
 </div>
 </div>
 </div>
@@ -22168,7 +22168,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=9623ea98">
 <div class="input">
-<div class="prompt input_prompt">In [147]:</div>
+<div class="prompt input_prompt">In [173]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -22199,7 +22199,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[147]:</div>
+<div class="prompt output_prompt">Out[173]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -22317,7 +22317,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=b9ea0733">
 <div class="input">
-<div class="prompt input_prompt">In [148]:</div>
+<div class="prompt input_prompt">In [174]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">tier_reached_per_event</span><span class="p">,</span> 
@@ -22349,27 +22349,25 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=7abd26ba">
 <div class="input">
-<div class="prompt input_prompt">In [149]:</div>
+<div class="prompt input_prompt">In [175]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
-<span class="n">tier_reached_diorama_daily</span> <span class="o">=</span> <span class="n">data_diorama</span><span class="p">[</span><span class="n">data_diorama</span><span class="o">.</span><span class="n">max_tier_reached</span><span class="o">&lt;=</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'liveops_event_definition_id'</span><span class="p">,</span> <span class="s1">'days_since_event_start'</span><span class="p">,</span> <span class="s1">'max_tier_reached'</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+<span class="n">tier_reached_lastevent_daily</span> <span class="o">=</span> <span class="n">data_last_event</span><span class="p">[</span><span class="n">data_last_event</span><span class="o">.</span><span class="n">max_tier_reached</span><span class="o">&lt;=</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'liveops_event_definition_id'</span><span class="p">,</span> <span class="s1">'days_since_event_start'</span><span class="p">,</span> <span class="s1">'max_tier_reached'</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
     <span class="n">users</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'user_id'</span><span class="p">,</span> <span class="s1">'nunique'</span><span class="p">)</span>
 <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
 <span class="c1"># Calculate total users for each days_since_event_start</span>
-<span class="n">total_users_per_day</span> <span class="o">=</span> <span class="n">tier_reached_diorama_daily</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'days_since_event_start'</span><span class="p">)[</span><span class="s1">'users'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="n">total_users_per_day</span> <span class="o">=</span> <span class="n">tier_reached_lastevent_daily</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'days_since_event_start'</span><span class="p">)[</span><span class="s1">'users'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="n">total_users_per_day</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'days_since_event_start'</span><span class="p">,</span> <span class="s1">'total_users_per_day'</span><span class="p">]</span>
 
 <span class="c1"># Merge to get total for each row</span>
-<span class="n">tier_reached_diorama_daily</span> <span class="o">=</span> <span class="n">tier_reached_diorama_daily</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">total_users_per_day</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'days_since_event_start'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
-
+<span class="n">tier_reached_lastevent_daily</span> <span class="o">=</span> <span class="n">tier_reached_lastevent_daily</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">total_users_per_day</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'days_since_event_start'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
 <span class="c1"># Calculate percentage</span>
-<span class="n">tier_reached_diorama_daily</span><span class="p">[</span><span class="s1">'percentage_of_day_total'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tier_reached_diorama_daily</span><span class="p">[</span><span class="s1">'users'</span><span class="p">]</span> <span class="o">/</span> <span class="n">tier_reached_diorama_daily</span><span class="p">[</span><span class="s1">'total_users_per_day'</span><span class="p">]</span>
+<span class="n">tier_reached_lastevent_daily</span><span class="p">[</span><span class="s1">'percentage_of_day_total'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tier_reached_lastevent_daily</span><span class="p">[</span><span class="s1">'users'</span><span class="p">]</span> <span class="o">/</span> <span class="n">tier_reached_lastevent_daily</span><span class="p">[</span><span class="s1">'total_users_per_day'</span><span class="p">]</span>
 
-<span class="n">tier_reached_diorama_daily</span><span class="p">[</span><span class="s1">'max_tier_reached_str'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tier_reached_diorama_daily</span><span class="p">[</span><span class="s1">'max_tier_reached'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-
-<span class="n">tier_reached_diorama_daily</span>
+<span class="n">tier_reached_lastevent_daily</span><span class="p">[</span><span class="s1">'max_tier_reached_str'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tier_reached_lastevent_daily</span><span class="p">[</span><span class="s1">'max_tier_reached'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> 
+<span class="n">tier_reached_lastevent_daily</span>
 </pre></div>
 </div>
 </div>
@@ -22377,7 +22375,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[149]:</div>
+<div class="prompt output_prompt">Out[175]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -22408,51 +22406,51 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <tbody>
 <tr>
 <th>0</th>
-<td>TimedAlbum-Diorama</td>
+<td>TimedAlbum-ThroughTheAges</td>
 <td>0.0</td>
 <td>1</td>
-<td>73935</td>
-<td>73935</td>
+<td>68240</td>
+<td>68240</td>
 <td>1.000000</td>
 <td>1</td>
 </tr>
 <tr>
 <th>1</th>
-<td>TimedAlbum-Diorama</td>
+<td>TimedAlbum-ThroughTheAges</td>
 <td>1.0</td>
 <td>1</td>
-<td>87972</td>
-<td>87972</td>
+<td>78277</td>
+<td>78277</td>
 <td>1.000000</td>
 <td>1</td>
 </tr>
 <tr>
 <th>2</th>
-<td>TimedAlbum-Diorama</td>
+<td>TimedAlbum-ThroughTheAges</td>
 <td>2.0</td>
 <td>1</td>
-<td>89279</td>
-<td>89279</td>
+<td>80458</td>
+<td>80458</td>
 <td>1.000000</td>
 <td>1</td>
 </tr>
 <tr>
 <th>3</th>
-<td>TimedAlbum-Diorama</td>
+<td>TimedAlbum-ThroughTheAges</td>
 <td>3.0</td>
 <td>1</td>
-<td>89243</td>
-<td>89243</td>
+<td>80485</td>
+<td>80485</td>
 <td>1.000000</td>
 <td>1</td>
 </tr>
 <tr>
 <th>4</th>
-<td>TimedAlbum-Diorama</td>
+<td>TimedAlbum-ThroughTheAges</td>
 <td>4.0</td>
 <td>1</td>
-<td>89153</td>
-<td>89153</td>
+<td>80569</td>
+<td>80569</td>
 <td>1.000000</td>
 <td>1</td>
 </tr>
@@ -22467,58 +22465,58 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <td>...</td>
 </tr>
 <tr>
-<th>160</th>
-<td>TimedAlbum-Diorama</td>
+<th>138</th>
+<td>TimedAlbum-ThroughTheAges</td>
 <td>39.0</td>
-<td>6</td>
-<td>57</td>
-<td>82772</td>
-<td>0.000689</td>
-<td>6</td>
-</tr>
-<tr>
-<th>161</th>
-<td>TimedAlbum-Diorama</td>
-<td>39.0</td>
-<td>7</td>
-<td>20</td>
-<td>82772</td>
-<td>0.000242</td>
-<td>7</td>
-</tr>
-<tr>
-<th>162</th>
-<td>TimedAlbum-Diorama</td>
-<td>39.0</td>
-<td>8</td>
-<td>8</td>
-<td>82772</td>
-<td>0.000097</td>
-<td>8</td>
-</tr>
-<tr>
-<th>163</th>
-<td>TimedAlbum-Diorama</td>
-<td>39.0</td>
-<td>9</td>
 <td>5</td>
-<td>82772</td>
-<td>0.000060</td>
-<td>9</td>
+<td>5</td>
+<td>72935</td>
+<td>0.000069</td>
+<td>5</td>
 </tr>
 <tr>
-<th>164</th>
-<td>TimedAlbum-Diorama</td>
+<th>139</th>
+<td>TimedAlbum-ThroughTheAges</td>
+<td>39.0</td>
+<td>6</td>
+<td>1</td>
+<td>72935</td>
+<td>0.000014</td>
+<td>6</td>
+</tr>
+<tr>
+<th>140</th>
+<td>TimedAlbum-ThroughTheAges</td>
+<td>39.0</td>
+<td>7</td>
+<td>1</td>
+<td>72935</td>
+<td>0.000014</td>
+<td>7</td>
+</tr>
+<tr>
+<th>141</th>
+<td>TimedAlbum-ThroughTheAges</td>
+<td>39.0</td>
+<td>8</td>
+<td>2</td>
+<td>72935</td>
+<td>0.000027</td>
+<td>8</td>
+</tr>
+<tr>
+<th>142</th>
+<td>TimedAlbum-ThroughTheAges</td>
 <td>39.0</td>
 <td>10</td>
-<td>3</td>
-<td>82772</td>
-<td>0.000036</td>
+<td>1</td>
+<td>72935</td>
+<td>0.000014</td>
 <td>10</td>
 </tr>
 </tbody>
 </table>
-<p>165 rows × 7 columns</p>
+<p>143 rows × 7 columns</p>
 </div></div>
 </div>
 </div>
@@ -22526,10 +22524,10 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=aeefab0f">
 <div class="input">
-<div class="prompt input_prompt">In [150]:</div>
+<div class="prompt input_prompt">In [176]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">tier_reached_diorama_daily</span><span class="p">,</span> 
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">tier_reached_lastevent_daily</span><span class="p">,</span> 
               <span class="n">x</span><span class="o">=</span><span class="s1">'days_since_event_start'</span><span class="p">,</span> 
               <span class="n">y</span><span class="o">=</span><span class="s1">'percentage_of_day_total'</span><span class="p">,</span>
               <span class="n">color</span><span class="o">=</span><span class="s1">'max_tier_reached_str'</span><span class="p">,</span>
@@ -22537,7 +22535,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
               <span class="n">width</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span>
               <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
               <span class="n">custom_data</span><span class="o">=</span><span class="p">[</span><span class="s1">'users'</span><span class="p">],</span>
-              <span class="n">category_orders</span><span class="o">=</span><span class="p">{</span><span class="s1">'max_tier_reached_str'</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tier_reached_diorama_daily</span><span class="p">[</span><span class="s1">'max_tier_reached_str'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())})</span>
+              <span class="n">category_orders</span><span class="o">=</span><span class="p">{</span><span class="s1">'max_tier_reached_str'</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tier_reached_lastevent_daily</span><span class="p">[</span><span class="s1">'max_tier_reached_str'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())})</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span><span class="n">hovertemplate</span><span class="o">=</span><span class="s1">'&lt;b&gt;Days Since Event Start:&lt;/b&gt; %</span><span class="si">{x}</span><span class="s1">&lt;br&gt;&lt;b&gt;Max Tier Reached:&lt;/b&gt; %</span><span class="si">{fullData.name}</span><span class="s1">&lt;br&gt;&lt;b&gt;Percentage:&lt;/b&gt; %</span><span class="si">{y:.2%}</span><span class="s1">&lt;br&gt;&lt;b&gt;Users:&lt;/b&gt; %</span><span class="si">{customdata[0]}</span><span class="s1">&lt;extra&gt;&lt;/extra&gt;'</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">tickformat</span><span class="o">=</span><span class="s1">'.2%'</span><span class="p">)</span>
@@ -22551,7 +22549,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <div class="output">
 <div class="output_area">
 <div class="prompt"></div>
-<div class="output_html rendered_html output_subarea"><div id="plotly-76-0" style="width:1200px;height:600px;"></div><script>Plotly.newPlot("plotly-76-0",[{"customdata": {"bdata": "zyABAKRXAQC/XAEAm1wBAEFcAQAbXAEA/FYBAIhTAQDCWQEAAVoBAAZXAQBTVQEAjFMBAJFNAQBGSQEANVABANlQAQDnTwEAPE4BAPVMAQAoSgEA1UUBAGlLAQAaTAEAC0sBAGxHAQATRQEAS0IBACM+AQCYPwEAJkQBAIZBAQDEPAEA7jkBAOs0AQBpMAEAzjIBAN8vAQC5KQEAESEBAA==", "dtype": "i4", "shape": "40, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "1", "marker": {"color": "#636efa", "pattern": {"shape": ""}}, "name": "1", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAAAAAAAAAAADwPwAAAAAAAABAAAAAAAAACEAAAAAAAAAQQAAAAAAAABRAAAAAAAAAGEAAAAAAAAAcQAAAAAAAACBAAAAAAAAAIkAAAAAAAAAkQAAAAAAAACZAAAAAAAAAKEAAAAAAAAAqQAAAAAAAACxAAAAAAAAALkAAAAAAAAAwQAAAAAAAADFAAAAAAAAAMkAAAAAAAAAzQAAAAAAAADRAAAAAAAAANUAAAAAAAAA2QAAAAAAAADdAAAAAAAAAOEAAAAAAAAA5QAAAAAAAADpAAAAAAAAAO0AAAAAAAAA8QAAAAAAAAD1AAAAAAAAAPkAAAAAAAAA/QAAAAAAAAEBAAAAAAACAQEAAAAAAAABBQAAAAAAAgEFAAAAAAAAAQkAAAAAAAIBCQAAAAAAAAENAAAAAAACAQ0A=", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/8OC+3+f/7z8AAAAAAADwP4b5Cx/n/+8/oWBkouf/7z9Ca6dcz//vP6JFMExV/+8/xUogclT/7z81RLn9Cf/vPyCWh+cH/+8/Ux8Peuv+7z8Udydr1/7vP27t0RVE/u8/exSuR+H67z9/CZRj/vfvP639otKY9O8/S8ckPSLx7z9RN+JsVe3vP9rBGoRV2e8/Mqwwakur7z/WTFjTin3vP9wpmpCvNu8/LODj0Ojr7j9z7UkRwLHuP6Rs6NBQVe4/JECewZn57T+v3SYkfLjtP/t/OCguJ+0//7sUpO2b7D8=", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQID", "dtype": "i1", "shape": "3, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "10", "marker": {"color": "#EF553B", "pattern": {"shape": ""}}, "name": "10", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAACAQkAAAAAAAABDQAAAAAAAgENA", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "rluk+twJ6T4qXsGOSxH5PuAEni+bAAM/", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQABAAEAAgAGAAYACQAKAAsACwARAC4AQQBdAHsAmQBFAQQDnwTqBncJXguYDjkSHhR8GIQc", "dtype": "i2", "shape": "27, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "2", "marker": {"color": "#00cc96", "pattern": {"shape": ""}}, "name": "2", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAKEAAAAAAAAAsQAAAAAAAAC5AAAAAAAAAMEAAAAAAAAAxQAAAAAAAADJAAAAAAAAAM0AAAAAAAAA0QAAAAAAAADVAAAAAAAAANkAAAAAAAAA3QAAAAAAAADhAAAAAAAAAOUAAAAAAAAA6QAAAAAAAADtAAAAAAAAAPEAAAAAAAAA9QAAAAAAAAD5AAAAAAAAAP0AAAAAAAABAQAAAAAAAgEBAAAAAAAAAQUAAAAAAAIBBQAAAAAAAAEJAAAAAAACAQkAAAAAAAABDQAAAAAAAgENA", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "2MYPH0Eg6D6Ci3kG9ODoPpTEXp+bXeg+wsNeSqxR+D4M6EBmH0oSP7leRop8YRI/NM+GWw6tGz8sDjwNDwMfPzvNCg5fSCE/MTPYZ9z9ID+nQsObCzQqP3T+J5VsxkE/WveWQ8RiST+hUP/ov0hSP7/qrsNyYVg/0M3erIa1Xj96a1TBoDFwPwC7Bzwi24I/Ve79eVP3jD9hIVjMOM2VP164588o1Z0/qCusKT0Soj+8bBP2cESnP8K9F3RffKw/xmajt0Z7rz/sM9qvGy6zP3WVEw3jk7Y/", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQACAAQABQAHAAwAGgAnAEQAgACpANgAIgFcAdIB1QK5Aw==", "dtype": "i2", "shape": "17, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "3", "marker": {"color": "#ab63fa", "pattern": {"shape": ""}}, "name": "3", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAN0AAAAAAAAA4QAAAAAAAADlAAAAAAAAAOkAAAAAAAAA7QAAAAAAAADxAAAAAAAAAPUAAAAAAAAA+QAAAAAAAAD9AAAAAAAAAQEAAAAAAAIBAQAAAAAAAAEFAAAAAAACAQUAAAAAAAABCQAAAAAAAgEJAAAAAAAAAQ0AAAAAAAIBDQA==", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "6GtdVnSp6D7OpDdgBrv4PiaNGh/J/gg/bWE7Eud0Dz8BKWkeRTMWP9Mw8OS4RCM/iLLcXWe6ND/EVCwIc3s+P0nH5OrXo0o/dMcEENI5WT8sKcCDbaVgPyA5vj9BdmU/G+5wsrjlbD9i+kW/+f9wP3KXHyD6yXY/62fSvn6/gT+3ahY8a5SHPw==", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQABAAEAAQAEAAgADAAOAA8AGAAiADYAXQCPAJsApAC4ANkABQEtAQ==", "dtype": "i2", "shape": "20, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "4", "marker": {"color": "#FFA15A", "pattern": {"shape": ""}}, "name": "4", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAMUAAAAAAAAAyQAAAAAAAADNAAAAAAAAANkAAAAAAAAA4QAAAAAAAADlAAAAAAAAAOkAAAAAAAAA7QAAAAAAAADxAAAAAAAAAPUAAAAAAAAA+QAAAAAAAAD9AAAAAAAAAQEAAAAAAAIBAQAAAAAAAAEFAAAAAAACAQUAAAAAAAABCQAAAAAAAgEJAAAAAAAAAQ0AAAAAAAIBDQA==", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "u4pWiNRi6D5Mfghj+4HoPmdGlN/Tmeg+pQRpCxK36D7OpDdgBrsIPyaNGh/J/hg/dTq9173fIj8BKWkeRTMmPwc9LB7nFSg/uWnfBzgiMz8uzZzSAZM6P/ZSWw3CJ0U/6nijnwJUUj/Uu+KjpStcP2UB0fBFzV4/HfSC/olXYD9/sCbQFvphP7dRdVBcOWU/ACWLCKKOaT/6ZKaeSMptPw==", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQQFBQUKEBQiKzY6Q0pufA==", "dtype": "i1", "shape": "16, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "5", "marker": {"color": "#19d3f3", "pattern": {"shape": ""}}, "name": "5", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAOEAAAAAAAAA5QAAAAAAAADpAAAAAAAAAO0AAAAAAAAA8QAAAAAAAAD1AAAAAAAAAPkAAAAAAAAA/QAAAAAAAAEBAAAAAAACAQEAAAAAAAABBQAAAAAAAgEFAAAAAAAAAQkAAAAAAAIBCQAAAAAAAAENAAAAAAACAQ0A=", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "zqQ3YAa76D4mjRofyf4IP21hOxLndA8/Jl/fBvW2Dz8Ffh0Umg4QPzSwybey4x8/Wf38idQCKT9HvaNfWFcvP+wTBTFvzTo/x7ZrDhPxQD8gOb4/QXZFP0mLjVstHkc/2kOG9wovSj8CCs6BZ/NMP+wsru7cilU/9nCBHXOLWD8=", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQMDCg8TGBooLTk=", "dtype": "i1", "shape": "11, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "6", "marker": {"color": "#FF6692", "pattern": {"shape": ""}}, "name": "6", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAPUAAAAAAAAA+QAAAAAAAAD9AAAAAAAAAQEAAAAAAAIBAQAAAAAAAAEFAAAAAAACAQUAAAAAAAABCQAAAAAAAgEJAAAAAAAAAQ0AAAAAAAIBDQA==", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "9ozUX/WC6T4Dvn1nH8ICP/fX+9IBzgI/UfkFlEaIHz+HQJxVu6MnP7K4C6+nNC4/5LnwQs0hMz8r/0GSXFI0P5pyTTlUTD8/NfZfICmgQT/KpYtIuJBGPw==", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AgMDAwcJFBQ=", "dtype": "i1", "shape": "8, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "7", "marker": {"color": "#B6E880", "pattern": {"shape": ""}}, "name": "7", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAQEAAAAAAAIBAQAAAAAAAAEFAAAAAAACAQUAAAAAAAABCQAAAAAAAgEJAAAAAAAAAQ0AAAAAAAIBDQA==", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "dMcEENI5+T7TZuOqYukCP1YWqTjIEwM/5LnwQs0hAz/0iKkTi+IVPyTn+JkYKxw/tLVxcp5VLz/KslxPrasvPw==", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQEBAQIDBAQGBQUFBAgI", "dtype": "i1", "shape": "15, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "8", "marker": {"color": "#FF97FF", "pattern": {"shape": ""}}, "name": "8", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAOUAAAAAAAAA6QAAAAAAAADtAAAAAAAAAPEAAAAAAAAA9QAAAAAAAAD5AAAAAAAAAP0AAAAAAAABAQAAAAAAAgEBAAAAAAAAAQUAAAAAAAIBBQAAAAAAAAEJAAAAAAACAQkAAAAAAAABDQAAAAAAAgENA", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "Jo0aH8n+6D7xTfx0UirpPrjl5WsqX+k+bpaVhvaw6T72jNRf9YL5PgO+fWcfwgI/n8pPGa0SCT90xwQQ0jkJP9Nm46pi6RI/5M8ZCaPLDz8mi+bEAOMPP6XDFhyiQw8/rluk+twJCT8qXsGOSxEZP9VbfT8kVhk/", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AgECAgQFBAU=", "dtype": "i1", "shape": "8, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "9", "marker": {"color": "#FECB52", "pattern": {"shape": ""}}, "name": "9", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAQEAAAAAAAIBAQAAAAAAAAEFAAAAAAACAQUAAAAAAAABCQAAAAAAAgEJAAAAAAAAAQ0AAAAAAAIBDQA==", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "dMcEENI5+T7EMy85LjfpPh1z4aC1b/k+haLrA2eC+T6EnHgW6AIJP5pyTTlUTA8/Kl7BjksRCT/KslxPrasPPw==", "dtype": "f8"}, "yaxis": "y"}],{"barmode": "relative", "height": 600, "legend": {"title": {"text": "Max Tier Reached"}, "tracegroupgap": 0}, "template": {"data": {"bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "bar"}], "barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "barpolar"}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "choropleth": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "choropleth"}], "contour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "contour"}], "contourcarpet": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "contourcarpet"}], "heatmap": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "heatmap"}], "histogram": [{"marker": {"pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "histogram"}], "histogram2d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "histogram2d"}], "histogram2dcontour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "histogram2dcontour"}], "mesh3d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "mesh3d"}], "parcoords": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "parcoords"}], "pie": [{"automargin": true, "type": "pie"}], "scatter": [{"fillpattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}, "type": "scatter"}], "scatter3d": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatter3d"}], "scattercarpet": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattercarpet"}], "scattergeo": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergeo"}], "scattergl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergl"}], "scattermap": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermap"}], "scattermapbox": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermapbox"}], "scatterpolar": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolar"}], "scatterpolargl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolargl"}], "scatterternary": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterternary"}], "surface": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "surface"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}]}, "layout": {"annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "autotypenumbers": "strict", "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]], "sequential": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "sequentialminus": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]]}, "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "geo": {"bgcolor": "white", "lakecolor": "white", "landcolor": "#E5ECF6", "showlakes": true, "showland": true, "subunitcolor": "white"}, "hoverlabel": {"align": "left"}, "hovermode": "closest", "mapbox": {"style": "light"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "ternary": {"aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "title": {"x": 0.05}, "xaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}, "yaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}}}, "title": {"text": "% users by tier reached over days since event start"}, "width": 1200, "xaxis": {"anchor": "y", "domain": [0, 1], "title": {"text": "days_since_event_start"}}, "yaxis": {"anchor": "x", "domain": [0, 1], "tickformat": ".2%", "title": {"text": "percentage_of_day_total"}}},{"responsive":false});</script></div>
+<div class="output_html rendered_html output_subarea"><div id="plotly-76-0" style="width:1200px;height:600px;"></div><script>Plotly.newPlot("plotly-76-0",[{"customdata": {"bdata": "kAoBAMUxAQBKOgEAZToBALk6AQBbOAEAEzYBAMQxAQBrLQEAojIBAK40AQDEMwEAjjEBAOAtAQDtKAEAiiUBAEstAQALLwEASC4BABMtAQATLAEA2CcBAMsiAQAnKAEAYSwBAPgsAQA5KwEACykBAIUkAQCqHwEAfiMBAMoiAQAKIAEACh0BAAkZAQCsEgEAbwwBAFkOAQD8EAEA/QoBAA==", "dtype": "i4", "shape": "40, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "1", "marker": {"color": "#636efa", "pattern": {"shape": ""}}, "name": "1", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAAAAAAAAAAADwPwAAAAAAAABAAAAAAAAACEAAAAAAAAAQQAAAAAAAABRAAAAAAAAAGEAAAAAAAAAcQAAAAAAAACBAAAAAAAAAIkAAAAAAAAAkQAAAAAAAACZAAAAAAAAAKEAAAAAAAAAqQAAAAAAAACxAAAAAAAAALkAAAAAAAAAwQAAAAAAAADFAAAAAAAAAMkAAAAAAAAAzQAAAAAAAADRAAAAAAAAANUAAAAAAAAA2QAAAAAAAADdAAAAAAAAAOEAAAAAAAAA5QAAAAAAAADpAAAAAAAAAO0AAAAAAAAA8QAAAAAAAAD1AAAAAAAAAPkAAAAAAAAA/QAAAAAAAAEBAAAAAAACAQEAAAAAAAABBQAAAAAAAgEFAAAAAAAAAQkAAAAAAAIBCQAAAAAAAAENAAAAAAACAQ0A=", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwP3JW92Hl/+8/RPOCkq//7z9tAoyXrv/vP4KO9KWR/+8/718JYJD/7z86Ekpvrv/vP9Swy7Xx/u8/ojQ9dQn97z8wLsO9EfzvP+8+0H1P++8/bIhArSL77z/D5ZuY1/nvP4R1rAwD+O8/chWntJf37z8hVhJbK/XvP+KaoAWh8O8/kHtwBvHt7z9VuJmVB+zvP9loDl3D3u8/gLU0+ubF7z9s436cWonvPwQS27q4Zu8/1fiZTeUv7z9cziPjeOzuP8Mpu9EPvO4/eByt90qY7j/2bHOvNWfuP2oDwi50Me4/mYDOeef87T8=", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQE=", "dtype": "i1", "shape": "2, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "10", "marker": {"color": "#EF553B", "pattern": {"shape": ""}}, "name": "10", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAQ0AAAAAAAIBDQA==", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "eY+lIoxQ7D7DZ4pI88DsPg==", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQADAAMABAADAAMACQAbACQAKwAsADcASQBNAGEAiwChAK8AIwEFAiAESQU0B3oJ+ArvC5gNOg9iEA==", "dtype": "i2", "shape": "29, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "2", "marker": {"color": "#00cc96", "pattern": {"shape": ""}}, "name": "2", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAJkAAAAAAAAAoQAAAAAAAACpAAAAAAAAALEAAAAAAAAAuQAAAAAAAADBAAAAAAAAAMUAAAAAAAAAyQAAAAAAAADNAAAAAAAAANEAAAAAAAAA1QAAAAAAAADZAAAAAAAAAN0AAAAAAAAA4QAAAAAAAADlAAAAAAAAAOkAAAAAAAAA7QAAAAAAAADxAAAAAAAAAPUAAAAAAAAA+QAAAAAAAAD9AAAAAAAAAQEAAAAAAAIBAQAAAAAAAAEFAAAAAAACAQUAAAAAAAABCQAAAAAAAgEJAAAAAAAAAQ0AAAAAAAIBDQA==", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "rjGOqQie6j5t9S5DXxsEP+PQZP8cWgQ/8plf3IKWCz/LJQM+/u0EP1ZycXstZAQ/mP20FVloHj9prtcnnNs2Px+AmB6AmD4/dhJno+VUQj/HEzr4mAZDPwE6sOQDMUg/PNasnEOFTz/QKOOZnGNQPy4DL+x1mVQ/NBmclLGsXT8MQTTUWU5hPyWTEwvsGGM/8HfFTrAecD+EtsbFRi18P2HeK8eXoYw/qDS07ANwkj+hRB0ORDiZP+K3XOwer6A/IuTFnUCjoz/lorM/IcOlPyfP0L6+dag/qs54XCfyqj9/t6YaEXGtPw==", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQABAAEAAQABAAEAAQAEAAQABAAEAAUADAAhAC0AMQA/AEgAVAB/AO4AVAE=", "dtype": "i2", "shape": "22, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "3", "marker": {"color": "#ab63fa", "pattern": {"shape": ""}}, "name": "3", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAALkAAAAAAAAAxQAAAAAAAADJAAAAAAAAAM0AAAAAAAAA0QAAAAAAAADVAAAAAAAAAOEAAAAAAAAA5QAAAAAAAADpAAAAAAAAAO0AAAAAAAAA8QAAAAAAAAD1AAAAAAAAAPkAAAAAAAAA/QAAAAAAAAEBAAAAAAACAQEAAAAAAAABBQAAAAAAAgEFAAAAAAAAAQkAAAAAAAIBCQAAAAAAAAENAAAAAAACAQ0A=", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "ZDIEqP3n6z6kb4ShawfrPifrZ9A9F+s+4nHA/jgy6z6qA0znxkjrPmeoDmmBrOs+uvB8/IU+6z5c9EUdyy4LP6000DeEUws/8FUreYiECz/9CINmy+8LP8Il2YDwuRE/seDc/KLtJD9h3ivHl6E8P3fjRgeFn0M/OmtQPO1xRT81jefllLpLP7lYOdDsHFA/0F+5Zt0lUz9tSKASkZBcP2PrNUjiUmo/6OgrjiEYcz8=", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQEBAQEDAwICAgQECQkMFSQq", "dtype": "i1", "shape": "18, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "4", "marker": {"color": "#FFA15A", "pattern": {"shape": ""}}, "name": "4", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAANkAAAAAAAAA3QAAAAAAAADhAAAAAAAAAOUAAAAAAAAA6QAAAAAAAADtAAAAAAAAAPEAAAAAAAAA9QAAAAAAAAD5AAAAAAAAAP0AAAAAAAABAQAAAAAAAgEBAAAAAAAAAQUAAAAAAAIBBQAAAAAAAAEJAAAAAAACAQkAAAAAAAABDQAAAAAAAgENA", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "Is8u7mom7D7k3kZfbKLrPrrwfPyFPus+XPRFHcsu6z6tNNA3hFPrPnSA4FpmowQ/vkbijNjzBD+db1sBtFz8Ppcr0fuD5/s+jXrs53vD+z6pwFOvj+gLPzwz4TmEAgw/88VRK6qwHz+5WDnQ7BwgP4Ft+Jkh4iU/9bZDhajkMj9pQfqmndo/PxjUmqef3kI/", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQICAgECAwMCBAYF", "dtype": "i1", "shape": "12, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "5", "marker": {"color": "#19d3f3", "pattern": {"shape": ""}}, "name": "5", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAPEAAAAAAAAA9QAAAAAAAAD5AAAAAAAAAP0AAAAAAAABAQAAAAAAAgEBAAAAAAAAAQUAAAAAAAIBBQAAAAAAAAEJAAAAAAACAQkAAAAAAAABDQAAAAAAAgENA", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "/QiDZsvv6z6db1sBtFz8Ppcr0fuD5/s+jXrs53vD+z6pwFOvj+jrPjwz4TmEAvw+94M2cnEgBT/3IPdq5nsFPwGSoCKCLf0+af5aXSXKDD+bK/wZaTwVP9qAVg2Y+BE/", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AgIBAQEBAQ==", "dtype": "i1", "shape": "7, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "6", "marker": {"color": "#FF6692", "pattern": {"shape": ""}}, "name": "6", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAQEAAAAAAAIBAQAAAAAAAAEFAAAAAAAAAQkAAAAAAAIBCQAAAAAAAAENAAAAAAACAQ0A=", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "qcBTr4/o+z48M+E5hAL8PkoFnu1BK+w+AZKgIoIt7T5p/lpdJcrsPnmPpSKMUOw+w2eKSPPA7D4=", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQEBAgICAQEB", "dtype": "i1", "shape": "9, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "7", "marker": {"color": "#B6E880", "pattern": {"shape": ""}}, "name": "7", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAAAAP0AAAAAAAABAQAAAAAAAgEBAAAAAAAAAQUAAAAAAAIBBQAAAAAAAAEJAAAAAAACAQkAAAAAAAABDQAAAAAAAgENA", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "jXrs53vD6z6pwFOvj+jrPjwz4TmEAuw+SgWe7UEr/D5JgUk5M6X8PgGSoCKCLf0+af5aXSXK7D55j6UijFDsPsNnikjzwOw+", "dtype": "f8"}, "yaxis": "y"}, {"customdata": {"bdata": "AQEBAg==", "dtype": "i1", "shape": "4, 1"}, "hovertemplate": "<b>Days Since Event Start:</b> %{x}<br><b>Max Tier Reached:</b> %{fullData.name}<br><b>Percentage:</b> %{y:.2%}<br><b>Users:</b> %{customdata[0]}<extra></extra>", "legendgroup": "8", "marker": {"color": "#FF97FF", "pattern": {"shape": ""}}, "name": "8", "orientation": "v", "showlegend": true, "textposition": "auto", "type": "bar", "x": {"bdata": "AAAAAACAQUAAAAAAAIBCQAAAAAAAAENAAAAAAACAQ0A=", "dtype": "f8"}, "xaxis": "x", "y": {"bdata": "SYFJOTOl7D5p/lpdJcrsPnmPpSKMUOw+w2eKSPPA/D4=", "dtype": "f8"}, "yaxis": "y"}],{"barmode": "relative", "height": 600, "legend": {"title": {"text": "Max Tier Reached"}, "tracegroupgap": 0}, "template": {"data": {"bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "bar"}], "barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "barpolar"}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "choropleth": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "choropleth"}], "contour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "contour"}], "contourcarpet": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "contourcarpet"}], "heatmap": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "heatmap"}], "histogram": [{"marker": {"pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "histogram"}], "histogram2d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "histogram2d"}], "histogram2dcontour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "histogram2dcontour"}], "mesh3d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "mesh3d"}], "parcoords": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "parcoords"}], "pie": [{"automargin": true, "type": "pie"}], "scatter": [{"fillpattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}, "type": "scatter"}], "scatter3d": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatter3d"}], "scattercarpet": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattercarpet"}], "scattergeo": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergeo"}], "scattergl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergl"}], "scattermap": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermap"}], "scattermapbox": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermapbox"}], "scatterpolar": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolar"}], "scatterpolargl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolargl"}], "scatterternary": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterternary"}], "surface": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "type": "surface"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}]}, "layout": {"annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "autotypenumbers": "strict", "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]], "sequential": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]], "sequentialminus": [[0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1, "#f0f921"]]}, "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "geo": {"bgcolor": "white", "lakecolor": "white", "landcolor": "#E5ECF6", "showlakes": true, "showland": true, "subunitcolor": "white"}, "hoverlabel": {"align": "left"}, "hovermode": "closest", "mapbox": {"style": "light"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "ternary": {"aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "title": {"x": 0.05}, "xaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}, "yaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}}}, "title": {"text": "% users by tier reached over days since event start"}, "width": 1200, "xaxis": {"anchor": "y", "domain": [0, 1], "title": {"text": "days_since_event_start"}}, "yaxis": {"anchor": "x", "domain": [0, 1], "tickformat": ".2%", "title": {"text": "percentage_of_day_total"}}},{"responsive":false});</script></div>
 </div>
 </div>
 </div>
@@ -22565,7 +22563,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=da9b8dff">
 <div class="input">
-<div class="prompt input_prompt">In [151]:</div>
+<div class="prompt input_prompt">In [177]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -22585,7 +22583,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[151]:</div>
+<div class="prompt output_prompt">Out[177]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -22722,7 +22720,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=a5bd21ac">
 <div class="input">
-<div class="prompt input_prompt">In [152]:</div>
+<div class="prompt input_prompt">In [178]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">data_revenue_prestigers</span><span class="p">,</span> 
@@ -22752,7 +22750,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=24d4bc5c">
 <div class="input">
-<div class="prompt input_prompt">In [153]:</div>
+<div class="prompt input_prompt">In [179]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">data_revenue_prestigers</span><span class="p">,</span> 
@@ -22782,7 +22780,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=ec85a9c3">
 <div class="input">
-<div class="prompt input_prompt">In [154]:</div>
+<div class="prompt input_prompt">In [180]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -22802,7 +22800,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[154]:</div>
+<div class="prompt output_prompt">Out[180]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -22939,7 +22937,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=1a98d9de">
 <div class="input">
-<div class="prompt input_prompt">In [155]:</div>
+<div class="prompt input_prompt">In [181]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">data_revenue_prestigers_dse</span><span class="p">[</span><span class="s1">'arpdau_lag7'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_revenue_prestigers_dse</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'liveops_event_definition_id'</span><span class="p">)[</span><span class="s1">'arpdau'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
@@ -23007,7 +23005,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=7e8b0486">
 <div class="input">
-<div class="prompt input_prompt">In [156]:</div>
+<div class="prompt input_prompt">In [182]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -23022,7 +23020,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[156]:</div>
+<div class="prompt output_prompt">Out[182]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -23183,7 +23181,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=dcb0764b">
 <div class="input">
-<div class="prompt input_prompt">In [157]:</div>
+<div class="prompt input_prompt">In [183]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -23195,7 +23193,7 @@ Name: user_id, Length: 8330, dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[157]:</div>
+<div class="prompt output_prompt">Out[183]:</div>
 <div class="output_text output_subarea output_execute_result">
 <pre>dt                      dbdate
 user_id                 object
@@ -23213,7 +23211,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=78590d4c">
 <div class="input">
-<div class="prompt input_prompt">In [158]:</div>
+<div class="prompt input_prompt">In [184]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -23243,7 +23241,7 @@ dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[158]:</div>
+<div class="prompt output_prompt">Out[184]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -23440,7 +23438,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=9b215ed4">
 <div class="input">
-<div class="prompt input_prompt">In [159]:</div>
+<div class="prompt input_prompt">In [185]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -23522,7 +23520,7 @@ dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[159]:</div>
+<div class="prompt output_prompt">Out[185]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -23709,7 +23707,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=b427e355">
 <div class="input">
-<div class="prompt input_prompt">In [160]:</div>
+<div class="prompt input_prompt">In [186]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">econ_gems_agg_flagged</span><span class="p">,</span> 
@@ -23746,7 +23744,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=f5d7fdb2">
 <div class="input">
-<div class="prompt input_prompt">In [161]:</div>
+<div class="prompt input_prompt">In [187]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">econ_gems_agg</span><span class="p">,</span> 
@@ -23817,7 +23815,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=401a72d7">
 <div class="input">
-<div class="prompt input_prompt">In [162]:</div>
+<div class="prompt input_prompt">In [188]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Melt the percentiles data for easier plotting</span>
@@ -23856,7 +23854,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=f6adebaa">
 <div class="input">
-<div class="prompt input_prompt">In [163]:</div>
+<div class="prompt input_prompt">In [189]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -23877,7 +23875,7 @@ dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[163]:</div>
+<div class="prompt output_prompt">Out[189]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -24002,7 +24000,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=26d8ef08">
 <div class="input">
-<div class="prompt input_prompt">In [164]:</div>
+<div class="prompt input_prompt">In [190]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -24067,7 +24065,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=5a1640b3">
 <div class="input">
-<div class="prompt input_prompt">In [165]:</div>
+<div class="prompt input_prompt">In [191]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">econ_gems_agg</span><span class="p">,</span> 
@@ -24147,7 +24145,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=749a125e">
 <div class="input">
-<div class="prompt input_prompt">In [166]:</div>
+<div class="prompt input_prompt">In [192]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Melt the dataframe to have inflows and outflows as separate rows</span>
@@ -24251,7 +24249,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=5cd3f4c7">
 <div class="input">
-<div class="prompt input_prompt">In [167]:</div>
+<div class="prompt input_prompt">In [193]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -24304,7 +24302,7 @@ dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[167]:</div>
+<div class="prompt output_prompt">Out[193]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -24453,7 +24451,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=77faf44e">
 <div class="input">
-<div class="prompt input_prompt">In [168]:</div>
+<div class="prompt input_prompt">In [194]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># hide-output</span>
@@ -24475,7 +24473,7 @@ dtype: object</pre>
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[168]:</div>
+<div class="prompt output_prompt">Out[194]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -24624,7 +24622,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=d9496622">
 <div class="input">
-<div class="prompt input_prompt">In [169]:</div>
+<div class="prompt input_prompt">In [195]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">econ_completers_gems_agg</span><span class="p">,</span> 
@@ -24671,7 +24669,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=0918ac1c">
 <div class="input">
-<div class="prompt input_prompt">In [170]:</div>
+<div class="prompt input_prompt">In [196]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Add set to legends for completers vs non-completers gems comparison</span>
@@ -24747,7 +24745,7 @@ dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=49edea37">
 <div class="input">
-<div class="prompt input_prompt">In [171]:</div>
+<div class="prompt input_prompt">In [197]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">export_notebook_html</span><span class="p">(</span>
@@ -24768,7 +24766,7 @@ dtype: object</pre>
 </div>
 </div>
 <div class="output_area">
-<div class="prompt output_prompt">Out[171]:</div>
+<div class="prompt output_prompt">Out[197]:</div>
 <div class="output_text output_subarea output_execute_result">
 <pre>PosixPath('prestige.html')</pre>
 </div>

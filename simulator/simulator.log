@@ -1,0 +1,1026 @@
+2026-06-15 15:41:17,935 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-15 15:41:19,185 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-15 15:41:29,860 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-15 15:45:29,185 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-15 15:45:30,242 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-15 15:45:40,892 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-15 16:26:15,062 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-15 16:26:16,124 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-15 16:26:26,997 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-15 16:26:54,049 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:26:54,054 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-15 16:26:54,055 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-15 16:26:54,062 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:26:54,064 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:26:54,124 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:26:54,125 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:26:54,334 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:27:03,483 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:27:03,493 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:27:10,726 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:27:10,732 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:27:26,927 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:27:26,943 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:27:31,228 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-15 16:27:32,281 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-15 16:27:42,841 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-15 16:28:59,496 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:28:59,504 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-15 16:28:59,506 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-15 16:28:59,520 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:28:59,523 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:28:59,754 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:28:59,754 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:28:59,891 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:29:11,203 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:29:11,207 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:30:26,439 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:30:26,442 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:37:53,789 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-15 16:37:54,843 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-15 16:38:05,689 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-15 16:38:17,807 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:38:17,813 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-15 16:38:17,815 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-15 16:38:17,824 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:38:17,826 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:38:17,973 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:38:17,973 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:38:18,117 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:38:23,185 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:38:23,190 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:38:23,715 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:38:23,726 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:38:23,916 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:38:23,928 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:38:26,388 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-15 16:38:27,446 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-15 16:38:37,988 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-15 16:40:28,110 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:40:28,117 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-15 16:40:28,118 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-15 16:40:28,129 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:40:28,132 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:40:28,271 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:40:28,271 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:40:28,421 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:40:41,615 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:40:41,627 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:40:43,039 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:40:43,051 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:40:43,261 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:40:43,268 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:40:43,484 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:40:43,496 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:40:49,248 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:40:49,260 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:41:02,221 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:41:02,233 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:41:02,237 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:41:02,256 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:02,256 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:02,271 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:41:19,888 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:41:19,900 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:19,904 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:19,922 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:41:19,922 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:41:19,938 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:41:24,245 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:41:24,256 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:41:24,260 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:41:24,279 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:24,279 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:24,294 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:41:29,147 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:29,148 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:34,846 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:34,847 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:40,548 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:40,549 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:52,917 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:41:52,918 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:42:20,479 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-15 16:42:21,680 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-15 16:42:32,412 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-15 16:44:41,206 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:44:41,212 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-15 16:44:41,212 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-15 16:44:41,225 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 373, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-15 16:44:41,231 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 373, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-15 16:44:41,234 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:44:41,236 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:44:41,307 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:44:41,307 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:44:41,454 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:45:04,180 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:04,181 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:11,094 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:11,095 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:15,448 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:15,449 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:31,866 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:31,868 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:38,324 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:38,329 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:43,532 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:43,533 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:56,198 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:45:56,202 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:46:00,696 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:46:00,702 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:46:10,281 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:46:10,286 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:47:19,664 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:47:19,665 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:49:12,372 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:49:12,382 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:49:12,386 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:49:12,452 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:49:12,452 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:49:12,468 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:49:12,469 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:49:12,478 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:49:27,801 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:49:27,816 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:49:27,821 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:49:27,878 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:49:27,879 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:49:27,892 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:49:27,892 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:49:27,900 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:53:53,490 DEBUG load_saved_scenario START name=plan a.1 - 2026 ua250K
+2026-06-15 16:53:53,500 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:53:53,505 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-15 16:53:53,574 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:53:53,574 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:53:53,592 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:53:53,592 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:53:53,602 DEBUG load_saved_scenario COMPLETE name=plan a.1 - 2026 ua250K
+2026-06-15 16:54:37,513 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:54:37,519 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:55:04,520 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-15 16:55:04,535 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:55:04,540 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:55:04,653 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-15 16:55:36,481 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:55:36,495 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts (updated)
+2026-06-15 16:56:11,870 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-15 16:56:11,875 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-15 16:57:36,322 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-15 16:57:36,326 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-16 10:20:00,650 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-16 10:20:01,964 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-16 10:20:12,699 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-16 10:20:28,883 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 10:20:28,891 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-16 10:20:28,892 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-16 10:20:28,911 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 373, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 10:20:28,918 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 373, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 10:20:28,920 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 10:20:28,923 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 10:20:29,083 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 10:20:29,084 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 10:20:29,135 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 10:24:01,739 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts (updated)
+2026-06-16 10:24:01,751 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 10:24:01,755 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 10:24:01,819 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-16 10:24:01,820 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-16 10:24:01,832 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts (updated)
+2026-06-16 10:49:17,709 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-16 10:49:18,766 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-16 10:49:29,575 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-16 10:49:55,706 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 10:49:55,713 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-16 10:49:55,715 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-16 10:49:55,733 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 373, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 10:49:55,738 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 373, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 10:49:55,741 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 10:49:55,744 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 10:49:55,883 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 10:49:55,884 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 10:49:56,051 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 10:51:38,294 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-16 10:51:39,529 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-16 10:51:50,252 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-16 10:52:23,148 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 10:52:23,154 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-16 10:52:23,155 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-16 10:52:23,172 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 373, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 10:52:23,181 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 373, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 10:52:23,184 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 10:52:23,186 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 10:52:23,328 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 10:52:23,328 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 10:52:23,380 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 11:05:34,380 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-16 11:05:35,589 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-16 11:05:46,367 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-16 11:08:01,109 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 11:08:01,118 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-16 11:08:01,120 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-16 11:08:01,140 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 370, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 11:08:01,148 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 370, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 11:08:01,150 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 11:08:01,153 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 11:08:01,314 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 11:08:01,314 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 11:08:01,349 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 11:09:15,073 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 11:09:15,092 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 11:13:08,355 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-16 11:13:09,554 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-16 11:13:20,292 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-16 14:46:34,670 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 14:46:34,683 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-16 14:46:34,685 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-16 14:46:34,710 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 370, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 14:46:34,720 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 370, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 14:46:34,723 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 14:46:34,726 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 14:46:34,891 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 14:46:34,891 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 14:46:34,934 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 14:48:47,230 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 14:48:47,251 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 15:13:10,245 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-16 15:13:11,497 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-16 15:13:22,192 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-16 15:14:21,950 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 15:14:21,956 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-16 15:14:21,957 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-16 15:14:21,973 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 370, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 15:14:21,980 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 370, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 15:14:21,982 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 15:14:21,984 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 15:14:22,137 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 15:14:22,138 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 15:14:22,189 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 15:21:18,203 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 15:21:18,205 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 15:21:29,133 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 15:21:29,138 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 15:22:33,175 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 15:22:33,185 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 15:22:33,189 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 15:22:33,262 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 15:22:46,177 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 15:22:46,188 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 15:51:37,147 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-16 15:51:38,385 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-16 15:51:49,039 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-16 15:54:28,664 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 15:54:28,672 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-16 15:54:28,674 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-16 15:54:28,693 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 375, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 15:54:28,701 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 375, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-16 15:54:28,704 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 15:54:28,707 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 15:54:28,864 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 15:54:28,865 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 15:54:28,932 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 15:54:53,204 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 15:54:53,224 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 15:57:11,758 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-16 15:57:11,780 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-16 15:57:18,888 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts (updated)
+2026-06-16 15:57:18,900 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-16 15:57:18,904 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-16 15:57:18,963 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-16 15:57:18,964 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-16 15:57:18,969 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts (updated)
+2026-06-17 10:25:56,602 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-17 10:25:56,617 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 10:25:56,624 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 10:25:56,693 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 10:25:56,693 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 10:25:56,702 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-17 14:25:30,967 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 14:25:32,041 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 14:25:42,658 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 14:43:27,065 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 14:43:28,308 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 14:43:38,696 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 14:44:05,428 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-17 14:44:05,436 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-17 14:44:05,438 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-17 14:44:05,455 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 359, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 14:44:05,468 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 359, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 14:44:05,472 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 14:44:05,476 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 14:44:05,539 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 14:44:05,539 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 14:44:05,687 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-17 14:52:16,889 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 14:52:18,157 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 14:52:28,719 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 14:53:31,898 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-17 14:53:31,916 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-17 14:53:31,917 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-17 14:53:31,937 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 359, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 14:53:31,942 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 359, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 14:53:31,945 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 14:53:31,947 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 14:53:32,000 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 14:53:32,001 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 14:53:32,174 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-17 15:03:27,596 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 15:03:28,853 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 15:03:39,505 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 15:04:41,062 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-17 15:04:41,068 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-17 15:04:41,070 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-17 15:04:41,090 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 359, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:04:41,099 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 359, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:04:41,102 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 15:04:41,105 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 15:04:41,163 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 15:04:41,163 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 15:04:41,337 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-17 15:10:13,114 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 15:10:14,423 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 15:10:25,036 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 15:16:30,340 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 15:16:31,660 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 15:16:42,293 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 15:21:13,223 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-17 15:21:13,231 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-17 15:21:13,236 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-17 15:21:13,262 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:21:13,273 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:21:13,275 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 15:21:13,277 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 15:21:13,334 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 15:21:13,335 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 15:21:13,549 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-17 15:28:15,274 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 15:28:15,288 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 15:28:19,937 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:28:19,938 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:28:22,086 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:28:22,087 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:32:25,722 DEBUG load_saved_scenario START name=plan a.1 - 2026 ua250K
+2026-06-17 15:32:25,735 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:32:25,740 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:32:25,796 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 15:32:25,796 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 15:32:25,816 DEBUG CPI(ios) immediate n=44 (rows pre-existed)
+2026-06-17 15:32:25,816 DEBUG CPI(android) immediate n=44 (rows pre-existed)
+2026-06-17 15:32:25,829 DEBUG load_saved_scenario COMPLETE name=plan a.1 - 2026 ua250K
+2026-06-17 15:33:12,752 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:33:12,753 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:33:14,518 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:33:14,518 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:34:20,707 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:34:20,714 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:39:44,347 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 15:39:45,725 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 15:39:56,477 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 15:40:40,156 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-17 15:40:40,163 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-17 15:40:40,163 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-17 15:40:40,175 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:40:40,181 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:40:40,184 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:40:40,186 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:40:40,264 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:40:40,264 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:40:40,416 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-17 15:45:55,779 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 15:45:57,098 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 15:46:07,731 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 15:48:37,712 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-17 15:48:37,716 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-17 15:48:37,716 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-17 15:48:37,723 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:48:37,728 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:48:37,730 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:48:37,732 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:48:37,788 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:48:37,788 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:48:37,932 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-17 15:55:12,951 DEBUG load_saved_scenario START name=plan a.1 - 2026 ua250K
+2026-06-17 15:55:12,985 DEBUG load_saved_scenario COMPLETE name=plan a.1 - 2026 ua250K
+2026-06-17 15:55:57,763 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 15:55:59,066 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 15:56:09,816 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 15:56:25,432 DEBUG load_saved_scenario START name=plan a.1 - 2026 ua250K
+2026-06-17 15:56:25,437 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-17 15:56:25,437 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-17 15:56:25,450 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:56:25,457 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 15:56:25,459 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:56:25,461 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:56:25,523 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 15:56:25,523 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 15:56:25,849 DEBUG load_saved_scenario COMPLETE name=plan a.1 - 2026 ua250K
+2026-06-17 16:04:26,948 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-17 16:04:28,229 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-17 16:04:39,027 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-17 16:10:03,919 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-17 16:10:03,928 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-17 16:10:03,928 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-17 16:10:03,941 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 16:10:03,947 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-17 16:10:03,950 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 16:10:03,952 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 16:10:04,015 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 16:10:04,016 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-17 16:10:04,180 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-17 16:12:28,069 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-17 16:12:28,071 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 10:23:51,621 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-18 10:23:52,713 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-18 10:24:03,512 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-18 10:26:10,304 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 10:26:10,310 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-18 10:26:10,310 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-18 10:26:10,323 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-18 10:26:10,328 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-18 10:26:10,331 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 10:26:10,333 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 10:26:10,392 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 10:26:10,392 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 10:26:10,576 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 10:42:43,234 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 10:42:43,245 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 10:43:02,760 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-18 10:43:03,840 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-18 10:43:14,573 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-18 10:43:22,575 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 10:43:22,581 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-18 10:43:22,582 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-18 10:43:22,595 ERROR derive_age_dist failed (ios)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-18 10:43:22,600 ERROR derive_age_dist failed (android)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 360, in _derive_age_dist
+    retention  = build_curve(anchors[platform]['retention'])
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-18 10:43:22,603 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 10:43:22,606 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 10:43:22,668 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 10:43:22,668 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 10:43:22,819 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 10:44:27,576 DEBUG load_saved_scenario START name=plan a.1 - 2026 ua250K
+2026-06-18 10:44:27,606 DEBUG load_saved_scenario COMPLETE name=plan a.1 - 2026 ua250K
+2026-06-18 12:19:54,475 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-18 12:19:55,529 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-18 12:20:06,279 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-18 12:20:16,180 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 12:20:16,185 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-18 12:20:16,185 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-18 12:20:16,189 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 12:20:16,192 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 12:20:16,259 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 12:20:16,259 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 12:20:16,424 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 12:21:34,803 DEBUG load_saved_scenario START name=plan a.1 - 2026 ua250K
+2026-06-18 12:21:34,833 DEBUG load_saved_scenario COMPLETE name=plan a.1 - 2026 ua250K
+2026-06-18 12:21:41,591 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 12:21:41,622 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 12:42:45,805 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-18 12:42:46,877 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-18 12:42:57,633 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-18 12:43:09,810 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 12:43:09,815 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-18 12:43:09,816 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-18 12:43:09,820 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 12:43:09,823 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 12:43:09,891 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 12:43:09,891 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 12:43:10,042 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 12:43:10,049 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-18 12:43:10,150 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 12:43:10,154 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 282, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-18 12:46:01,138 DEBUG load_saved_scenario START name=plan a.1 - 2026 ua250K
+2026-06-18 12:46:01,167 DEBUG load_saved_scenario COMPLETE name=plan a.1 - 2026 ua250K
+2026-06-18 12:46:01,173 DEBUG _wait_and_show_status START name=plan a.1 - 2026 ua250K
+2026-06-18 12:46:01,274 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 12:46:01,279 ERROR _wait_and_show_status failed name=plan a.1 - 2026 ua250K
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 282, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-18 12:46:10,091 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 12:46:10,122 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 12:46:10,128 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-18 12:46:10,229 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 12:46:10,233 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 282, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-18 12:46:18,440 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 12:46:18,444 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 13:01:46,350 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 13:01:46,357 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 13:02:45,837 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 13:02:45,848 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 13:02:45,853 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 13:02:45,908 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 13:02:45,922 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-18 13:02:46,022 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 13:02:46,026 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 282, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-18 13:02:58,340 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 13:02:58,348 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 13:53:45,782 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-18 13:53:46,857 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-18 13:53:57,664 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-18 13:54:07,613 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts (test)
+2026-06-18 13:54:07,619 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-18 13:54:07,620 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-18 13:54:07,629 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 13:54:07,631 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 13:54:07,697 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 13:54:07,697 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 13:54:07,847 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts (test)
+2026-06-18 13:54:07,856 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts (test)
+2026-06-18 13:54:07,956 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 13:54:07,960 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts (test)
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-18 14:41:45,340 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-18 14:41:45,357 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 14:41:45,364 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 14:41:45,423 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-18 14:41:45,436 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-18 14:41:45,537 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 14:41:45,541 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-18 14:42:06,024 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 14:42:06,042 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 14:44:57,195 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 14:44:57,209 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 14:52:29,260 DEBUG load_saved_scenario START name=plan a.1 - 2026 ua250K
+2026-06-18 14:52:29,271 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 14:52:29,277 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 14:52:29,403 DEBUG load_saved_scenario COMPLETE name=plan a.1 - 2026 ua250K
+2026-06-18 14:52:29,404 DEBUG _wait_and_show_status START name=plan a.1 - 2026 ua250K
+2026-06-18 14:52:29,505 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 14:52:29,509 ERROR _wait_and_show_status failed name=plan a.1 - 2026 ua250K
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-18 14:52:51,831 DEBUG load_saved_scenario START name=plan a1 - 2026 ua250k
+2026-06-18 14:52:51,841 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-18 14:52:51,846 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-18 14:52:51,886 DEBUG load_saved_scenario COMPLETE name=plan a1 - 2026 ua250k
+2026-06-18 14:52:51,897 DEBUG _wait_and_show_status START name=plan a1 - 2026 ua250k
+2026-06-18 14:52:51,999 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 14:52:52,007 ERROR _wait_and_show_status failed name=plan a1 - 2026 ua250k
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-18 14:57:58,066 DEBUG load_saved_scenario START name=plan a2 - 2027 ua250k
+2026-06-18 14:57:58,090 DEBUG load_saved_scenario COMPLETE name=plan a2 - 2027 ua250k
+2026-06-18 14:57:58,094 DEBUG _wait_and_show_status START name=plan a2 - 2027 ua250k
+2026-06-18 14:57:58,196 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-18 14:57:58,202 ERROR _wait_and_show_status failed name=plan a2 - 2027 ua250k
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
