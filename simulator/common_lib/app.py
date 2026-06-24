@@ -106,12 +106,20 @@ def setup_callbacks(
             curve_anchors = panel.get_curve_anchors()
             chart_ws = {k: build_chart_widget(name, k) for k in ('dau', 'installs', 'revenue', 'monthly')}
             arpdau_vals = panel.get_arpdau()
+            mkt_actuals = None
+            if marketing is not None:
+                _mkt_agg  = aggregate_marketing(marketing)
+                mkt_actuals = dict(zip(
+                    _mkt_agg['ua_spend']['month'],
+                    _mkt_agg['ua_spend']['total_budget'],
+                ))
             table_styler, table_df = monthly_table(
                 name, filtered,
                 historical_marketing=panel.get_historical_marketing(),
                 monthly_ua_budget=panel.ua_budget_panel.values['monthly_budget'],
                 n_actuals=n_actuals,
                 monthly_iap_net_factor=arpdau_vals.get('iap_net_factor'),
+                marketing_actuals=mkt_actuals,
             )
             table_html = table_styler.to_html()
 

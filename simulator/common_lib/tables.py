@@ -86,6 +86,7 @@ def monthly_table(
     n_actuals: int = 6,
     monthly_iap_net_factor: dict = None,
     monthly_ua_budget: dict = None,
+    marketing_actuals: dict = None,
 ) -> 'pd.io.formats.style.Styler':
     """
     Build a styled monthly P&L table combining actuals and forecast.
@@ -97,7 +98,7 @@ def monthly_table(
     actuals : pd.DataFrame
         Daily actuals with columns: dt, platform, dau, iap_revenue, ad_revenue.
     historical_marketing : dict {month_str: float}, optional
-        Actual UA spend for historical months.
+        UA spend for historical months (from the UI panel — planned budget).
     n_actuals : int
         How many historical months to show before the forecast start.
     monthly_iap_net_factor : dict {month_str: float}, optional
@@ -106,6 +107,9 @@ def monthly_table(
         Combined (ios+android) UA spend for all months. If provided, used as
         primary source for forecast-row marketing cost, overriding the
         per-platform values stored in the scenario file.
+    marketing_actuals : dict {month_str: float}, optional
+        Real marketing spend from marketing.pkl. When provided, used as the
+        source for Mktg Cost (Act) in preference to the UA Budget panel values.
     """
     scenario_data = load_scenario(scenario)
     forecast_start = scenario_data[1]
@@ -155,8 +159,8 @@ def monthly_table(
                                                      fct_df.loc[idx, 'ad_revenue'])
                 days = calendar.monthrange(forecast_start.year, forecast_start.month)[1]
                 fct_df.loc[idx, 'avg_dau'] = fct_df.loc[idx, 'total_dau'] / days
-                fct_df.loc[idx, 'arpdau']  = (fct_df.loc[idx, 'revenue_gross'] /
-                                               fct_df.loc[idx, 'total_dau'])
+                # arpdau stays as the pure input value — blending affects revenue/DAU totals
+                # but the forecast ARPDAU column should reflect the user-entered rate only
 
     df = pd.concat([act_df, fct_df], ignore_index=True).sort_values('date').reset_index(drop=True)
     df['month_str'] = df['month'].astype(str)
@@ -175,25 +179,33 @@ def monthly_table(
     _all['dt'] = pd.to_datetime(_all['dt'])
     _all['month_str'] = _all['dt'].dt.strftime('%Y-%m')
 
-    dau_actuals_map = (
+    _daily_dau_by_month = (
         _all.groupby(['dt', 'month_str'])['dau'].sum()
         .reset_index()
-        .groupby('month_str')['dau'].mean()
+        .rename(columns={'dau': 'daily_dau'})
+    )
+    dau_actuals_map = (
+        _daily_dau_by_month.groupby('month_str')['daily_dau'].mean()
         .round().astype(int)
         .to_dict()
     )
+    _total_dau_monthly = _daily_dau_by_month.groupby('month_str')['daily_dau'].sum()
 
     _rev_monthly = _all.groupby('month_str').agg(
         iap=('iap_revenue', 'sum'), ad=('ad_revenue', 'sum')
     )
-    rev_gross_actuals_map = (_rev_monthly['iap'] + _rev_monthly['ad']).to_dict()
-    rev_net_actuals_map   = (
+    rev_gross_actuals_map  = (_rev_monthly['iap'] + _rev_monthly['ad']).to_dict()
+    rev_net_actuals_map    = (
         _rev_monthly['iap'] * IAP_NET_FACTOR + _rev_monthly['ad'] * AD_NET_FACTOR
     ).to_dict()
+    arpdau_actuals_map     = (
+        (_rev_monthly['iap'] + _rev_monthly['ad']) / _total_dau_monthly
+    ).to_dict()
 
-    df['dau_actuals']       = df['month_str'].map(dau_actuals_map)
-    df['rev_gross_actuals'] = df['month_str'].map(rev_gross_actuals_map)
-    df['rev_net_actuals']   = df['month_str'].map(rev_net_actuals_map)
+    df['dau_actuals']        = df['month_str'].map(dau_actuals_map)
+    df['rev_gross_actuals']  = df['month_str'].map(rev_gross_actuals_map)
+    df['rev_net_actuals']    = df['month_str'].map(rev_net_actuals_map)
+    df['arpdau_actuals']     = df['month_str'].map(arpdau_actuals_map)
 
     def _mkt(row):
         m = row['month_str']
@@ -205,10 +217,27 @@ def monthly_table(
             return historical_marketing.get(m, float('nan'))
         return float('nan')
 
-    df['marketing_cost']      = df.apply(_mkt, axis=1)
-    df['game_margin']         = df['revenue_net']    - df['marketing_cost'].fillna(0)
-    df['game_margin_actuals'] = df['rev_net_actuals'] - df['marketing_cost'].fillna(0)
-    df['cumulative_margin']   = df['game_margin'].cumsum()
+    def _mkt_actuals(row):
+        m = row['month_str']
+        # Only show a value for months where we have actual DAU/revenue data.
+        if m not in dau_actuals_map:
+            return float('nan')
+        # Priority: real spend from marketing.pkl → UA Budget panel → historical_marketing
+        if marketing_actuals:
+            val = marketing_actuals.get(m)
+            return float(val) if val is not None else float('nan')
+        if _ua_budget:
+            val = _ua_budget.get(m)
+            return float(val) if val is not None else float('nan')
+        if historical_marketing:
+            return historical_marketing.get(m, float('nan'))
+        return float('nan')
+
+    df['marketing_cost']         = df.apply(_mkt, axis=1)
+    df['marketing_cost_actuals'] = df.apply(_mkt_actuals, axis=1)
+    df['game_margin']            = df['revenue_net']    - df['marketing_cost'].fillna(0)
+    df['game_margin_actuals']    = df['rev_net_actuals'] - df['marketing_cost_actuals'].fillna(0)
+    df['cumulative_margin']      = df['game_margin'].cumsum()
 
     def _fmt(x):
         return f'${x:,.0f}' if pd.notna(x) else '—'
@@ -216,16 +245,21 @@ def monthly_table(
     def _fmt_dau(x):
         return f'{int(x):,}' if pd.notna(x) else '—'
 
+    def _fmt_arpdau(x):
+        return f'${x:.2f}' if pd.notna(x) else '—'
+
     disp = pd.DataFrame({
         'Date':               df['date'].dt.strftime('%Y-%m-%d'),
-        'DAU Actuals (avg)':  df['dau_actuals'],
-        'DAU (avg)':          df['avg_dau'].round().astype(int),
+        'DAU (Act)':          df['dau_actuals'],
+        'DAU':                df['avg_dau'].round().astype(int),
+        'ARPDAU (Act)':       df['arpdau_actuals'],
         'ARPDAU':             df['arpdau'],
         'Gross Rev (Act)':    df['rev_gross_actuals'],
-        'Revenue (Gross)':    df['revenue_gross'],
+        'Gross Rev':          df['revenue_gross'],
         'Net Rev (Act)':      df['rev_net_actuals'],
-        'Revenue (Net)':      df['revenue_net'],
-        'Marketing Cost':     df['marketing_cost'],
+        'Net Rev':            df['revenue_net'],
+        'Mktg Cost (Act)':    df['marketing_cost_actuals'],
+        'Mktg Cost':          df['marketing_cost'],
         'Game Margin (Act)':  df['game_margin_actuals'],
         'Game Margin':        df['game_margin'],
         'Cumul. Margin':      df['cumulative_margin'],
@@ -243,17 +277,19 @@ def monthly_table(
         .apply(_row_bg, axis=1)
         .map(lambda _: f'background-color: {_GREEN}', subset=['Game Margin (Act)', 'Game Margin', 'Cumul. Margin'])
         .format({
-            'DAU Actuals (avg)': _fmt_dau,
-            'DAU (avg)':        '{:,}',
-            'ARPDAU':           '${:.2f}',
-            'Gross Rev (Act)':  _fmt,
-            'Revenue (Gross)':  _fmt,
-            'Net Rev (Act)':    _fmt,
-            'Revenue (Net)':    _fmt,
-            'Marketing Cost':   _fmt,
-            'Game Margin (Act)': _fmt,
-            'Game Margin':      _fmt,
-            'Cumul. Margin':    _fmt,
+            'DAU (Act)':          _fmt_dau,
+            'DAU':                '{:,}',
+            'ARPDAU (Act)':       _fmt_arpdau,
+            'ARPDAU':             '${:.2f}',
+            'Gross Rev (Act)':    _fmt,
+            'Gross Rev':          _fmt,
+            'Net Rev (Act)':      _fmt,
+            'Net Rev':            _fmt,
+            'Mktg Cost (Act)':    _fmt,
+            'Mktg Cost':          _fmt,
+            'Game Margin (Act)':  _fmt,
+            'Game Margin':        _fmt,
+            'Cumul. Margin':      _fmt,
         })
         .set_table_styles([
             {'selector': 'th',
@@ -316,7 +352,7 @@ def comparison_table(
             for m in months:
                 sub = disp[disp['_month'] == m]
                 if not sub.empty:
-                    row[f'DAU {m}']          = sub['DAU (avg)'].iloc[0]
+                    row[f'DAU {m}']          = sub['DAU'].iloc[0]
                     row[f'Cumul Margin {m}']  = sub['Cumul. Margin'].iloc[0]
                 else:
                     row[f'DAU {m}']          = None

@@ -1024,3 +1024,160 @@ Traceback (most recent call last):
     ap._mode.send_state()
     ^^^^^^^^
 AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 10:07:49,308 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-24 10:07:50,378 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-24 10:08:01,045 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-24 10:08:15,325 ERROR run_simulation failed
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 96, in run_simulation
+    ios_inp     = _build_inputs('ios',     panel.get_ios_overrides())
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 76, in _build_inputs
+    retention_curve=build_curve(anchors[platform]['retention']),
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/curves.py", line 26, in build_curve
+    interp = PchipInterpolator(days, values, extrapolate=True)
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 263, in __init__
+    x, _, y, axis, _ = prepare_input(x, y, axis, xp=xp)
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/.trailmix_basic_venv/lib/python3.14/site-packages/scipy/interpolate/_cubic.py", line 50, in prepare_input
+    raise ValueError("`x` must contain at least 2 elements.")
+ValueError: `x` must contain at least 2 elements.
+2026-06-24 10:10:24,842 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-24 10:10:24,850 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-24 10:10:24,851 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-24 10:10:24,861 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 10:10:24,863 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 10:10:24,928 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 10:10:24,928 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 10:10:25,069 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-24 10:10:25,077 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-24 10:10:25,179 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 10:10:25,183 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 10:30:21,767 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 10:30:21,774 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 10:37:26,717 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 10:37:26,719 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 10:42:58,438 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-24 10:42:58,448 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 10:42:58,452 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 10:42:58,504 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-24 10:42:58,517 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-24 10:42:58,698 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 10:42:58,707 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 10:44:32,080 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-24 10:44:32,115 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-24 10:44:32,124 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-24 10:44:32,225 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 10:44:32,236 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 10:50:28,110 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-24 10:50:29,170 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-24 10:50:39,800 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-24 10:56:23,896 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-24 10:56:23,906 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-24 10:56:23,908 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-24 10:56:23,919 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 10:56:23,921 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 10:56:23,982 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 10:56:23,982 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 10:56:24,173 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-24 10:56:24,183 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-24 10:56:24,283 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 10:56:24,287 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 11:04:14,719 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-24 11:04:15,776 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-24 11:04:26,511 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-24 11:09:23,919 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-24 11:09:23,928 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-24 11:09:23,930 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-24 11:09:23,940 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 11:09:23,943 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 11:09:24,006 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 11:09:24,007 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 11:09:24,146 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-24 11:09:24,155 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-24 11:09:24,256 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 11:09:24,260 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 11:14:12,501 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-24 11:14:13,558 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-24 11:14:24,294 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-24 11:19:12,384 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-24 11:19:12,394 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-24 11:19:12,396 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-24 11:19:12,409 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 11:19:12,412 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 11:19:12,479 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 11:19:12,480 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 11:19:12,675 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-24 11:19:12,683 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-24 11:19:12,784 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 11:19:12,802 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 283, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 11:25:17,303 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-24 11:25:18,372 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-24 11:25:29,136 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-24 11:27:42,007 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-24 11:27:42,016 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-24 11:27:42,018 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-24 11:27:42,028 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 11:27:42,031 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 11:27:42,095 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 11:27:42,095 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 11:27:42,237 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-24 11:27:42,263 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-24 11:27:42,363 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 11:27:42,367 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 291, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
