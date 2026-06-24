@@ -6,6 +6,8 @@ DECLARE end_date1 DATE DEFAULT cast('{end_date1}' as date);
 DECLARE start_date2 DATE DEFAULT cast('{start_date2}' as date);
 DECLARE end_date2 DATE DEFAULT cast('{end_date2}' as date);
 
+DECLARE exclude_networks ARRAY<STRING> DEFAULT {exclude_networks};
+
 WITH activity AS (
   select 
     dt,
@@ -26,7 +28,8 @@ WITH activity AS (
   and cast(install_ts as date)<=end_date1
   and d.platform in ('AND', 'IOS')
   and install_build_version in ('0.74.0','0.75.0')
-  and display_campaign_network != 'CPE'
+  and display_campaign_network not in UNNEST(exclude_networks)
+  and display_campaign_network = 'Non-Attributed'
   and active = 1
   group by all
   union all 
@@ -49,7 +52,8 @@ WITH activity AS (
   and cast(install_ts as date)<=end_date2
   and d.platform in ('AND', 'IOS')
   and install_build_version in ('0.76.0', '0.77.0', '0.78.0', '0.79.0', '0.80.0')
-  and display_campaign_network != 'CPE'
+  and display_campaign_network not in UNNEST(exclude_networks)
+  and display_campaign_network = 'Non-Attributed'
   and active = 1
   group by all
 ),
@@ -69,7 +73,7 @@ installs AS (
 
 cohort_sizes AS (
   SELECT 
-    --install_dt, 
+    install_dt, 
     platform,
     install_build_version,
     COUNT(DISTINCT user_id) AS cohort_size
@@ -79,7 +83,7 @@ cohort_sizes AS (
 
 cohort_activity AS (
   SELECT
-    --i.install_dt,
+    i.install_dt,
     i.platform,
     i.install_build_version,
     DATE_DIFF(a.dt, i.install_dt, DAY) AS dx,
@@ -87,7 +91,11 @@ cohort_activity AS (
   FROM installs i
   JOIN activity a ON a.user_id = i.user_id
    AND DATE_DIFF(a.dt, i.install_dt, DAY) IN (0, 1, 3, 7, 14, 21, 30, 60, 90, 180, 365, 1000, 1800)
-   AND DATE_DIFF(end_date2, i.install_dt, DAY) >= DATE_DIFF(a.dt, i.install_dt, DAY)
+   AND (
+    (i.install_dt >= start_date1 AND DATE_DIFF(end_date1, i.install_dt, DAY) >= DATE_DIFF(COALESCE(a.dt, end_date1), i.install_dt, DAY))
+      OR 
+    (i.install_dt >= start_date2 AND DATE_DIFF(end_date2, i.install_dt, DAY) >= DATE_DIFF(COALESCE(a.dt, end_date2), i.install_dt, DAY))
+   )
   GROUP BY ALL
 )
 
@@ -97,10 +105,11 @@ SELECT
   ca.platform,
   --install_build_version,
   if(ca.install_build_version >= '0.76.0', 'B.Post-FTUE revamp', 'A.Pre-FTUE revamp') as FTUE_flag,
+  COUNT(DISTINCT ca.install_dt) as num_cohorts,
   SUM(cs.cohort_size) as cohort_size,
   SUM(ca.retained) as retained_size,
   SAFE_DIVIDE(SUM(ca.retained), SUM(cs.cohort_size)) AS retention_rate
 FROM cohort_activity ca
-JOIN cohort_sizes cs USING (install_build_version, platform)
+JOIN cohort_sizes cs USING (install_dt,install_build_version, platform)
 GROUP BY ALL
 ORDER BY 1,2

@@ -4,6 +4,8 @@ DECLARE end_date1 DATE DEFAULT cast('{end_date1}' as date);
 DECLARE start_date2 DATE DEFAULT cast('{start_date2}' as date);
 DECLARE end_date2 DATE DEFAULT cast('{end_date2}' as date);
 
+DECLARE exclude_networks ARRAY<STRING> DEFAULT {exclude_networks};
+
 with active_users as (
   select 
     dt,
@@ -11,7 +13,7 @@ with active_users as (
     user_id,
     d.platform,
     ua.acquisition_type,
-    install_build_version
+    install_build_version,
   from trailmixgames-game-1.merger_prod_fact.fact_dt_user_activity
   join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_build b using (user_id)
   join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device d using (user_id)
@@ -24,7 +26,7 @@ with active_users as (
   and cast(install_ts as date)<=end_date1
   and d.platform in ('AND', 'IOS')
   and install_build_version in ('0.74.0','0.75.0')
-  and display_campaign_network != 'CPE'
+  and display_campaign_network not in UNNEST(exclude_networks)
   and active = 1
   group by all
   union all 
@@ -34,7 +36,7 @@ with active_users as (
     user_id,
     d.platform,
     ua.acquisition_type,
-    install_build_version
+    install_build_version,
   from trailmixgames-game-1.merger_prod_fact.fact_dt_user_activity
   join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_build b using (user_id)
   join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device d using (user_id)
@@ -47,7 +49,7 @@ with active_users as (
   and cast(install_ts as date)<=end_date2
   and d.platform in ('AND', 'IOS')
   and install_build_version in ('0.76.0', '0.77.0', '0.78.0', '0.79.0', '0.80.0')
-  and display_campaign_network != 'CPE'
+  and display_campaign_network not in UNNEST(exclude_networks)
   and active = 1
   group by all
 
@@ -89,6 +91,7 @@ date_trunc(a.install_dt, month) as install_dt_month,
 date_diff(a.dt, a.install_dt, day) as days_since_install,
 pl.max_level,
 gd.max_gameday,
+a.platform,
 a.acquisition_type,
 a.install_build_version
 from active_users a

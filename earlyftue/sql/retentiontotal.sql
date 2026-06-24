@@ -5,6 +5,9 @@ DECLARE start_date1 DATE DEFAULT cast('{start_date1}' as date);
 DECLARE end_date1 DATE DEFAULT cast('{end_date1}' as date);
 DECLARE start_date2 DATE DEFAULT cast('{start_date2}' as date);
 DECLARE end_date2 DATE DEFAULT cast('{end_date2}' as date);
+
+DECLARE exclude_networks ARRAY<STRING> DEFAULT {exclude_networks};
+
 WITH activity AS (
   select 
     dt,
@@ -25,7 +28,7 @@ WITH activity AS (
   and cast(install_ts as date)<=end_date1
   and d.platform in ('AND', 'IOS')
   and install_build_version in ('0.74.0','0.75.0')
-  and display_campaign_network != 'CPE'
+  and display_campaign_network not in UNNEST(exclude_networks)
   and active = 1
   group by all
   union all 
@@ -48,7 +51,7 @@ WITH activity AS (
   and cast(install_ts as date)<=end_date2
   and d.platform in ('AND', 'IOS')
   and install_build_version in ('0.76.0', '0.77.0', '0.78.0', '0.79.0', '0.80.0')
-  and display_campaign_network != 'CPE'
+  and display_campaign_network not in UNNEST(exclude_networks)
   and active = 1
   group by all
 ),
@@ -67,11 +70,10 @@ installs AS (
 ), 
 
 cohort_sizes AS (
-  SELECT 
-    --install_dt, 
+  SELECT
+    install_dt,
     platform,
     install_build_version,
-    count(DISTINCT install_dt) as num_cohorts,
     COUNT(DISTINCT user_id) AS cohort_size
   FROM installs
   GROUP BY ALL
@@ -79,7 +81,7 @@ cohort_sizes AS (
 
 cohort_activity AS (
   SELECT
-    --i.install_dt,
+    i.install_dt,
     i.platform,
     i.install_build_version,
     DATE_DIFF(a.dt, i.install_dt, DAY) AS dx,
@@ -101,11 +103,11 @@ SELECT
   ca.platform,
   --install_build_version,
   if(ca.install_build_version >= '0.76.0', 'B.Post-FTUE revamp', 'A.Pre-FTUE revamp') as FTUE_flag,
-  max(num_cohorts) as num_cohorts,
+  COUNT(DISTINCT ca.install_dt) as num_cohorts,
   SUM(cs.cohort_size) as cohort_size,
   SUM(ca.retained) as retained_size,
   SAFE_DIVIDE(SUM(ca.retained), SUM(cs.cohort_size)) AS retention_rate
 FROM cohort_activity ca
-JOIN cohort_sizes cs USING (install_build_version, platform)
+JOIN cohort_sizes cs USING (install_dt, install_build_version, platform)
 GROUP BY ALL
 ORDER BY 1,2

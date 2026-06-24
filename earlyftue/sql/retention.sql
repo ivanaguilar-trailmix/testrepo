@@ -6,6 +6,8 @@ DECLARE end_date1 DATE DEFAULT cast('{end_date1}' as date);
 DECLARE start_date2 DATE DEFAULT cast('{start_date2}' as date);
 DECLARE end_date2 DATE DEFAULT cast('{end_date2}' as date);
 
+DECLARE exclude_networks ARRAY<STRING> DEFAULT {exclude_networks};
+
 WITH activity AS (
   select 
     dt,
@@ -26,7 +28,7 @@ WITH activity AS (
   and cast(install_ts as date)<=end_date1
   and d.platform in ('AND', 'IOS')
   and install_build_version in ('0.74.0','0.75.0')
-  and display_campaign_network != 'CPE'
+  and display_campaign_network not in UNNEST(exclude_networks)
   and active = 1
   group by all
   union all 
@@ -49,7 +51,7 @@ WITH activity AS (
   and cast(install_ts as date)<=end_date2
   and d.platform in ('AND', 'IOS')
   and install_build_version in ('0.76.0', '0.77.0', '0.78.0', '0.79.0', '0.80.0')
-  and display_campaign_network != 'CPE'
+  and display_campaign_network not in UNNEST(exclude_networks)
   and active = 1
   group by all
 ),
