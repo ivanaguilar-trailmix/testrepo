@@ -262,3 +262,204 @@ def plot_percentile_comparison(level_pcts_by_group, percentile='all'):
             labels={'diff': 'Level difference', 'days_since_install': 'Days since install'},
         )
         fig2.show()
+
+
+def compute_retention_significance(df, alpha=0.05, power=0.80):
+    """
+    Augment a retention dataframe with Wilson CIs and two-proportion z-test results.
+    Each (dx, platform) pair is tested independently using its own cohort sizes.
+
+    Added columns
+    -------------
+    ci_low, ci_high   Wilson 95% CI for each row's retention_rate
+    z_stat, p_value   Pooled two-proportion z-test vs the other FTUE group
+    sig_label         '***' p<0.001 / '**' p<0.01 / '*' p<0.05 / 'NS'
+    n_needed          Min users per group to detect the observed effect (equal-size, 80% power)
+    """
+    from scipy import stats
+
+    df = df.copy()
+
+    # Wilson CI (vectorised)
+    z_crit = stats.norm.ppf(1 - alpha / 2)
+    n = df['cohort_size'].to_numpy(float)
+    p = df['retention_rate'].to_numpy(float)
+    denom = 1 + z_crit**2 / n
+    center = (p + z_crit**2 / (2 * n)) / denom
+    margin = z_crit * np.sqrt(p * (1 - p) / n + z_crit**2 / (4 * n**2)) / denom
+    df['ci_low'] = np.clip(center - margin, 0, 1)
+    df['ci_high'] = np.clip(center + margin, 0, 1)
+
+    # Two-proportion z-test per (dx, platform)
+    ftue_groups = sorted(df['FTUE_flag'].unique())
+    group_a, group_b = ftue_groups[0], ftue_groups[1]
+
+    z_alpha = stats.norm.ppf(1 - alpha / 2)
+    z_beta = stats.norm.ppf(power)
+    sig_rows = []
+
+    for (dx, platform), grp in df.groupby(['dx', 'platform']):
+        a = grp[grp['FTUE_flag'] == group_a]
+        b = grp[grp['FTUE_flag'] == group_b]
+        if a.empty or b.empty:
+            continue
+
+        n_a = float(a['cohort_size'].iloc[0])
+        k_a = float(a['retained_size'].iloc[0])
+        n_b = float(b['cohort_size'].iloc[0])
+        k_b = float(b['retained_size'].iloc[0])
+        p_a, p_b = k_a / n_a, k_b / n_b
+
+        p_pool = (k_a + k_b) / (n_a + n_b)
+        se = np.sqrt(p_pool * (1 - p_pool) * (1 / n_a + 1 / n_b))
+        z = (p_a - p_b) / se if se > 0 else 0.0
+        p_val = float(2 * (1 - stats.norm.cdf(abs(z))))
+
+        if p_val < 0.001:    sig = '***'
+        elif p_val < 0.01:   sig = '**'
+        elif p_val < alpha:  sig = '*'
+        else:                sig = 'NS'
+
+        effect = abs(p_a - p_b)
+        n_needed = (
+            int(np.ceil((z_alpha + z_beta)**2 * (p_a * (1 - p_a) + p_b * (1 - p_b)) / effect**2))
+            if effect > 1e-6 else None
+        )
+
+        sig_rows.append({
+            'dx': dx, 'platform': platform,
+            'z_stat': round(z, 3), 'p_value': p_val,
+            'sig_label': sig, 'n_needed': n_needed,
+        })
+
+    return df.merge(pd.DataFrame(sig_rows), on=['dx', 'platform'], how='left')
+
+
+def plot_retention_significance(df, title='', alpha=0.05, power=0.80):
+    """
+    Grouped bar chart of retention rates with Wilson 95% CIs and per-Dx significance annotations.
+
+    For NS checkpoints, shows how many more users per group would be required to reach significance
+    at the currently observed effect size (equal-group approximation, 80% power).
+
+    Parameters
+    ----------
+    df     : retention_data_total or retention_data_total_na (dx, platform, FTUE_flag, cohort_size,
+             retained_size, retention_rate)
+    title  : chart title
+    alpha  : significance level (default 0.05)
+    power  : desired power for the n_needed calculation (default 0.80)
+
+    Returns
+    -------
+    pd.DataFrame — input df augmented with significance columns.
+    """
+    df_sig = compute_retention_significance(df, alpha=alpha, power=power)
+
+    platforms = sorted(df_sig['platform'].unique())
+    ftue_groups = sorted(df_sig['FTUE_flag'].unique())
+    dx_vals = sorted(df_sig.loc[df_sig['dx'] > 0, 'dx'].unique())
+    dx_labels = ['D' + str(d) for d in dx_vals]
+
+    COLORS = {
+        ftue_groups[0]: 'rgba(99,110,250,0.85)',
+        ftue_groups[1]: 'rgba(239,85,59,0.85)',
+    }
+    SIG_COLOR = {'***': '#1a7f37', '**': '#1a7f37', '*': '#d97706', 'NS': '#888888'}
+
+    fig = make_subplots(
+        rows=len(platforms), cols=1,
+        subplot_titles=platforms,
+        shared_xaxes=False,
+        vertical_spacing=0.14,
+    )
+
+    for row_idx, platform in enumerate(platforms, 1):
+        pdata = (
+            df_sig[(df_sig['platform'] == platform) & (df_sig['dx'] > 0)]
+            .copy()
+            .sort_values('dx')
+        )
+        pdata['dx_cat'] = 'D' + pdata['dx'].astype(str)
+
+        for ftue in ftue_groups:
+            gdata = pdata[pdata['FTUE_flag'] == ftue]
+            err_up = (gdata['ci_high'] - gdata['retention_rate']).values
+            err_dn = (gdata['retention_rate'] - gdata['ci_low']).values
+
+            fig.add_trace(go.Bar(
+                x=gdata['dx_cat'],
+                y=gdata['retention_rate'],
+                name=ftue,
+                legendgroup=ftue,
+                showlegend=(row_idx == 1),
+                marker_color=COLORS[ftue],
+                error_y=dict(
+                    type='data',
+                    array=err_up,
+                    arrayminus=err_dn,
+                    visible=True,
+                    color='rgba(0,0,0,0.35)',
+                    thickness=1.5,
+                    width=4,
+                ),
+                text=gdata['retention_rate'].apply(lambda v: f'{v:.1%}'),
+                textposition='outside',
+                hovertemplate=(
+                    '%{x}: %{y:.2%}<br>'
+                    'n=%{customdata[0]:,} | retained=%{customdata[1]:,}<extra>' + ftue + '</extra>'
+                ),
+                customdata=gdata[['cohort_size', 'retained_size']].values,
+            ), row=row_idx, col=1)
+
+        # Significance annotations — one per dx group
+        sig_cols = ['dx', 'dx_cat', 'sig_label', 'p_value', 'n_needed']
+        sig_summary = pdata.drop_duplicates('dx')[sig_cols].sort_values('dx')
+        max_ci = pdata.groupby('dx')['ci_high'].max()
+
+        xref = 'x' if row_idx == 1 else f'x{row_idx}'
+        yref = 'y' if row_idx == 1 else f'y{row_idx}'
+
+        for _, sr in sig_summary.iterrows():
+            label = sr['sig_label']
+            p_val = sr['p_value']
+            p_text = 'p<0.001' if p_val < 0.001 else f'p={p_val:.3f}'
+            ann_text = f'<b>{label}</b> {p_text}'
+
+            if label == 'NS' and pd.notna(sr['n_needed']):
+                current_min_n = int(pdata[pdata['dx'] == sr['dx']]['cohort_size'].min())
+                shortfall = max(0, int(sr['n_needed']) - current_min_n)
+                if shortfall > 0:
+                    ann_text += f'<br>~{shortfall:,} more/group needed'
+                else:
+                    ann_text += '<br>(n sufficient — borderline)'
+
+            y_ann = float(max_ci.get(sr['dx'], 0)) + 0.018
+
+            fig.add_annotation(
+                x=sr['dx_cat'], y=y_ann,
+                text=ann_text,
+                showarrow=False,
+                font=dict(size=9, color=SIG_COLOR.get(label, '#888')),
+                xref=xref, yref=yref,
+                xanchor='center', yanchor='bottom',
+                align='center',
+            )
+
+        yax = 'yaxis' if row_idx == 1 else f'yaxis{row_idx}'
+        xax = 'xaxis' if row_idx == 1 else f'xaxis{row_idx}'
+        fig.update_layout(**{
+            yax: dict(tickformat='.0%', title='Retention rate'),
+            xax: dict(categoryorder='array', categoryarray=dx_labels),
+        })
+
+    fig.update_layout(
+        title=title,
+        barmode='group',
+        width=1200,
+        height=520 * len(platforms),
+        uniformtext_minsize=7,
+        uniformtext_mode='hide',
+    )
+    fig.show()
+    return df_sig
