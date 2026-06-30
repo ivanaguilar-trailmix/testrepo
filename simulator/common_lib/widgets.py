@@ -1764,10 +1764,11 @@ class ScenarioPanel:
         for ap in (self.retention_actuals_panel,
                    self.conversion_actuals_panel,
                    self.arpdau_actuals_panel):
-            ap._mode.send_state()
-            ap._days_back.send_state()
-            ap._from_date.send_state()
-            ap._to_date.send_state()
+            if ap._show_range:
+                ap._mode.send_state()
+                ap._days_back.send_state()
+                ap._from_date.send_state()
+                ap._to_date.send_state()
 
     async def _precreate_rows_bg(self) -> None:
         """After display, gradually pre-create rows up to _MAX_ROWS per panel.
