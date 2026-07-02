@@ -361,7 +361,36 @@ def comparison_table(
         except Exception as e:
             rows.append({'Scenario': name, 'note': str(e)})
 
-    return pd.DataFrame(rows).set_index('Scenario')
+    df = pd.DataFrame(rows).set_index('Scenario')
+
+    def _fmt_dau(x):
+        return f'{int(x):,}' if pd.notna(x) else '—'
+
+    def _fmt_margin(x):
+        return f'${x:,.0f}' if pd.notna(x) else '—'
+
+    fmt = {}
+    for col in df.columns:
+        if col.startswith('DAU '):
+            fmt[col] = _fmt_dau
+        elif col.startswith('Cumul Margin '):
+            fmt[col] = _fmt_margin
+
+    styler = (
+        df.style
+        .format(fmt, na_rep='—')
+        .set_table_styles([
+            {'selector': 'th',
+             'props': [('background-color', _HEADER), ('color', 'white'),
+                       ('font-weight', 'bold'), ('padding', '6px 14px'),
+                       ('text-align', 'center')]},
+            {'selector': 'td',
+             'props': [('padding', '4px 14px'), ('text-align', 'right')]},
+            {'selector': 'td:first-child',
+             'props': [('text-align', 'left')]},
+        ])
+    )
+    return styler, df
 
 
 def export_all_tables(
@@ -419,7 +448,8 @@ def export_all_tables(
                 print(f"  skipped {name!r}: {e}")
 
         buf = io.StringIO()
-        comparison_table(actuals=actuals, months=months).to_csv(buf)
+        _, comp_df = comparison_table(actuals=actuals, months=months)
+        comp_df.to_csv(buf)
         zf.writestr("comparison_table.csv", buf.getvalue())
         print(f"  added: comparison_table.csv")
 

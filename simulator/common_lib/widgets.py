@@ -153,6 +153,20 @@ def _month_count_inclusive(start_ym: str, end_ym: str) -> int:
     return max(1, (ey - sy) * 12 + (em - sm) + 1)
 
 
+_MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+
+def _ym_label(ym: str) -> str:
+    y, m = int(ym[:4]), int(ym[5:7])
+    return f"{_MONTH_NAMES[m - 1]} {y}"
+
+
+def _gap_widget() -> widgets.HTML:
+    """20-px neutral spacer used between platform groups in data rows."""
+    return widgets.HTML("", layout=widgets.Layout(width='20px'))
+
+
 # ---------------------------------------------------------------------------
 # Per-platform monthly inputs panel  (CPI + UA spend only)
 # ---------------------------------------------------------------------------
@@ -729,12 +743,12 @@ class ARPDAUPanel:
         }
         self._iap_net_inputs: list[widgets.BoundedFloatText] = []
         self._month_labels:   list[widgets.Label]            = []
-        self._net_labels:     list[widgets.Label]            = []
         self._data_rows:      list[widgets.HBox]             = []
-        self._net_rows:       list[widgets.HBox]             = []
-        self._rows_timer:     Optional[object]      = None
-        self._rows_new_from:  int                   = 0
-        self._live:           bool                  = False
+        self._row_fill_btns:    list                 = []
+        self._forecast_start_ym: Optional[str]       = None
+        self._rows_timer:       Optional[object]     = None
+        self._rows_new_from:    int                  = 0
+        self._live:             bool                 = False
 
         ios_iap_fill  = _fill_btn()
         ios_ad_fill   = _fill_btn()
@@ -744,7 +758,7 @@ class ARPDAUPanel:
 
         def _apply_btn():
             return widgets.Button(
-                description='Apply ↑',
+                description='Apply ↓',
                 layout=widgets.Layout(width='58px', height='22px'),
                 style=widgets.ButtonStyle(font_size='10px'),
             )
@@ -764,32 +778,60 @@ class ARPDAUPanel:
         for btn in (ios_iap_apply, ios_ad_apply, and_iap_apply, and_ad_apply):
             btn.layout.width = "65px"
 
-        def _h(text, w):
-            return widgets.HTML(f"<b>{text}</b>", layout=widgets.Layout(width=w))
+        # Two header rows — each a single line, same 17-widget structure as data rows.
+        _w20h = widgets.Layout(width='20px')
 
-        def _sp22():
-            return widgets.HTML("", layout=_w22)
+        def _hl(text, width, muted=False):
+            if not text:
+                return widgets.HTML("", layout=widgets.Layout(width=width))
+            color = 'color:#888;' if muted else ''
+            return widgets.HTML(
+                f"<div style='{color}font-size:12px'>{text}</div>",
+                layout=widgets.Layout(width=width),
+            )
 
-        header_row = widgets.VBox([
-            widgets.HBox([
-                _h("Month",       "90px"),
-                _h("iOS IAP ($)", "110px"), _h("", "22px"), _h("Uplift %", "65px"),
-                _h("iOS Ad ($)",  "110px"), _h("", "22px"), _h("Uplift %", "65px"),
-                _h("And IAP ($)", "110px"), _h("", "22px"), _h("Uplift %", "65px"),
-                _h("And Ad ($)",  "110px"), _h("", "22px"), _h("Uplift %", "65px"),
-            ]),
-            widgets.HBox([
-                widgets.HTML("", layout=_w90),
-                ios_iap_fill, _sp22(), ios_iap_apply,
-                ios_ad_fill,  _sp22(), ios_ad_apply,
-                and_iap_fill, _sp22(), and_iap_apply,
-                and_ad_fill,  _sp22(), and_ad_apply,
-            ]),
+        # Row 1: group names in value column only
+        hdr1 = widgets.HBox([
+            _hl("",              "90px"),
+            _hl("iOS IAP",       "110px", muted=True), _hl("", "65px"), _hl("", "22px"),
+            _hl("iOS Ad",        "110px", muted=True), _hl("", "65px"), _hl("", "22px"),
+            widgets.HTML("", layout=_w20h),
+            _hl("And IAP",       "110px", muted=True), _hl("", "65px"), _hl("", "22px"),
+            _hl("And Ad",        "110px", muted=True), _hl("", "65px"), _hl("", "22px"),
+            widgets.HTML("", layout=_w20h),
+            _hl("IAP Net Factor","110px", muted=True), _hl("", "22px"),
         ])
 
-        net_header_row = widgets.VBox([
-            widgets.HBox([_h("Month", "90px"), _h("IAP Net Factor", "110px")]),
-            widgets.HBox([widgets.HTML("", layout=_w90), net_fill]),
+        # Row 2: column labels
+        hdr2 = widgets.HBox([
+            _hl("Month",   "90px"),
+            _hl("ARPDAU",  "110px"), _hl("Uplift%", "65px"), _hl("↓", "22px"),
+            _hl("ARPDAU",  "110px"), _hl("Uplift%", "65px"), _hl("↓", "22px"),
+            widgets.HTML("", layout=_w20h),
+            _hl("ARPDAU",  "110px"), _hl("Uplift%", "65px"), _hl("↓", "22px"),
+            _hl("ARPDAU",  "110px"), _hl("Uplift%", "65px"), _hl("↓", "22px"),
+            widgets.HTML("", layout=_w20h),
+            _hl("Factor",  "110px"), _hl("↓", "22px"),
+        ])
+
+        def _hdr_rfill():
+            b = _row_fill_btn()
+            b.disabled = True
+            return b
+
+        header_row = widgets.VBox([
+            hdr1,
+            hdr2,
+            widgets.HBox([
+                widgets.HTML("", layout=_w90),
+                ios_iap_fill, ios_iap_apply, _hdr_rfill(),
+                ios_ad_fill,  ios_ad_apply,  _hdr_rfill(),
+                widgets.HTML("", layout=_w20h),
+                and_iap_fill, and_iap_apply, _hdr_rfill(),
+                and_ad_fill,  and_ad_apply,  _hdr_rfill(),
+                widgets.HTML("", layout=_w20h),
+                net_fill, _hdr_rfill(),
+            ]),
         ])
 
         def _make_fill(platform, metric):
@@ -807,7 +849,15 @@ class ARPDAUPanel:
                 inp = self._inputs[platform][metric]
                 upl = self._uplift_inputs[platform][metric]
                 n   = len(self._months)
-                for i in range(1, n):
+                # Start from the first forecast row so historical rows are not modified.
+                # The last historical row acts as the base for the first forecast value.
+                fc_start = 0
+                if self._forecast_start_ym:
+                    for j, m in enumerate(self._months):
+                        if m >= self._forecast_start_ym:
+                            fc_start = j
+                            break
+                for i in range(max(1, fc_start), n):
                     inp[i].value = round(inp[i - 1].value * (1 + upl[i].value / 100), 4)
             return _apply
 
@@ -824,8 +874,7 @@ class ARPDAUPanel:
             for i, w in enumerate(self._iap_net_inputs) if 0 < i < len(self._months)
         ])
 
-        self._rows_box     = widgets.VBox([])
-        self._net_rows_box = widgets.VBox([])
+        self._rows_box = widgets.VBox([])
         self._apply_months(self._months)
 
         paste_section = _make_paste_section(
@@ -847,15 +896,9 @@ class ARPDAUPanel:
             self._rows_box,
         ], layout=_sec)
 
-        net_section = widgets.VBox([
-            widgets.HTML("<b style='font-size:12px'>IAP Net Factor</b>"),
-            net_header_row,
-            self._net_rows_box,
-        ], layout=_sec)
-
         self._box = widgets.VBox([
             _header("Revenue — Monthly Inputs"),
-            widgets.HBox([arpdau_section, net_section], layout=widgets.Layout(align_items='flex-start')),
+            arpdau_section,
             paste_section,
         ], layout=widgets.Layout(padding="10px"))
 
@@ -878,8 +921,6 @@ class ARPDAUPanel:
         and_iap_w.observe(lambda ch, _i=i: self._on_change_idx(_i, 'android', 'iap', ch), names='value')
         and_ad_w.observe( lambda ch, _i=i: self._on_change_idx(_i, 'android', 'ad',  ch), names='value')
 
-        net_lbl = widgets.Label("", layout=widgets.Layout(width="90px"))
-
         self._inputs['ios']['iap'].append(ios_iap_w)
         self._inputs['ios']['ad'].append(ios_ad_w)
         self._inputs['android']['iap'].append(and_iap_w)
@@ -890,7 +931,6 @@ class ARPDAUPanel:
         self._uplift_inputs['android']['ad'].append(and_ad_upl)
         self._iap_net_inputs.append(net_factor_w)
         self._month_labels.append(lbl)
-        self._net_labels.append(net_lbl)
 
         ios_iap_rfill = _row_fill_btn()
         ios_iap_rfill.on_click(lambda _, _i=i: [
@@ -918,14 +958,17 @@ class ARPDAUPanel:
             for w in self._iap_net_inputs[_i + 1:len(self._months)]
         ])
 
+        self._row_fill_btns.append([ios_iap_rfill, ios_ad_rfill, and_iap_rfill, and_ad_rfill, net_rfill])
         self._data_rows.append(widgets.HBox([
             lbl,
-            ios_iap_w, ios_iap_rfill, ios_iap_upl,
-            ios_ad_w,  ios_ad_rfill,  ios_ad_upl,
-            and_iap_w, and_iap_rfill, and_iap_upl,
-            and_ad_w,  and_ad_rfill,  and_ad_upl,
+            ios_iap_w, ios_iap_upl, ios_iap_rfill,
+            ios_ad_w,  ios_ad_upl,  ios_ad_rfill,
+            _gap_widget(),
+            and_iap_w, and_iap_upl, and_iap_rfill,
+            and_ad_w,  and_ad_upl,  and_ad_rfill,
+            _gap_widget(),
+            net_factor_w, net_rfill,
         ]))
-        self._net_rows.append(widgets.HBox([net_lbl, net_factor_w, net_rfill]))
 
     def _apply_months(self, months: list[str]):
         existing = len(self._data_rows)
@@ -933,14 +976,12 @@ class ARPDAUPanel:
             self._create_row()
         for i, m in enumerate(months):
             self._month_labels[i].value = m
-            self._net_labels[i].value   = m
         n = len(months)
         if not self._live:
             if self._rows_timer is not None:
                 self._rows_timer.cancel()
                 self._rows_timer = None
-            self._rows_box.children     = tuple(self._data_rows[:n])
-            self._net_rows_box.children = tuple(self._net_rows[:n])
+            self._rows_box.children = tuple(self._data_rows[:n])
             return
         new_rows = len(self._data_rows) > existing
         if new_rows:
@@ -950,15 +991,13 @@ class ARPDAUPanel:
                 self._rows_timer.cancel()
         else:
             if self._rows_timer is None:
-                self._rows_box.children     = tuple(self._data_rows[:n])
-                self._net_rows_box.children = tuple(self._net_rows[:n])
+                self._rows_box.children = tuple(self._data_rows[:n])
                 return
             self._rows_timer.cancel()
         nf = self._rows_new_from
         def _deferred(_n=n, _nf=nf):
             try:
-                self._rows_box.children     = tuple(self._data_rows[:_n])
-                self._net_rows_box.children = tuple(self._net_rows[:_n])
+                self._rows_box.children = tuple(self._data_rows[:_n])
                 sample = {self._months[i]: self._inputs['ios']['iap'][i].value for i in range(_nf, min(_nf + 3, _n))}
                 _wlog.debug("ARPDAU deferred fired n=%d nf=%d sample_ios_iap=%s", _n, _nf, sample)
                 for i in range(_n):
@@ -975,8 +1014,7 @@ class ARPDAUPanel:
             loop = asyncio.get_running_loop()
             self._rows_timer = loop.call_later(4.0, _deferred)
         except RuntimeError:
-            self._rows_box.children     = tuple(self._data_rows[:n])
-            self._net_rows_box.children = tuple(self._net_rows[:n])
+            self._rows_box.children = tuple(self._data_rows[:n])
             self._rows_timer = None
 
     def _on_change_idx(self, i: int, platform: str, metric: str, change):
@@ -992,6 +1030,27 @@ class ARPDAUPanel:
             for metric in ('iap', 'ad'):
                 for w in self._inputs[platform][metric]:
                     _highlight(w, False)
+
+    def set_editable_from(self, forecast_start_ym: str):
+        self._forecast_start_ym = forecast_start_ym
+        self._apply_disabled_state()
+
+    def _apply_disabled_state(self):
+        if not self._forecast_start_ym:
+            return
+        for i, m in enumerate(self._months):
+            hist = m < self._forecast_start_ym
+            for platform in ('ios', 'android'):
+                for metric in ('iap', 'ad'):
+                    if i < len(self._inputs[platform][metric]):
+                        self._inputs[platform][metric][i].disabled = hist
+                    if i < len(self._uplift_inputs[platform][metric]):
+                        self._uplift_inputs[platform][metric][i].disabled = hist
+            if i < len(self._iap_net_inputs):
+                self._iap_net_inputs[i].disabled = hist
+            if i < len(self._row_fill_btns):
+                for btn in self._row_fill_btns[i]:
+                    btn.disabled = hist
 
     def update_months(self, start_month: str, n_months: int):
         new_months = _month_sequence(n_months, start_month)
@@ -1101,16 +1160,18 @@ class UABudgetPanel:
         self._baseline_ios_pct: dict[str, float] = {}
         self._loading = False
 
-        self._budget_inputs:        list[widgets.BoundedFloatText] = []
-        self._ios_pct_inputs:       list[widgets.BoundedFloatText] = []
-        self._ios_spend_labels:     list[widgets.HTML]             = []
-        self._android_spend_labels: list[widgets.HTML]             = []
-        self._month_labels:         list[widgets.Label]            = []
-        self._data_rows:            list[widgets.HBox]             = []
-        self._change_callbacks:     list[Callable]                 = []
-        self._rows_timer:           Optional[object]               = None
-        self._rows_new_from:        int                            = 0
-        self._live:                 bool                           = False
+        self._budget_inputs:         list[widgets.BoundedFloatText] = []
+        self._ios_pct_inputs:        list[widgets.BoundedFloatText] = []
+        self._ios_spend_labels:      list[widgets.HTML]             = []
+        self._android_spend_labels:  list[widgets.HTML]             = []
+        self._month_labels:          list[widgets.Label]            = []
+        self._data_rows:             list[widgets.HBox]             = []
+        self._row_fill_btns:         list                           = []
+        self._forecast_start_ym:     Optional[str]                  = None
+        self._change_callbacks:      list[Callable]                 = []
+        self._rows_timer:            Optional[object]               = None
+        self._rows_new_from:         int                            = 0
+        self._live:                  bool                           = False
 
         budget_fill  = _fill_btn()
         ios_pct_fill = _fill_btn()
@@ -1188,6 +1249,7 @@ class UABudgetPanel:
         self._ios_pct_inputs.append(ios_pct_w)
         self._ios_spend_labels.append(ios_spend_lbl)
         self._android_spend_labels.append(android_spend_lbl)
+        self._row_fill_btns.append([budget_fill, ios_pct_fill])
         self._data_rows.append(widgets.HBox([lbl, budget_w, budget_fill, ios_pct_w, ios_pct_fill, ios_spend_lbl, android_spend_lbl]))
 
     def _apply_months(self, months: list[str]):
@@ -1267,6 +1329,22 @@ class UABudgetPanel:
     def _clear_highlights(self):
         for w in self._budget_inputs:  _highlight(w, False)
         for w in self._ios_pct_inputs: _highlight(w, False)
+
+    def set_editable_from(self, forecast_start_ym: str):
+        self._forecast_start_ym = forecast_start_ym
+        self._apply_disabled_state()
+
+    def _apply_disabled_state(self):
+        if not self._forecast_start_ym:
+            return
+        for i, m in enumerate(self._months):
+            hist = m < self._forecast_start_ym
+            if i < len(self._budget_inputs):
+                self._budget_inputs[i].disabled  = hist
+                self._ios_pct_inputs[i].disabled = hist
+            if i < len(self._row_fill_btns):
+                for btn in self._row_fill_btns[i]:
+                    btn.disabled = hist
 
     def update_months(self, start_month: str, n_months: int):
         new_months  = _month_sequence(n_months, start_month)
@@ -1467,6 +1545,81 @@ class ActualsRangePanel:
 
 
 # ---------------------------------------------------------------------------
+# Targets panel  (per-month cumulative margin targets)
+# ---------------------------------------------------------------------------
+
+class TargetsPanel:
+    """Editable table of cumulative margin targets, one per forecast month."""
+
+    def __init__(self):
+        self._inputs: dict = {}   # YYYY-MM → widgets.Text
+        self._rows_box = widgets.VBox([])
+        self._box = widgets.VBox([
+            widgets.HTML(
+                "<span style='font-size:11px;color:#888'>"
+                "Set a cumulative margin target for any forecast month. "
+                "Leave blank to skip that month."
+                "</span>"
+            ),
+            widgets.HBox([
+                widgets.HTML("<b style='width:110px;display:inline-block;font-size:12px'>Month</b>"),
+                widgets.HTML("<b style='width:220px;display:inline-block;font-size:12px'>Cumul. Margin Target</b>"),
+            ], layout=widgets.Layout(margin='6px 0 2px 0')),
+            self._rows_box,
+        ])
+
+    def update_months(self, start_ym: str, n: int):
+        months = [_month_offset(start_ym, i) for i in range(n)]
+        for ym in months:
+            if ym not in self._inputs:
+                self._inputs[ym] = widgets.Text(
+                    value='',
+                    placeholder='blank = no target',
+                    layout=widgets.Layout(width='200px'),
+                )
+        rows = []
+        for ym in months:
+            rows.append(widgets.HBox([
+                widgets.HTML(
+                    f"<span style='width:110px;display:inline-block;"
+                    f"font-size:12px'>{_ym_label(ym)}</span>"
+                ),
+                self._inputs[ym],
+            ], layout=widgets.Layout(align_items='center', margin='0 0 2px 0')))
+        self._rows_box.children = tuple(rows)
+
+    def get_targets(self) -> dict:
+        result = {}
+        for ym, w in self._inputs.items():
+            val = w.value.strip().replace(',', '').replace('$', '')
+            if val:
+                try:
+                    result[ym] = float(val)
+                except ValueError:
+                    pass
+        return result
+
+    def set_targets(self, data: dict):
+        for ym, val in (data or {}).items():
+            text = '' if val is None else str(int(val))
+            if ym in self._inputs:
+                self._inputs[ym].value = text
+            else:
+                self._inputs[ym] = widgets.Text(
+                    value=text,
+                    placeholder='blank = no target',
+                    layout=widgets.Layout(width='200px'),
+                )
+
+    def send_states(self):
+        for w in self._inputs.values():
+            w.send_state()
+
+    def widget(self) -> widgets.VBox:
+        return self._box
+
+
+# ---------------------------------------------------------------------------
 # Scenario controls
 # ---------------------------------------------------------------------------
 
@@ -1500,7 +1653,7 @@ class ScenarioPanel:
             style={"description_width": "120px"}, layout=widgets.Layout(width="320px"),
         )
         load_btn = widgets.Button(description="Load", button_style="info",
-                                  layout=widgets.Layout(width="80px"))
+                                  layout=widgets.Layout(width="90px"))
         load_btn.on_click(self._on_load)
 
         # ---- platform panels ----
@@ -1521,6 +1674,9 @@ class ScenarioPanel:
 
         # ---- ARPDAU panel ----
         self.arpdau_panel = ARPDAUPanel(n_months=12, start_month=start_month)
+
+        # ---- targets panel ----
+        self.targets_panel = TargetsPanel()
 
         # ---- UA budget panel ----
         self.ua_budget_panel = UABudgetPanel(n_months=12, start_month=start_month)
@@ -1569,6 +1725,7 @@ class ScenarioPanel:
             self.ua_budget_panel.widget(),
             widgets.HBox([self.ios_panel.widget(), self.android_panel.widget()]),
             widgets.VBox([self.conversion_actuals_panel.widget(), _conversion_note, self.conversion_panel.widget()]),
+            self.targets_panel.widget(),
             widgets.VBox([self._chart_btns_box, self._result_display]),
         ])
         input_tab.set_title(0, 'DAU')
@@ -1577,7 +1734,8 @@ class ScenarioPanel:
         input_tab.set_title(3, 'UA Budget')
         input_tab.set_title(4, 'CPI')
         input_tab.set_title(5, 'Conversion')
-        input_tab.set_title(6, 'Results')
+        input_tab.set_title(6, 'Targets')
+        input_tab.set_title(7, 'Results')
         self._input_tab = input_tab
         input_tab.observe(self._on_tab_change, names='selected_index')
 
@@ -1592,11 +1750,16 @@ class ScenarioPanel:
         self._on_forecast_params_change(None)  # initialise extended panels with correct month range
 
         # ---- action buttons ----
-        run_btn  = widgets.Button(description="Run simulation", button_style="primary",
-                                  layout=widgets.Layout(width="155px"))
-        save_btn = widgets.Button(description="Save scenario",  button_style="success",
-                                  layout=widgets.Layout(width="145px"))
+        run_btn  = widgets.Button(description="Run",  button_style="primary",
+                                  layout=widgets.Layout(width="90px"))
+        save_btn = widgets.Button(description="Save", button_style="success",
+                                  layout=widgets.Layout(width="90px"))
         self._status = widgets.HTML("")
+        self._target_dot = widgets.HTML(
+            "<span style='display:inline-block;width:12px;height:12px;"
+            "border-radius:50%;background:#aaa;vertical-align:middle;"
+            "margin:0 4px'></span>"
+        )
 
         run_btn.on_click(self._on_run)
         save_btn.on_click(self._on_save)
@@ -1609,7 +1772,7 @@ class ScenarioPanel:
                 layout=widgets.Layout(align_items='center', margin='0 0 8px 0'),
             ),
             widgets.HBox(
-                [self.load_dropdown, load_btn, divider, run_btn, save_btn, self._status],
+                [self.load_dropdown, load_btn, save_btn, divider, run_btn, self._target_dot, self._status],
                 layout=widgets.Layout(align_items='center'),
             ),
         ], layout=widgets.Layout(margin='6px 0 10px 0'))
@@ -1693,6 +1856,21 @@ class ScenarioPanel:
     def set_historical_marketing(self, data: dict):
         pass  # handled in app.py during load_saved_scenario
 
+    def get_targets(self) -> dict:
+        return self.targets_panel.get_targets()
+
+    def set_targets(self, data: dict):
+        self.targets_panel.set_targets(data)
+
+    def set_target_dot(self, color: str):
+        _colors = {'green': '#2ecc71', 'red': '#e74c3c', 'grey': '#aaa'}
+        bg = _colors.get(color, '#aaa')
+        self._target_dot.value = (
+            f"<span style='display:inline-block;width:12px;height:12px;"
+            f"border-radius:50%;background:{bg};vertical-align:middle;"
+            f"margin:0 4px'></span>"
+        )
+
     def get_actuals_range(self) -> dict:
         return {
             'retention':  self.retention_actuals_panel.get_state(),
@@ -1715,16 +1893,16 @@ class ScenarioPanel:
         val = self.forecast_start.value
         return val.date() if isinstance(val, datetime) else val
 
-    def set_chart_results(self, chart_widgets: dict, table_widget) -> None:
+    def set_chart_results(self, chart_widgets: dict, table_widget, targets_widget=None) -> None:
         """Populate the button-bar and result area after a successful Run."""
         _LABELS = {
             'dau': 'DAU', 'installs': 'Installs', 'revenue': 'Revenue',
-            'monthly': 'Monthly', 'table': 'P&L Table',
+            'monthly': 'Monthly', 'table': 'P&L Table', 'targets': 'Targets',
             'retention': 'Retention', 'conversion': 'Conversion',
         }
-        self._cached_results = {**chart_widgets, 'table': table_widget}
+        self._cached_results = {**chart_widgets, 'table': table_widget, 'targets': targets_widget}
         btns = []
-        for key in list(chart_widgets.keys()) + ['table']:
+        for key in list(chart_widgets.keys()) + ['table', 'targets']:
             btn = widgets.Button(
                 description=_LABELS.get(key, key),
                 button_style='info',
@@ -1736,7 +1914,7 @@ class ScenarioPanel:
         first = next(iter(self._cached_results), None)
         if first:
             self._show_result(first)
-        self._input_tab.selected_index = 6  # switch to Results tab
+        self._input_tab.selected_index = 7  # switch to Results tab
 
     def _show_result(self, key: str) -> None:
         w = self._cached_results.get(key)
@@ -1769,6 +1947,11 @@ class ScenarioPanel:
                 ap._days_back.send_state()
                 ap._from_date.send_state()
                 ap._to_date.send_state()
+        # Target inputs
+        self.targets_panel.send_states()
+        # Re-apply disabled state for historical rows in extended panels
+        self.arpdau_panel._apply_disabled_state()
+        self.ua_budget_panel._apply_disabled_state()
 
     async def _precreate_rows_bg(self) -> None:
         """After display, gradually pre-create rows up to _MAX_ROWS per panel.
@@ -1829,17 +2012,20 @@ class ScenarioPanel:
         # Forecast-range panels
         self.ios_panel.update_months(forecast_ym, n_forecast)
         self.android_panel.update_months(forecast_ym, n_forecast)
-        self.arpdau_panel.update_months(forecast_ym, n_forecast)
+        if hasattr(self, 'targets_panel'):
+            self.targets_panel.update_months(forecast_ym, n_forecast)
 
-        # Extended cost panels — need actuals_from
+        # Extended panels (actuals_from → end of forecast) — need actuals_from
         if not hasattr(self, '_actuals_months'):
             return
         actuals_ym = self.get_actuals_from().strftime("%Y-%m")
 
-        # Extended panels: actuals_from → end of forecast
         forecast_end_ym = _month_offset(forecast_ym, n_forecast - 1)
         n_extended = _month_count_inclusive(actuals_ym, forecast_end_ym)
+        self.arpdau_panel.update_months(actuals_ym, n_extended)
+        self.arpdau_panel.set_editable_from(forecast_ym)
         self.ua_budget_panel.update_months(actuals_ym, n_extended)
+        self.ua_budget_panel.set_editable_from(forecast_ym)
         self.ios_panel.update_boost_months(actuals_ym, n_extended)
         self.android_panel.update_boost_months(actuals_ym, n_extended)
         self._sync_installs()
