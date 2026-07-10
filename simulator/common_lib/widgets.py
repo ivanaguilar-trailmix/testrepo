@@ -1897,7 +1897,7 @@ class ScenarioPanel:
         """Populate the button-bar and result area after a successful Run."""
         _LABELS = {
             'dau': 'DAU', 'installs': 'Installs', 'revenue': 'Revenue',
-            'monthly': 'Monthly', 'table': 'P&L Table', 'targets': 'Targets',
+            'boost': 'Boost', 'monthly': 'Monthly', 'table': 'P&L Table', 'targets': 'Targets',
             'retention': 'Retention', 'conversion': 'Conversion',
         }
         self._cached_results = {**chart_widgets, 'table': table_widget, 'targets': targets_widget}

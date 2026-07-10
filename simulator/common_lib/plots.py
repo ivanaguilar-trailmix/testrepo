@@ -21,6 +21,7 @@ _CHART_META = {
     'installs': ('installs', 'new_installs',  'New Installs per Day',     ',.0f'),
     'revenue':  ('revenue',  'total_revenue', 'Daily Revenue (IAP + Ad)', '$,.2f'),
     'payers':   ('payers',   'payer_dau',     'Payer DAU',                ',.0f'),
+    'boost':    ('boost',    'boost_dau',     'External Boost DAU',       ',.0f'),
 }
 
 _actuals: pd.DataFrame | None = None
@@ -184,9 +185,9 @@ def plot(scenarios, chart: str = 'all') -> None:
         scenarios = [scenarios]
     dfs   = {name: load_result(name) for name in scenarios}
     title = ' vs '.join(scenarios)
-    show  = {chart} if chart != 'all' else {'dau', 'installs', 'revenue', 'payers', 'monthly'}
+    show  = {chart} if chart != 'all' else {'dau', 'installs', 'revenue', 'payers', 'boost', 'monthly'}
 
-    for key in ('dau', 'installs', 'revenue', 'payers'):
+    for key in ('dau', 'installs', 'revenue', 'payers', 'boost'):
         if key in show:
             metric, y_col, y_label, fmt = _CHART_META[key]
             _build_daily_fig(metric, y_col, y_label, dfs, title, fmt).show()

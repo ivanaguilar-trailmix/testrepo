@@ -104,7 +104,7 @@ def setup_callbacks(
             n_actuals = max(1, (start.year - actuals_from.year) * 12 + (start.month - actuals_from.month)) if actuals_from else 6
 
             curve_anchors = panel.get_curve_anchors()
-            chart_ws = {k: build_chart_widget(name, k) for k in ('dau', 'installs', 'revenue', 'monthly')}
+            chart_ws = {k: build_chart_widget(name, k) for k in ('dau', 'installs', 'revenue', 'boost', 'monthly')}
             arpdau_vals = panel.get_arpdau()
             mkt_actuals = None
             if marketing is not None:
@@ -150,7 +150,64 @@ def setup_callbacks(
                 _w.HTML(f'<div style="overflow-x:auto">{table_html}</div>'),
             ])
 
-            panel.set_chart_results(chart_ws, table_w)
+            # ---- targets evaluation ----
+            targets = panel.get_targets()
+            target_rows = sorted(
+                [(ym, t) for ym, t in targets.items() if t is not None],
+                key=lambda x: x[0],
+            )
+            cumul_by_month = {
+                row['Date'][:7]: row['Cumul. Margin']
+                for _, row in table_df.iterrows()
+            }
+            all_met = True
+            rows_html = []
+            for ym, target in target_rows:
+                actual = cumul_by_month.get(ym)
+                if actual is None:
+                    status_cell = "<span style='color:orange'>No data</span>"
+                    pct_cell    = "—"
+                    all_met = False
+                else:
+                    pct = (actual - target) / abs(target) * 100 if target != 0 else 0.0
+                    pct_color = '#27ae60' if pct >= 0 else '#e74c3c'
+                    pct_sign  = '+' if pct >= 0 else ''
+                    pct_cell  = f"<span style='color:{pct_color}'>{pct_sign}{pct:.1f}%</span>"
+                    if actual >= target:
+                        status_cell = "<span style='color:#27ae60'>&#10003; Met</span>"
+                    else:
+                        status_cell = "<span style='color:#e74c3c'>&#10007; Missed</span>"
+                        all_met = False
+                actual_str = f"${actual:,.0f}" if actual is not None else "—"
+                rows_html.append(
+                    f"<tr><td style='padding:4px 12px'>{ym}</td>"
+                    f"<td style='padding:4px 12px'>{actual_str}</td>"
+                    f"<td style='padding:4px 12px'>${target:,.0f}</td>"
+                    f"<td style='padding:4px 12px'>{pct_cell}</td>"
+                    f"<td style='padding:4px 12px'>{status_cell}</td></tr>"
+                )
+            if target_rows:
+                hdr = ("<tr style='background:#f0f0f0'>"
+                       "<th style='padding:4px 12px;text-align:left'>Month</th>"
+                       "<th style='padding:4px 12px;text-align:left'>Actual</th>"
+                       "<th style='padding:4px 12px;text-align:left'>Target</th>"
+                       "<th style='padding:4px 12px;text-align:left'>% Diff</th>"
+                       "<th style='padding:4px 12px;text-align:left'>Status</th></tr>")
+                targets_html = (
+                    f"<table style='border-collapse:collapse;font-size:13px'>"
+                    f"{hdr}{''.join(rows_html)}</table>"
+                )
+                targets_w = _w.HTML(f'<div style="overflow-x:auto">{targets_html}</div>')
+                dot_color = 'green' if all_met else 'red'
+            else:
+                targets_w = _w.HTML(
+                    "<span style='color:#888;font-size:12px'>"
+                    "No targets defined. Set cumulative margin targets in the Targets tab.</span>"
+                )
+                dot_color = 'grey'
+            panel.set_target_dot(dot_color)
+
+            panel.set_chart_results(chart_ws, table_w, targets_w)
             panel.set_status(f"Done — {name}  |  save the scenario to persist inputs", 'green')
         except Exception:
             _logger.exception("run_simulation failed")
@@ -179,6 +236,7 @@ def setup_callbacks(
                 monthly_ua_budget=ua_vals['monthly_budget'],
                 monthly_ios_pct=ua_vals['monthly_ios_pct'],
                 monthly_iap_net_factor=arpdau_vals.get('iap_net_factor'),
+                margin_targets=panel.get_targets() or None,
             )
             panel.set_status(f'Saved to {path.name}', 'green')
             panel.load_dropdown.options = ['— new scenario —'] + list_scenarios()
@@ -194,7 +252,7 @@ def setup_callbacks(
              curve_anchors, actuals_range,
              actuals_from, selected_charts, historical_marketing,
              monthly_ua_budget, monthly_ios_pct,
-             monthly_iap_net_factor) = load_scenario(name)
+             monthly_iap_net_factor, margin_targets) = load_scenario(name)
 
             # Suppress forecast-start callbacks during load — the scenario supplies its
             # own anchor DAU and age distribution; firing set_anchor_from_actuals() here
@@ -246,6 +304,8 @@ def setup_callbacks(
                     panel.set_actuals_range(actuals_range)
                 if actuals_from:
                     panel.set_actuals_from(actuals_from)
+                if margin_targets:
+                    panel.set_targets(margin_targets)
                 # UA budget: new format takes precedence; fall back to deriving from per-platform UA
                 if monthly_ua_budget is not None:
                     panel.ua_budget_panel.set_values(
@@ -359,11 +419,12 @@ def setup_callbacks(
                 panel.arpdau_actuals_panel.set_status("No actuals data available", 'orange')
                 return
             panel.arpdau_panel.set_values(
-                ios_iap     = monthly['ios']['iap'],
-                ios_ad      = monthly['ios']['ad'],
-                android_iap = monthly['android']['iap'],
-                android_ad  = monthly['android']['ad'],
-                is_baseline = True,
+                ios_iap        = monthly['ios']['iap'],
+                ios_ad         = monthly['ios']['ad'],
+                android_iap    = monthly['android']['iap'],
+                android_ad     = monthly['android']['ad'],
+                iap_net_factor = monthly.get('iap_net_factor') or None,
+                is_baseline    = True,
             )
             n = max(len(monthly['ios']['iap']), len(monthly['android']['iap']))
             panel.arpdau_actuals_panel.set_status(

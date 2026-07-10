@@ -42,6 +42,7 @@ class PlatformResults:
     dau: np.ndarray
     organic_dau: np.ndarray       # contribution from pre-forecast user base
     new_cohort_dau: np.ndarray    # contribution from new installs during forecast
+    boost_dau: np.ndarray         # portion of new_cohort_dau attributable to the external installs boost
     payer_dau: np.ndarray
     iap_revenue: np.ndarray
     ad_revenue: np.ndarray
@@ -58,6 +59,7 @@ class PlatformResults:
             "dau":            self.dau,
             "organic_dau":    self.organic_dau,
             "new_cohort_dau": self.new_cohort_dau,
+            "boost_dau":      self.boost_dau,
             "payer_dau":      self.payer_dau,
             "iap_revenue":    self.iap_revenue,
             "ad_revenue":     self.ad_revenue,
@@ -80,6 +82,7 @@ class SimulationResults:
             dau=self.ios.dau + self.android.dau,
             organic_dau=self.ios.organic_dau + self.android.organic_dau,
             new_cohort_dau=self.ios.new_cohort_dau + self.android.new_cohort_dau,
+            boost_dau=self.ios.boost_dau + self.android.boost_dau,
             payer_dau=self.ios.payer_dau + self.android.payer_dau,
             iap_revenue=self.ios.iap_revenue + self.android.iap_revenue,
             ad_revenue=self.ios.ad_revenue + self.android.ad_revenue,
@@ -232,6 +235,11 @@ def _run_platform(inputs: PlatformInputs, start_date: date, n_days: int) -> Plat
     new_cohort_dau, payer_dau = _cohort_dau_and_payers(
         daily_installs, inputs.retention_curve, inputs.conversion_curve, n_days
     )
+    # Isolate the boost's own contribution — same retention decay, applied only to
+    # the boost-install stream, so it always sums to <= new_cohort_dau.
+    boost_dau, _ = _cohort_dau_and_payers(
+        boost_installs, inputs.retention_curve, inputs.conversion_curve, n_days
+    )
 
     dau         = new_cohort_dau + organic_dau
     iap_revenue = dau * daily_iap
@@ -244,6 +252,7 @@ def _run_platform(inputs: PlatformInputs, start_date: date, n_days: int) -> Plat
         dau=dau,
         organic_dau=organic_dau,
         new_cohort_dau=new_cohort_dau,
+        boost_dau=boost_dau,
         payer_dau=payer_dau,
         iap_revenue=iap_revenue,
         ad_revenue=ad_revenue,
@@ -330,6 +339,7 @@ def save_scenario(
     monthly_ua_budget: dict = None,
     monthly_ios_pct: dict = None,
     monthly_iap_net_factor: dict = None,
+    margin_targets: dict = None,
 ) -> Path:
     SCENARIOS_DIR.mkdir(exist_ok=True)
     safe_name = name.replace(" ", "_").lower()
@@ -346,6 +356,7 @@ def save_scenario(
         "monthly_ua_budget":       monthly_ua_budget,
         "monthly_ios_pct":         monthly_ios_pct,
         "monthly_iap_net_factor":  monthly_iap_net_factor,
+        "margin_targets":          margin_targets,
         "ios":                     _inputs_to_dict(ios_inputs),
         "android":                 _inputs_to_dict(android_inputs),
     }
@@ -373,6 +384,7 @@ def load_scenario(name: str) -> tuple:
         payload.get("monthly_ua_budget"),
         payload.get("monthly_ios_pct"),
         payload.get("monthly_iap_net_factor"),
+        payload.get("margin_targets"),
     )
 
 

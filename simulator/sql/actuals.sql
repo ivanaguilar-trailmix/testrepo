@@ -57,6 +57,7 @@ WITH active_users as (
     count(distinct new_user_id) as new_installs,
     sum(gross_usd_iap_revenue) as iap_revenue,
     sum(net_usd_iap_revenue) as iap_net_revenue,
+    sum(net_usd_iap_revenue)/sum(gross_usd_iap_revenue) as iap_net_factor,
     sum(gross_usd_ad_revenue) as ad_revenue,
     sum(net_usd_ad_revenue) as ad_net_revenue,
   from active_users

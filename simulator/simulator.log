@@ -1181,3 +1181,691 @@ Traceback (most recent call last):
     ap._mode.send_state()
     ^^^^^^^^
 AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 14:23:40,604 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-24 14:23:41,682 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-24 14:23:52,417 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-24 14:24:05,319 DEBUG load_saved_scenario START name=plan a1 - 2026 ua250k
+2026-06-24 14:24:05,328 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-24 14:24:05,329 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-24 14:24:05,338 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 14:24:05,341 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 14:24:05,403 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-24 14:24:05,404 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-24 14:24:05,572 DEBUG load_saved_scenario COMPLETE name=plan a1 - 2026 ua250k
+2026-06-24 14:24:05,581 DEBUG _wait_and_show_status START name=plan a1 - 2026 ua250k
+2026-06-24 14:24:05,682 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 14:24:05,691 ERROR _wait_and_show_status failed name=plan a1 - 2026 ua250k
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 291, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-24 15:08:34,868 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-24 15:08:34,885 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-24 15:08:34,887 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-24 15:08:34,988 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-24 15:08:34,992 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 291, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-30 11:00:45,721 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 11:00:46,785 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-30 11:00:57,551 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 11:01:12,920 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 11:01:12,925 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 11:01:12,926 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 11:01:12,933 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 11:01:12,935 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 11:01:12,991 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 11:01:12,992 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 11:01:13,223 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 11:01:13,232 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 11:01:13,333 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 11:01:13,337 ERROR _wait_and_show_status failed name=plan a - no ua, no uplifts
+Traceback (most recent call last):
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/app.py", line 291, in _wait_and_show_status
+    panel.resync_header_widgets()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/ivanaguilar/Desktop/DataStuff/gitrepos/testrepo/simulator/common_lib/widgets.py", line 1767, in resync_header_widgets
+    ap._mode.send_state()
+    ^^^^^^^^
+AttributeError: 'ActualsRangePanel' object has no attribute '_mode'
+2026-06-30 11:24:22,285 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 11:24:23,342 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-30 11:24:34,115 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 11:25:27,423 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 11:25:27,434 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 11:25:27,437 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 11:25:27,462 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 11:25:27,465 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 11:25:27,680 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 11:25:27,680 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 11:25:27,875 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 11:25:27,880 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 11:25:27,981 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 11:25:28,191 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 12:07:26,255 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 12:07:27,319 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-30 12:07:37,586 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 12:07:51,584 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 12:07:51,590 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 12:07:51,592 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 12:07:51,610 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 12:07:51,612 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 12:07:51,828 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 12:07:51,829 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 12:07:52,030 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 12:07:52,036 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 12:07:52,137 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 12:07:52,345 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 12:30:12,884 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 12:30:12,887 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 12:30:35,364 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 12:30:35,387 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 13:14:54,636 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 13:14:54,639 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 13:14:59,766 DEBUG CPI(ios) immediate n=41 (rows pre-existed)
+2026-06-30 13:14:59,767 DEBUG CPI(android) immediate n=41 (rows pre-existed)
+2026-06-30 13:15:05,825 DEBUG CPI(ios) immediate n=41 (rows pre-existed)
+2026-06-30 13:15:05,827 DEBUG CPI(android) immediate n=41 (rows pre-existed)
+2026-06-30 13:15:38,578 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 13:15:38,580 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 13:22:08,404 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 13:22:09,462 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-30 13:22:20,109 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 14:13:11,783 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 14:13:11,798 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:13:11,802 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:13:11,911 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:13:11,912 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:13:12,190 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 14:13:12,193 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 14:13:12,294 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:13:12,501 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 14:13:32,450 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 14:13:32,471 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 14:13:32,474 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 14:13:32,576 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:13:32,783 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 14:14:38,122 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 14:14:38,142 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 14:14:38,144 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 14:14:38,245 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:14:38,457 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 14:15:01,164 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 14:15:01,184 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 14:15:01,186 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 14:15:01,288 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:15:01,500 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 14:15:24,067 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 14:15:24,083 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 14:15:24,085 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 14:15:24,186 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:15:24,397 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 14:16:49,303 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 14:16:49,327 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 14:16:49,331 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 14:16:49,432 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:16:49,643 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 14:25:01,611 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 14:25:01,686 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 14:25:01,699 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 14:25:01,818 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:25:02,042 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 14:25:54,673 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:25:54,675 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:27:24,526 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:27:24,535 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:38:52,300 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:38:52,301 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:40:41,786 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 14:40:41,803 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:40:41,804 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:40:41,852 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 14:40:41,859 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 14:40:41,965 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:40:42,183 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 14:40:49,576 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:40:49,577 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:44:28,530 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 14:44:29,586 DEBUG precreate: start ios=12 arpdau=12 ua=24
+2026-06-30 14:44:40,305 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 14:44:53,975 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 14:44:53,985 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 14:44:53,988 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 14:44:54,012 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:44:54,014 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:44:54,189 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:44:54,190 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:44:54,370 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 14:44:54,380 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 14:44:54,481 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:44:54,690 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 14:48:48,086 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:48:48,102 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:49:39,576 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:49:39,580 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:50:53,682 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 14:50:53,695 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:50:53,700 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:50:53,780 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:50:53,780 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:50:53,942 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 14:50:53,944 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 14:50:54,045 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:50:54,253 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 14:51:03,541 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 14:51:03,552 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:51:03,555 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:51:03,611 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:51:03,611 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:51:03,642 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 14:51:03,658 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 14:51:03,759 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:51:03,984 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 14:51:21,654 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 14:51:21,663 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:51:21,667 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:51:21,725 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:51:21,725 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:51:21,781 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 14:51:21,783 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 14:51:21,885 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:51:22,094 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 14:53:32,880 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 14:53:32,890 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:53:32,894 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:53:32,949 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 14:53:32,949 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 14:53:32,984 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 14:53:32,999 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 14:53:33,099 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 14:53:33,313 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 16:01:36,945 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 16:01:38,017 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 16:01:48,687 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 16:06:28,922 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 16:06:28,933 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 16:06:28,935 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 16:06:28,963 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 16:06:28,965 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 16:06:29,148 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 16:06:29,148 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 16:06:29,317 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 16:06:29,349 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 16:06:29,451 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:06:29,659 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 16:13:09,013 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 16:13:10,085 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 16:13:20,783 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 16:14:14,926 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 16:14:14,932 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 16:14:14,933 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 16:14:14,948 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 16:14:14,949 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 16:14:15,106 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 16:14:15,106 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 16:14:15,343 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 16:14:15,353 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 16:14:15,455 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:14:15,666 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 16:17:21,096 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 16:17:21,099 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 16:17:34,939 DEBUG CPI(ios) immediate n=43 (rows pre-existed)
+2026-06-30 16:17:34,941 DEBUG CPI(android) immediate n=43 (rows pre-existed)
+2026-06-30 16:17:37,654 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 16:17:37,655 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 16:19:39,283 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 16:19:39,336 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 16:19:39,346 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 16:19:39,448 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:19:39,672 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 16:41:56,149 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 16:41:57,239 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 16:42:07,910 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 16:42:31,357 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 16:42:31,363 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 16:42:31,364 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 16:42:31,386 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 16:42:31,388 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 16:42:31,584 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 16:42:31,585 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 16:42:31,887 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 16:42:31,889 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 16:42:31,990 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:42:32,200 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 16:47:08,499 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 16:47:08,547 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 16:47:08,557 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 16:47:08,658 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:47:08,867 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 16:47:30,306 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 16:47:30,326 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 16:47:30,329 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 16:47:30,430 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:47:30,641 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 16:48:03,719 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 16:48:03,741 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 16:48:03,743 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 16:48:03,844 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:48:04,057 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 16:48:15,902 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 16:48:15,924 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 16:48:15,927 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 16:48:16,028 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:48:16,238 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 16:48:35,287 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 16:48:35,310 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 16:48:35,313 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 16:48:35,414 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:48:35,628 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 16:55:46,225 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 16:55:46,296 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 16:55:46,306 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 16:55:46,408 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 16:55:46,640 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 17:01:08,486 DEBUG load_saved_scenario START name=plan a - no ua, yes uplifts
+2026-06-30 17:01:08,503 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, yes uplifts
+2026-06-30 17:01:08,503 DEBUG _wait_and_show_status START name=plan a - no ua, yes uplifts
+2026-06-30 17:01:08,605 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 17:01:08,828 DEBUG _wait_and_show_status DONE name=plan a - no ua, yes uplifts
+2026-06-30 17:01:19,359 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 17:01:19,379 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 17:01:19,381 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 17:01:19,482 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 17:01:19,695 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 17:44:34,752 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 17:44:35,821 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 17:44:46,482 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 17:54:29,695 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 17:54:29,708 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 17:54:29,710 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 17:54:29,735 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 17:54:29,738 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 17:54:29,885 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 17:54:29,885 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 17:54:30,159 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 17:54:30,160 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 17:54:30,260 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 17:54:30,470 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 18:05:54,228 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 18:05:55,303 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 18:06:05,995 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 18:10:22,936 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 18:10:24,009 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 18:10:34,589 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 18:11:43,231 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 18:11:44,309 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 18:11:54,905 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 18:14:50,644 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 18:14:50,654 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 18:14:50,655 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 18:14:50,677 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 18:14:50,679 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 18:14:50,837 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 18:14:50,838 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 18:14:51,187 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 18:14:51,188 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 18:14:51,289 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 18:14:51,497 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 18:20:37,304 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 18:20:38,391 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 18:20:48,995 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 18:36:09,226 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 18:36:10,316 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 18:36:21,008 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 18:41:52,591 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 18:41:53,659 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 18:42:05,050 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 18:58:51,558 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 18:58:52,659 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 18:59:03,404 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 19:09:15,610 DEBUG ScenarioPanel displayed — all panels now live
+2026-06-30 19:09:16,677 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-06-30 19:09:27,299 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-06-30 19:10:55,938 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 19:10:55,950 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-06-30 19:10:55,952 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-06-30 19:10:55,979 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 19:10:55,982 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 19:10:56,130 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-06-30 19:10:56,130 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-06-30 19:10:56,453 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 19:10:56,454 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 19:10:56,555 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 19:10:56,764 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 19:23:20,925 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-06-30 19:23:20,959 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-06-30 19:23:20,962 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-06-30 19:23:21,063 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 19:23:21,278 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-06-30 19:24:06,318 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-06-30 19:24:06,351 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-06-30 19:24:06,353 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-06-30 19:24:06,455 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 19:24:06,664 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-06-30 19:24:25,442 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-06-30 19:24:25,464 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-06-30 19:24:25,467 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-06-30 19:24:25,569 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-06-30 19:24:25,782 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:12:23,930 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-01 13:12:25,180 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-01 13:12:33,795 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 13:12:33,799 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-01 13:12:33,801 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-01 13:12:33,957 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-01 13:12:33,957 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-01 13:12:34,100 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 13:12:34,106 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 13:12:34,206 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:12:34,414 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 13:12:35,370 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-01 13:13:24,691 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:13:24,719 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:13:24,721 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:13:24,823 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:13:25,030 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:13:52,076 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:13:52,090 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:13:52,091 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:13:52,193 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:13:52,411 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:15:07,769 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 13:15:07,798 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 13:15:07,799 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 13:15:07,901 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:15:08,117 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 13:16:55,586 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-01 13:16:56,696 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-01 13:17:06,856 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-01 13:17:27,431 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-01 13:17:28,712 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-01 13:17:37,983 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 13:17:37,998 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-01 13:17:38,004 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-01 13:17:38,154 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-01 13:17:38,155 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-01 13:17:38,304 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 13:17:38,314 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 13:17:38,414 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:17:38,621 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 13:17:39,145 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-01 13:18:29,637 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:18:29,663 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:18:29,665 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:18:29,766 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:18:29,974 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:18:45,368 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:18:45,386 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:18:45,387 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:18:45,487 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:18:45,705 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:28:50,344 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 13:28:50,379 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 13:28:50,382 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 13:28:50,483 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:28:50,698 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 13:31:27,810 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 13:31:27,827 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 13:31:27,829 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 13:31:27,930 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:31:28,155 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 13:35:13,446 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:35:13,476 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:35:13,479 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:35:13,580 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:35:13,792 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:36:38,260 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:36:38,283 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:36:38,285 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:36:38,386 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:36:38,607 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:39:56,982 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:39:57,000 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:39:57,002 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:39:57,102 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:39:57,323 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:42:20,999 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:42:21,017 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:42:21,019 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:42:21,123 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:42:21,353 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:42:40,352 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:42:40,369 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:42:40,371 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:42:40,472 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:42:40,698 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:42:48,498 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:42:48,513 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:42:48,514 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:42:48,616 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:42:48,838 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:42:59,720 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:42:59,739 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:42:59,740 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:42:59,842 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:43:00,066 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 13:47:11,490 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:47:11,521 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:47:11,522 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 13:47:11,623 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 13:47:11,849 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:04:42,445 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 14:04:42,487 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 14:04:42,490 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 14:04:42,591 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:04:42,803 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 14:11:04,377 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:11:04,414 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:11:04,417 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:11:04,518 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:11:04,730 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:25:15,757 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 14:25:15,794 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 14:25:15,798 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 14:25:15,900 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:25:16,114 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 14:25:46,883 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:25:46,909 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:25:46,912 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:25:47,014 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:25:47,232 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:39:19,718 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:39:19,756 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:39:19,758 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:39:19,860 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:39:20,082 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:39:44,976 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:39:45,000 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:39:45,003 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:39:45,105 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:39:45,333 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:40:00,280 DEBUG load_saved_scenario START name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 14:40:00,297 DEBUG load_saved_scenario COMPLETE name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 14:40:00,299 DEBUG _wait_and_show_status START name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 14:40:00,401 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:40:00,622 DEBUG _wait_and_show_status DONE name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 14:40:10,859 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 14:40:10,889 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 14:40:10,893 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 14:40:10,994 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:40:11,207 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 14:40:29,614 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:40:29,643 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:40:29,647 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:40:29,748 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:40:29,961 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:40:40,183 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:40:40,205 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:40:40,206 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:40:40,307 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:40:40,532 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 14:40:51,074 DEBUG load_saved_scenario START name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 14:40:51,098 DEBUG load_saved_scenario COMPLETE name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 14:40:51,100 DEBUG _wait_and_show_status START name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 14:40:51,201 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:40:51,426 DEBUG _wait_and_show_status DONE name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 14:41:12,103 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:41:12,126 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:41:12,128 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 14:41:12,230 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 14:41:12,459 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 16:03:47,255 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-01 16:03:47,300 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-01 16:03:47,304 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-01 16:03:47,405 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 16:03:47,620 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-01 16:04:08,009 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 16:04:08,038 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 16:04:08,042 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 16:04:08,144 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 16:04:08,360 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-01 16:04:20,169 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 16:04:20,190 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 16:04:20,192 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 16:04:20,294 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 16:04:20,520 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-01 16:04:39,215 DEBUG load_saved_scenario START name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 16:04:39,237 DEBUG load_saved_scenario COMPLETE name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 16:04:39,239 DEBUG _wait_and_show_status START name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 16:04:39,341 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-01 16:04:39,572 DEBUG _wait_and_show_status DONE name=plan a - 075m 2026q3, yes uplifts
+2026-07-01 16:11:27,239 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-01 16:11:28,310 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-01 16:11:38,862 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-02 10:45:01,978 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-02 10:45:03,051 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-02 10:45:13,931 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-02 10:45:31,533 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-02 10:45:31,541 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-07-02 10:45:31,541 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-07-02 10:45:31,564 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-02 10:45:31,568 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-02 10:45:31,697 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-02 10:45:31,697 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-02 10:45:31,914 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-02 10:45:31,915 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-02 10:45:32,015 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-02 10:45:32,223 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-07 14:07:26,032 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-07 14:07:27,213 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-07 14:07:38,519 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-07 14:07:53,910 DEBUG load_saved_scenario START name=plan a - no ua, no uplifts
+2026-07-07 14:07:53,916 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-07-07 14:07:53,916 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-07-07 14:07:53,939 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-07 14:07:53,941 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-07 14:07:54,092 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-07 14:07:54,093 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-07 14:07:54,234 DEBUG load_saved_scenario COMPLETE name=plan a - no ua, no uplifts
+2026-07-07 14:07:54,244 DEBUG _wait_and_show_status START name=plan a - no ua, no uplifts
+2026-07-07 14:07:54,344 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-07 14:07:54,553 DEBUG _wait_and_show_status DONE name=plan a - no ua, no uplifts
+2026-07-07 14:08:13,391 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-07 14:08:13,421 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-07 14:08:13,424 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-07 14:08:13,526 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-07 14:08:13,738 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-07 14:12:38,179 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-07 14:12:39,445 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-07 14:12:50,187 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-08 17:12:17,577 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-08 17:12:18,649 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-08 17:12:28,045 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-08 17:12:28,050 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-07-08 17:12:28,050 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-07-08 17:12:28,066 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-08 17:12:28,068 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-08 17:12:28,220 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-08 17:12:28,221 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-08 17:12:28,353 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-08 17:12:28,361 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-08 17:12:28,461 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-08 17:12:28,668 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-08 17:12:29,654 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-08 17:13:40,555 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-08 17:13:40,580 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-08 17:13:40,584 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-08 17:13:40,685 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-08 17:13:40,908 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts. org uplifts
+2026-07-08 17:14:26,582 DEBUG load_saved_scenario START name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-08 17:14:26,604 DEBUG load_saved_scenario COMPLETE name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-08 17:14:26,605 DEBUG _wait_and_show_status START name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-08 17:14:26,707 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-08 17:14:26,936 DEBUG _wait_and_show_status DONE name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-08 17:16:22,933 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-08 17:16:24,198 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-08 17:16:35,083 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-09 16:25:59,790 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-09 16:26:01,161 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-09 16:26:12,019 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-09 16:30:04,676 DEBUG load_saved_scenario START name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-09 16:30:04,686 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-07-09 16:30:04,686 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-07-09 16:30:04,711 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-09 16:30:04,715 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-09 16:30:04,841 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-09 16:30:04,841 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-09 16:30:04,981 DEBUG load_saved_scenario COMPLETE name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-09 16:30:04,991 DEBUG _wait_and_show_status START name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-09 16:30:05,092 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-09 16:30:05,299 DEBUG _wait_and_show_status DONE name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-09 16:30:53,494 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-09 16:30:54,677 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-09 16:31:05,544 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-09 16:31:08,520 DEBUG load_saved_scenario START name=plan a - 1m 2026q3, yes uplifts
+2026-07-09 16:31:08,526 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-07-09 16:31:08,527 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-07-09 16:31:08,550 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-09 16:31:08,553 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-09 16:31:08,689 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-09 16:31:08,690 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-09 16:31:08,829 DEBUG load_saved_scenario COMPLETE name=plan a - 1m 2026q3, yes uplifts
+2026-07-09 16:31:08,842 DEBUG _wait_and_show_status START name=plan a - 1m 2026q3, yes uplifts
+2026-07-09 16:31:08,942 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-09 16:31:09,150 DEBUG _wait_and_show_status DONE name=plan a - 1m 2026q3, yes uplifts
+2026-07-09 16:32:09,567 DEBUG load_saved_scenario START name=plan a - 300k 202607, yes uplifts
+2026-07-09 16:32:09,594 DEBUG load_saved_scenario COMPLETE name=plan a - 300k 202607, yes uplifts
+2026-07-09 16:32:09,597 DEBUG _wait_and_show_status START name=plan a - 300k 202607, yes uplifts
+2026-07-09 16:32:09,699 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-09 16:32:09,922 DEBUG _wait_and_show_status DONE name=plan a - 300k 202607, yes uplifts
+2026-07-10 11:43:52,698 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-10 11:43:53,906 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-10 11:44:04,387 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-10 12:04:51,570 DEBUG load_saved_scenario START name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-10 12:04:51,576 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-07-10 12:04:51,576 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-07-10 12:04:51,591 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-10 12:04:51,594 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-10 12:04:51,764 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-10 12:04:51,764 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-10 12:04:52,190 DEBUG load_saved_scenario COMPLETE name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-10 12:04:52,191 DEBUG _wait_and_show_status START name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-10 12:04:52,292 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-10 12:04:52,501 DEBUG _wait_and_show_status DONE name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-10 12:29:14,248 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-10 12:29:15,339 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-10 12:29:25,842 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100
+2026-07-10 12:30:00,627 DEBUG load_saved_scenario START name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-10 12:30:00,634 DEBUG CPI(ios) immediate n=12 (rows pre-existed)
+2026-07-10 12:30:00,634 DEBUG CPI(android) immediate n=12 (rows pre-existed)
+2026-07-10 12:30:00,652 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-10 12:30:00,654 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-10 12:30:00,825 DEBUG CPI(ios) immediate n=42 (rows pre-existed)
+2026-07-10 12:30:00,825 DEBUG CPI(android) immediate n=42 (rows pre-existed)
+2026-07-10 12:30:01,185 DEBUG load_saved_scenario COMPLETE name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-10 12:30:01,186 DEBUG _wait_and_show_status START name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-10 12:30:01,287 DEBUG _wait_and_show_status poll timers=[False, False, False, False, False, False]
+2026-07-10 12:30:01,496 DEBUG _wait_and_show_status DONE name=plan a - 300k 202607, yes uplifts. org uplifts
+2026-07-10 12:49:05,603 DEBUG ScenarioPanel displayed — all panels now live
+2026-07-10 12:49:06,756 DEBUG precreate: start ios=12 arpdau=24 ua=24
+2026-07-10 12:49:17,265 DEBUG precreate: done ios=100 ios_boost=100 arpdau=100 ua=100

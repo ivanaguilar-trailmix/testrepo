@@ -60,12 +60,16 @@ def _monthly_forecast(result: pd.DataFrame) -> pd.DataFrame:
     df = result[result['platform'] == 'combined'].copy()
     df['date']  = pd.to_datetime(df['date'])
     df['month'] = df['date'].dt.to_period('M')
+    if 'boost_dau' not in df.columns:
+        # Results saved before the boost DAU breakdown was added — treat as 0.
+        df['boost_dau'] = 0.0
 
     monthly = (
         df.groupby('month')
         .agg(
             avg_dau=('dau', 'mean'),
             total_dau=('dau', 'sum'),
+            avg_boost_dau=('boost_dau', 'mean'),
             iap_revenue=('iap_revenue', 'sum'),
             ad_revenue=('ad_revenue', 'sum'),
         )
@@ -174,6 +178,9 @@ def monthly_table(
     df['iap_net_factor'] = df.apply(_iap_net, axis=1)
     df['revenue_net']    = df['iap_revenue'] * df['iap_net_factor'] + df['ad_revenue'] * AD_NET_FACTOR
 
+    # Boost DAU only exists for forecast rows — NaN on actuals (column absent from act_df).
+    df['boost_dau_pct'] = df['avg_boost_dau'] / df['avg_dau'] * 100
+
     # Actuals maps: all available months, all platforms combined.
     _all = actuals.copy()
     _all['dt'] = pd.to_datetime(_all['dt'])
@@ -248,10 +255,15 @@ def monthly_table(
     def _fmt_arpdau(x):
         return f'${x:.2f}' if pd.notna(x) else '—'
 
+    def _fmt_pct(x):
+        return f'{x:.1f}%' if pd.notna(x) else '—'
+
     disp = pd.DataFrame({
         'Date':               df['date'].dt.strftime('%Y-%m-%d'),
         'DAU (Act)':          df['dau_actuals'],
         'DAU':                df['avg_dau'].round().astype(int),
+        'Boost DAU':          df['avg_boost_dau'].round(),
+        'Boost DAU %':        df['boost_dau_pct'],
         'ARPDAU (Act)':       df['arpdau_actuals'],
         'ARPDAU':             df['arpdau'],
         'Gross Rev (Act)':    df['rev_gross_actuals'],
@@ -279,6 +291,8 @@ def monthly_table(
         .format({
             'DAU (Act)':          _fmt_dau,
             'DAU':                '{:,}',
+            'Boost DAU':          _fmt_dau,
+            'Boost DAU %':        _fmt_pct,
             'ARPDAU (Act)':       _fmt_arpdau,
             'ARPDAU':             '${:.2f}',
             'Gross Rev (Act)':    _fmt,
@@ -328,6 +342,7 @@ def comparison_table(
             actuals_from_str       = scenario_tuple[7]
             historical_marketing   = scenario_tuple[9] or None
             monthly_iap_net_factor = scenario_tuple[12] or None
+            margin_targets         = scenario_tuple[13] or {}
 
             # Derive n_actuals from actuals_from stored in the scenario JSON.
             if actuals_from_str and actuals is not None:
@@ -352,11 +367,19 @@ def comparison_table(
             for m in months:
                 sub = disp[disp['_month'] == m]
                 if not sub.empty:
+                    margin_val = sub['Cumul. Margin'].iloc[0]
                     row[f'DAU {m}']          = sub['DAU'].iloc[0]
-                    row[f'Cumul Margin {m}']  = sub['Cumul. Margin'].iloc[0]
+                    row[f'Cumul Margin {m}']  = margin_val
+                    target = margin_targets.get(m)
+                    if target is not None:
+                        pct = (margin_val - target) / abs(target) * 100 if target != 0 else 0.0
+                        row[f'vs Target {m}'] = pct
+                    else:
+                        row[f'vs Target {m}'] = None
                 else:
                     row[f'DAU {m}']          = None
                     row[f'Cumul Margin {m}']  = None
+                    row[f'vs Target {m}']     = None
             rows.append(row)
         except Exception as e:
             rows.append({'Scenario': name, 'note': str(e)})
@@ -369,16 +392,32 @@ def comparison_table(
     def _fmt_margin(x):
         return f'${x:,.0f}' if pd.notna(x) else '—'
 
+    def _fmt_target(x):
+        if pd.isna(x):
+            return '—'
+        mark = '✓' if x >= 0 else '✗'
+        return f'{mark} {x:+.1f}%'
+
+    def _target_color(x):
+        if pd.isna(x):
+            return ''
+        return f'color: {"#27ae60" if x >= 0 else "#e74c3c"}'
+
     fmt = {}
+    target_cols = []
     for col in df.columns:
         if col.startswith('DAU '):
             fmt[col] = _fmt_dau
         elif col.startswith('Cumul Margin '):
             fmt[col] = _fmt_margin
+        elif col.startswith('vs Target '):
+            fmt[col] = _fmt_target
+            target_cols.append(col)
 
     styler = (
         df.style
         .format(fmt, na_rep='—')
+        .map(_target_color, subset=target_cols)
         .set_table_styles([
             {'selector': 'th',
              'props': [('background-color', _HEADER), ('color', 'white'),

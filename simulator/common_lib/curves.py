@@ -145,13 +145,25 @@ def monthly_arpdau_from_actuals(
     grouped['iap_arpdau'] = (grouped['iap_revenue'] / grouped['dau'].replace(0, np.nan)).round(4)
     grouped['ad_arpdau']  = (grouped['ad_revenue']  / grouped['dau'].replace(0, np.nan)).round(4)
 
-    result = {'ios': {'iap': {}, 'ad': {}}, 'android': {'iap': {}, 'ad': {}}}
+    result = {'ios': {'iap': {}, 'ad': {}}, 'android': {'iap': {}, 'ad': {}}, 'iap_net_factor': {}}
     for _, row in grouped.iterrows():
         p = row['platform']
         m = row['month']
         if p in result:
             if pd.notna(row['iap_arpdau']): result[p]['iap'][m] = float(row['iap_arpdau'])
             if pd.notna(row['ad_arpdau']):  result[p]['ad'][m]  = float(row['ad_arpdau'])
+
+    if 'iap_net_revenue' in filtered.columns and 'iap_revenue' in filtered.columns:
+        totals = (
+            filtered.groupby('month')[['iap_revenue', 'iap_net_revenue']]
+            .sum()
+            .reset_index()
+        )
+        for _, row in totals.iterrows():
+            gross = row['iap_revenue']
+            if pd.notna(gross) and gross > 0 and pd.notna(row['iap_net_revenue']):
+                result['iap_net_factor'][row['month']] = round(float(row['iap_net_revenue']) / float(gross), 4)
+
     return result
 
 
