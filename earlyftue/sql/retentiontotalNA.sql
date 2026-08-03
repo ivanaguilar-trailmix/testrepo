@@ -27,9 +27,9 @@ WITH activity AS (
   and dt<=end_date1
   and cast(install_ts as date)<=end_date1
   and d.platform in ('AND', 'IOS')
-  and install_build_version in ('0.74.0','0.75.0')
-  and display_campaign_network not in UNNEST(exclude_networks)
-  and display_campaign_network = 'Non-Attributed'
+  and install_build_version < '0.76.0'
+  and acquisition_type not in UNNEST(exclude_networks)
+  and acquisition_type = 'Non-Attributed'
   and active = 1
   group by all
   union all 
@@ -51,9 +51,9 @@ WITH activity AS (
   and dt<=end_date2
   and cast(install_ts as date)<=end_date2
   and d.platform in ('AND', 'IOS')
-  and install_build_version in ('0.76.0', '0.77.0', '0.78.0', '0.79.0', '0.80.0')
-  and display_campaign_network not in UNNEST(exclude_networks)
-  and display_campaign_network = 'Non-Attributed'
+  and install_build_version >= '0.76.0'
+  and acquisition_type not in UNNEST(exclude_networks)
+  and acquisition_type = 'Non-Attributed'
   and active = 1
   group by all
 ),
