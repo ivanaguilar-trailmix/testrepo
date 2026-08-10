@@ -8,9 +8,16 @@ ipywidgets==8.1.8
 ipykernel==7.1.0
 voila==0.5.12
 
-# Needed to load pickled data (exported from BigQuery)
+# Needed to load pickled data (exported from BigQuery) — BQ DATE columns come back as the
+# dbdate extension dtype, which needs db-dtypes (and its pyarrow dependency) importable even
+# though no code ever `import`s them directly.
 db-dtypes==1.5.0
+pyarrow==24.0.0
 
 # BigQuery — only needed if refreshing data from source (refresh_data = True)
-# google-cloud-bigquery==3.40.0
+# [pandas] extra required for BigQueryConnector.get()'s .to_dataframe() call; [bqstorage]
+# extra + google-cloud-bigquery-storage silence the "BigQuery Storage module not found"
+# warning and use the faster Storage Read API instead of REST for large result sets
+# google-cloud-bigquery[pandas,bqstorage]==3.40.0
+# google-cloud-bigquery-storage==2.36.0
 # google-auth==2.47.0
