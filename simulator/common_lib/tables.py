@@ -15,8 +15,8 @@ from common_lib.simulation import load_result, load_scenario, list_scenarios, SC
 
 _EXPORTS_DIR = Path(__file__).parent.parent / "exports"
 
-IAP_NET_FACTOR = 0.70   # fallback for actuals rows (no per-month input available)
-AD_NET_FACTOR  = 0.85
+IAP_NET_FACTOR = 0.70   # forecast-only fallback when no per-month iap_net_factor input is set
+AD_NET_FACTOR  = 0.85   # forecast-only; actuals use the real net revenue figures from BQ
 
 _YELLOW = '#FFFDE7'
 _GREEN  = '#C8E6C9'
@@ -29,7 +29,13 @@ def _monthly_actuals(actuals: pd.DataFrame, before, n_months: int) -> pd.DataFra
 
     daily = (
         df.groupby('dt')
-        .agg(dau=('dau', 'sum'), iap_revenue=('iap_revenue', 'sum'), ad_revenue=('ad_revenue', 'sum'))
+        .agg(
+            dau=('dau', 'sum'),
+            iap_revenue=('iap_revenue', 'sum'),
+            ad_revenue=('ad_revenue', 'sum'),
+            iap_net_revenue=('iap_net_revenue', 'sum'),
+            ad_net_revenue=('ad_net_revenue', 'sum'),
+        )
         .reset_index()
     )
     daily['month'] = daily['dt'].dt.to_period('M')
@@ -45,12 +51,16 @@ def _monthly_actuals(actuals: pd.DataFrame, before, n_months: int) -> pd.DataFra
             total_dau=('dau', 'sum'),
             iap_revenue=('iap_revenue', 'sum'),
             ad_revenue=('ad_revenue', 'sum'),
+            iap_net_revenue=('iap_net_revenue', 'sum'),
+            ad_net_revenue=('ad_net_revenue', 'sum'),
         )
         .reset_index()
     )
     monthly['date']          = monthly['month'].dt.to_timestamp()
     monthly['revenue_gross'] = monthly['iap_revenue'] + monthly['ad_revenue']
-    monthly['revenue_net']   = monthly['iap_revenue'] * IAP_NET_FACTOR + monthly['ad_revenue'] * AD_NET_FACTOR
+    # Real net revenue from BQ (usd_net_iap_revenue / usd_ad_revenue_est), not the fixed-ratio
+    # estimate used for forecast rows — actuals have genuine measured net figures already.
+    monthly['revenue_net']   = monthly['iap_net_revenue'] + monthly['ad_net_revenue']
     monthly['arpdau']        = monthly['revenue_gross'] / monthly['total_dau']
     monthly['is_forecast']   = False
     return monthly
@@ -100,7 +110,9 @@ def monthly_table(
     scenario : str
         Saved scenario name (result must exist).
     actuals : pd.DataFrame
-        Daily actuals with columns: dt, platform, dau, iap_revenue, ad_revenue.
+        Daily actuals with columns: dt, platform, dau, iap_revenue, ad_revenue,
+        iap_net_revenue, ad_net_revenue (real net figures from BQ, used directly
+        for actuals rows' Net Rev — not estimated via IAP_NET_FACTOR/AD_NET_FACTOR).
     historical_marketing : dict {month_str: float}, optional
         UA spend for historical months (from the UI panel — planned budget).
     n_actuals : int
@@ -169,14 +181,20 @@ def monthly_table(
     df = pd.concat([act_df, fct_df], ignore_index=True).sort_values('date').reset_index(drop=True)
     df['month_str'] = df['month'].astype(str)
 
-    # Apply per-month IAP net factor to forecast rows; actuals always use constant.
+    # Apply per-month IAP net factor to forecast rows only — actuals rows already carry real net
+    # revenue from _monthly_actuals() (iap_net_revenue + ad_net_revenue) and must not be
+    # overwritten by the ratio estimate, which is a forecast-only approximation.
     def _iap_net(row):
         if row['is_forecast'] and monthly_iap_net_factor:
             return float(monthly_iap_net_factor.get(row['month_str'], IAP_NET_FACTOR))
         return IAP_NET_FACTOR
 
     df['iap_net_factor'] = df.apply(_iap_net, axis=1)
-    df['revenue_net']    = df['iap_revenue'] * df['iap_net_factor'] + df['ad_revenue'] * AD_NET_FACTOR
+    forecast_mask = df['is_forecast']
+    df.loc[forecast_mask, 'revenue_net'] = (
+        df.loc[forecast_mask, 'iap_revenue'] * df.loc[forecast_mask, 'iap_net_factor']
+        + df.loc[forecast_mask, 'ad_revenue'] * AD_NET_FACTOR
+    )
 
     # Boost DAU only exists for forecast rows — NaN on actuals (column absent from act_df).
     df['boost_dau_pct'] = df['avg_boost_dau'] / df['avg_dau'] * 100
@@ -199,12 +217,12 @@ def monthly_table(
     _total_dau_monthly = _daily_dau_by_month.groupby('month_str')['daily_dau'].sum()
 
     _rev_monthly = _all.groupby('month_str').agg(
-        iap=('iap_revenue', 'sum'), ad=('ad_revenue', 'sum')
+        iap=('iap_revenue', 'sum'), ad=('ad_revenue', 'sum'),
+        iap_net=('iap_net_revenue', 'sum'), ad_net=('ad_net_revenue', 'sum'),
     )
     rev_gross_actuals_map  = (_rev_monthly['iap'] + _rev_monthly['ad']).to_dict()
-    rev_net_actuals_map    = (
-        _rev_monthly['iap'] * IAP_NET_FACTOR + _rev_monthly['ad'] * AD_NET_FACTOR
-    ).to_dict()
+    # Real net revenue from BQ, not the fixed-ratio estimate (same fix as _monthly_actuals above).
+    rev_net_actuals_map    = (_rev_monthly['iap_net'] + _rev_monthly['ad_net']).to_dict()
     arpdau_actuals_map     = (
         (_rev_monthly['iap'] + _rev_monthly['ad']) / _total_dau_monthly
     ).to_dict()
