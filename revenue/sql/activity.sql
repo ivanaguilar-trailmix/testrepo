@@ -1,0 +1,183 @@
+
+DECLARE start_date DATE DEFAULT cast('{start_date}' as date);
+DECLARE end_date DATE DEFAULT cast('{end_date}' as date);
+
+
+DECLARE exclude_networks ARRAY<STRING> DEFAULT {exclude_networks};
+
+
+with pseg_avg as (
+select 
+  cast(effective_ts as date) as effective_dt, 
+  cast(expiry_ts as date) as expiry_dt,
+  user_id, 
+  segment_type,
+  segment_value
+from trailmixgames-game-1.merger_prod_dimensions.dimchange_user_dailyoffers_psegs
+where 1=1
+and effective_ts between start_date and end_date
+and segment_type = 'DailyOffers-30d_Avg'
+--and segment_type = 'DailyOffers-30d_LastPurchase'
+--and segment_type = 'DailyOffers-30d_Count'
+)
+
+, pseg_tcount as (
+select 
+  cast(effective_ts as date) as effective_dt, 
+  cast(expiry_ts as date) as expiry_dt,
+  user_id, 
+  segment_type,
+  segment_value
+from trailmixgames-game-1.merger_prod_dimensions.dimchange_user_dailyoffers_psegs
+where 1=1
+and effective_ts between start_date and end_date
+and segment_type = 'DailyOffers-30d_Count'
+--and segment_type = 'DailyOffers-30d_LastPurchase'
+--and segment_type = 'DailyOffers-30d_Count'
+)
+
+, pseg_lastpurchase as (
+select 
+  cast(effective_ts as date) as effective_dt, 
+  cast(expiry_ts as date) as expiry_dt,
+  user_id, 
+  segment_type,
+  segment_value
+from trailmixgames-game-1.merger_prod_dimensions.dimchange_user_dailyoffers_psegs
+where 1=1
+and effective_ts between start_date and end_date
+--and segment_type = 'DailyOffers-30d_Avg'
+and segment_type = 'DailyOffers-30d_LastPurchase'
+--and segment_type = 'DailyOffers-30d_Count'
+)
+
+, active_users as (
+  select 
+    dt,
+    cast(install_ts as date) as install_dt,
+    a.user_id,
+    --d.platform,
+    --ua.display_campaign_network,
+    --ua.acquisition_type,
+    --g.install_country_code as country_code,
+    --install_build_version,
+    coalesce(us.loyalty_segment,'0.0 (new install)') as loyalty_segment,
+    coalesce(up.payment_value_28d_segment,'0.0 (non-payer)') as payer_value_segment,
+    coalesce(up.payment_frequency_28d_segment,'0.0 (non-payer)') as payment_frequency_segment,
+    coalesce(up.payment_recency_28d_segment,'0.0 (non-payer)') as payer_recency_segment,
+    coalesce(pavg.segment_value,'0.00') as daily_offers_avg_segment,
+    coalesce(pcount.segment_value,'0') as daily_offers_count_segment,
+    coalesce(plp.segment_value,'none') as daily_offers_lastpurchase_segment,
+    di.days_since_install_segment as dsi_segment
+  from trailmixgames-game-1.merger_prod_fact.fact_dt_user_activity a
+  --join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_build b using (user_id)
+  --join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device d using (user_id)
+  join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_session i using (user_id)
+  --join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_geo g using (user_id)
+  --join trailmixgames-game-1.merger_prod_dimensions.dimchange_user_install_ua ua USING (user_id)
+  left join trailmixgames-game-1.merger_prod_dimensions.dimchange_user_loyalty_segment us on (
+      a.user_id = us.user_id
+      AND a.dt >= us.effective_dt
+      AND a.dt < COALESCE(us.expiry_dt, CURRENT_DATE()))
+    left join trailmixgames-game-1.merger_prod_dimensions.dimchange_user_dsi_segment di on (
+      a.user_id = di.user_id
+      AND a.dt >= di.effective_dt
+      AND a.dt < COALESCE(di.expiry_dt, CURRENT_DATE()))
+  left join trailmixgames-game-1.merger_prod_dimensions.dimchange_user_payer_segments up on (
+      a.user_id = up.user_id
+      AND a.dt >= up.effective_dt
+      AND a.dt < COALESCE(up.expiry_dt, CURRENT_DATE()))
+  left join pseg_avg pavg on (
+      a.user_id = pavg.user_id
+      AND a.dt >= pavg.effective_dt
+      AND a.dt < COALESCE(pavg.expiry_dt, CURRENT_DATE()))
+  left join pseg_tcount pcount on (
+      a.user_id = pcount.user_id
+      AND a.dt >= pcount.effective_dt
+      AND a.dt < COALESCE(pcount.expiry_dt, CURRENT_DATE()))
+  left join pseg_lastpurchase plp on (
+      a.user_id = plp.user_id
+      AND a.dt >= plp.effective_dt
+      AND a.dt < COALESCE(plp.expiry_dt, CURRENT_DATE()))
+  where 1=1
+  and dt between start_date and end_date
+  --and cast(install_ts as date) between start_date and end_date
+  --and d.platform in ('AND', 'IOS')
+  --and acquisition_type not in UNNEST(exclude_networks)
+  and a.active = 1
+  group by all
+
+)
+
+-- AD REV
+, ad_rev AS (
+  SELECT distinct 
+    user_id, 
+    dt, 
+    usd_ad_revenue_est / 0.85 AS usd_gross_ad_revenue,
+    usd_ad_revenue_est,
+  FROM trailmixgames-game-1.merger_prod_fact.fact_dt_user_ad_revenue
+  WHERE 1=1
+  and dt>=start_date
+  and dt<=end_date
+)
+
+-- IAP REV
+, iap_rev AS (
+  SELECT  distinct 
+    user_id, 
+    dt, 
+    usd_iap_revenue,
+    usd_net_iap_revenue,
+    1 AS payer_flag
+  FROM trailmixgames-game-1.merger_prod_fact.fact_dt_user_iap_revenue
+  WHERE 1=1
+  and dt>=start_date
+  and dt<=end_date
+)
+
+
+, users_to_exclude as (
+select distinct
+user_id
+from trailmixgames-game-1.merger_prod_dimensions.dim_users_to_exclude
+where 1=1
+)
+
+select 
+  a.user_id,
+  a.dt,
+  date_trunc(a.dt, week) as dt_week,
+  date_trunc(a.dt, month) as dt_month,
+  a.install_dt,
+  --a.country_code,
+  date_trunc(a.install_dt, week) as install_dt_week,
+  date_trunc(a.install_dt, month) as install_dt_month,
+  date_diff(a.dt, a.install_dt, day) as days_since_install,
+  --pl.max_level,
+  --gd.max_gameday,
+  --a.platform,
+  --a.display_campaign_network,
+  --a.acquisition_type,
+  --a.install_build_version,
+  a.loyalty_segment,
+  a.payer_value_segment,
+  a.payment_frequency_segment,
+  a.payer_recency_segment,
+  a.dsi_segment,
+  a.daily_offers_avg_segment,
+  a.daily_offers_count_segment,
+  a.daily_offers_lastpurchase_segment,
+  iap.usd_net_iap_revenue AS usd_net_iap_revenue,
+  adr.usd_ad_revenue_est AS usd_net_ad_revenue,
+
+from active_users a
+left join ad_rev adr using (user_id, dt)
+left join iap_rev iap using (user_id, dt)
+--join player_level_all pl using (dt, user_id)
+--join gameday_all gd using (dt, user_id)
+left join users_to_exclude ue using (user_id)
+where 1=1
+and ue.user_id is null
+
+
