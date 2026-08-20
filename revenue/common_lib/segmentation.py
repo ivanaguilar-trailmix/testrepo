@@ -113,15 +113,16 @@ def add_segment_transition_columns(df, segment_col, date_col='dt', user_col='use
     return df.drop(columns=['_streak_id', '_prev_streak_start_dt', '_prev_streak_active_days'])
 
 
-def _add_direction_metrics(agg, segment_col, upgrades_count_col, downgrades_count_col, total_users_day, prefix=''):
+def _add_direction_metrics(agg, segment_col, upgrades_count_col, downgrades_count_col,
+                            total_upgrades_day, total_downgrades_day, prefix):
     """
-    Adds the share/ratio/balance columns (upgrades_share, downgrades_share, share_ratio,
-    net_share, balance_index, the two directional ratios, log_ratio_u_to_d, winner,
-    x_times_bigger) for one direction of movement onto an agg dataframe that already has
-    that direction's upgrades/downgrades counts. Used twice by get_segment_movements_agg —
-    once for inflow (prefix='', arrivals into the tier), once for outflow (prefix='outflow_',
-    departures from the tier) — so the edge-tier/continuity-correction handling is written
-    once and can't drift between the two directions.
+    Adds the share/ratio/direction columns (upgrades_share, downgrades_share,
+    direction_normalized, the two directional ratios, winner) for one direction of movement
+    onto an agg dataframe that already has that direction's upgrades/downgrades counts. Used
+    twice by get_segment_movements_agg —
+    once for inflow (prefix='inflow_', arrivals into the tier), once for outflow
+    (prefix='outflow_', departures from the tier) — so the edge-tier/continuity-correction
+    handling is written once and can't drift between the two directions.
     """
     def col(name):
         return f'{segment_col}_{prefix}{name}'
@@ -129,19 +130,31 @@ def _add_direction_metrics(agg, segment_col, upgrades_count_col, downgrades_coun
     upgrades_share_col = col('upgrades_share')
     downgrades_share_col = col('downgrades_share')
 
-    # Both shares are reported as positive magnitudes (the downgrades count is negative so
-    # it plots below the x-axis; the share is deliberately flipped back to positive here).
-    agg[upgrades_share_col] = agg[upgrades_count_col] / total_users_day
-    agg[downgrades_share_col] = agg[downgrades_count_col] * -1 / total_users_day
+    # Each share is a tier's cut of that day's TOTAL FOR ITS OWN DIRECTION only (all tiers'
+    # upgrades summed for total_upgrades_day, all tiers' downgrades summed for
+    # total_downgrades_day) — not one denominator shared between both directions. A tier
+    # that structurally only ever receives downgrades (e.g. the lowest tier, everyone's
+    # eventual downgrade destination) would otherwise dominate a shared denominator and
+    # dilute every other tier's upgrades_share even though it contributes zero upgrades.
+    # Splitting the denominator by direction means upgrades_share sums to 1 across tiers
+    # each day, and downgrades_share sums to 1 across tiers each day — two independent
+    # 100% breakdowns, not one shared pie. Both shares are reported as positive magnitudes
+    # (the downgrades count is negative so it plots below the x-axis; the share is
+    # deliberately flipped back to positive here).
+    agg[upgrades_share_col] = agg[upgrades_count_col] / total_upgrades_day
+    agg[downgrades_share_col] = agg[downgrades_count_col] * -1 / total_downgrades_day
 
-    # net_share / balance_index use the day's proportional shares directly — well-defined
-    # everywhere, including the edge tiers (e.g. inflow's lowest tier can only ever be
-    # reached by a downgrade, so it's always exactly -1 there; outflow's lowest tier can
-    # only ever be left via an upgrade, so it's always exactly +1). No correction needed.
-    up_share = agg[upgrades_share_col].astype(float)
-    down_share = agg[downgrades_share_col].astype(float)
-    agg[col('net_share')] = up_share - down_share
-    agg[col('balance_index')] = (up_share - down_share) / (up_share + down_share).replace(0, np.nan)
+    # direction_normalized: same signed-net-count idea as {segment_col}_{prefix}direction
+    # (upgrades minus downgrades, raw headcount) but scaled to [-1, 1] by this tier's own
+    # total movers that (day, tier) — computed straight from counts (not from the shares
+    # above) so it stays a per-tier composition measure regardless of how the shares'
+    # denominators are defined. Well-defined everywhere, including the edge tiers (e.g.
+    # inflow's lowest tier can only ever be reached by a downgrade, so it's always exactly
+    # -1 there; outflow's lowest tier can only ever be left via an upgrade, so it's always
+    # exactly +1). No correction needed.
+    up_count = agg[upgrades_count_col].astype(float)
+    down_count = agg[downgrades_count_col].abs().astype(float)
+    agg[col('direction_normalized')] = (up_count - down_count) / (up_count + down_count).replace(0, np.nan)
 
     # No movement at all this direction, this day, this tier (only possible since inflow
     # and outflow are merged together — a tier can have one side with zero rows) — the
@@ -149,31 +162,24 @@ def _add_direction_metrics(agg, segment_col, upgrades_count_col, downgrades_coun
     # leave them blank rather than showing a misleading "tied" reading.
     has_movement = (agg[upgrades_count_col].astype(float) != 0) | (agg[downgrades_count_col].astype(float) != 0)
 
-    # The remaining metrics — share_ratio, the two directional ratios, log_ratio_u_to_d,
-    # x_times_bigger — all divide one side by the other, which breaks at the edge tiers:
-    # the lowest tier's upgrades_count is *structurally* always 0 (never just 0 by chance),
-    # and the highest tier's downgrades_count is always 0, so a plain ratio is either
-    # infinite or undefined there. A continuity correction — add half a "phantom mover" to
-    # both counts, the standard fix for zero-cell ratios (same idea as the Haldane-Anscombe
-    # correction for odds ratios) — keeps these finite while barely nudging any day where
-    # both sides already have real movement (0.5 is tiny next to typical daily counts).
+    # The two directional ratios divide one side by the other, which breaks at the edge
+    # tiers: the lowest tier's upgrades_count is *structurally* always 0 (never just 0 by
+    # chance), and the highest tier's downgrades_count is always 0, so a plain ratio is
+    # either infinite or undefined there. A continuity correction — add half a "phantom
+    # mover" to both counts, the standard fix for zero-cell ratios (same idea as the
+    # Haldane-Anscombe correction for odds ratios) — keeps these finite while barely nudging
+    # any day where both sides already have real movement (0.5 is tiny next to typical daily
+    # counts).
     CONTINUITY = 0.5
-    up = agg[upgrades_count_col].astype(float) + CONTINUITY
-    down = agg[downgrades_count_col].abs().astype(float) + CONTINUITY
+    up = up_count + CONTINUITY
+    down = down_count + CONTINUITY
 
-    agg[col('share_ratio')] = np.where(has_movement, down / up, np.nan)
     agg[col('ratio_downgrade_to_upgrade')] = np.where(has_movement, down / up, np.nan)
     agg[col('ratio_upgrade_to_downgrade')] = np.where(has_movement, up / down, np.nan)
-    agg[col('log_ratio_u_to_d')] = np.where(has_movement, np.log(up / down), np.nan)
 
     agg[col('winner')] = np.where(
         ~has_movement, 'No Movement',
         np.where(up > down, 'Upgrades', np.where(down > up, 'Downgrades', 'Neutral'))
-    )
-    agg[col('x_times_bigger')] = np.where(
-        ~has_movement, np.nan,
-        np.where(up > down, agg[col('ratio_upgrade_to_downgrade')],
-                 np.where(down > up, agg[col('ratio_downgrade_to_upgrade')], 1.0))
     )
 
     return agg
@@ -183,8 +189,8 @@ def get_segment_movements_agg(segment_col, df):
     """
     Takes the per-user-per-day tier data (after add_segment_transition_columns has run)
     and rolls it up into one row per day per tier, from two angles at once:
-      - inflow (unprefixed columns, e.g. upgrades_count): who ARRIVED in this tier today,
-        split by whether they arrived via an upgrade or a downgrade.
+      - inflow (inflow_-prefixed columns, e.g. inflow_upgrades_count): who ARRIVED in this
+        tier today, split by whether they arrived via an upgrade or a downgrade.
       - outflow (outflow_-prefixed columns, e.g. outflow_upgrades_count): who LEFT this
         tier today, split by whether they left via an upgrade or a downgrade.
       - net_flow: inflow arrivals minus outflow departures — is this tier gaining or
@@ -195,8 +201,8 @@ def get_segment_movements_agg(segment_col, df):
     active_days_col = f'{segment_col}_shift_active_days'
     real_days_col = f'{segment_col}_shift_real_days'
 
-    upgrades_count_col = f'{segment_col}_upgrades_count'
-    downgrades_count_col = f'{segment_col}_downgrades_count'
+    upgrades_count_col = f'{segment_col}_inflow_upgrades_count'
+    downgrades_count_col = f'{segment_col}_inflow_downgrades_count'
     outflow_upgrades_count_col = f'{segment_col}_outflow_upgrades_count'
     outflow_downgrades_count_col = f'{segment_col}_outflow_downgrades_count'
 
@@ -211,20 +217,18 @@ def get_segment_movements_agg(segment_col, df):
     ][(df[jump_col] != 0) & (df[prev_col].notna())]
 
     movements_agg = movements.groupby(['dt', segment_col]).agg(
-        user_id_count=('user_id', 'nunique'),
+        inflow_user_id_count=('user_id', 'nunique'),
         # count upgrades only, not downgrades (jump_size > 0)
         **{
             upgrades_count_col: (jump_col, lambda x: (x > 0).sum()),
             # reverse the sign on downgrades so charts can show them below the x-axis, not above
             downgrades_count_col: (jump_col, lambda x: (x < 0).sum() * -1),
-            f'{segment_col}_jump_size_mean': (jump_col, 'mean'),
             f'{segment_col}_shift_active_days_mean': (active_days_col, 'mean'),
             f'{segment_col}_shift_real_days_mean': (real_days_col, 'mean'),
         },
     ).reset_index()
 
-    movements_agg['balance'] = movements_agg[upgrades_count_col] + movements_agg[downgrades_count_col]
-    movements_agg['ratio'] = movements_agg[downgrades_count_col] / movements_agg[upgrades_count_col].replace(0, np.nan)
+    movements_agg[f'{segment_col}_inflow_direction'] = movements_agg[upgrades_count_col] + movements_agg[downgrades_count_col]
 
     outflow_agg = movements.groupby(['dt', prev_col]).agg(
         outflow_user_id_count=('user_id', 'nunique'),
@@ -238,36 +242,147 @@ def get_segment_movements_agg(segment_col, df):
     # missing count means "zero movement that side", not missing data.
     movements_agg = movements_agg.merge(outflow_agg, on=['dt', segment_col], how='outer')
     count_cols = [
-        'user_id_count', upgrades_count_col, downgrades_count_col,
+        'inflow_user_id_count', upgrades_count_col, downgrades_count_col,
         'outflow_user_id_count', outflow_upgrades_count_col, outflow_downgrades_count_col,
     ]
     movements_agg[count_cols] = movements_agg[count_cols].fillna(0)
 
-    # --- 2) Daily shares ---
-    # Total unique movers represented per day across this segment's tiers. Every movement
-    # is exactly one inflow (into its destination) and one outflow (out of its origin), so
-    # this total is the same whether you sum inflow or outflow counts across tiers — one
-    # shared denominator for both directions' shares below.
-    movements_agg['total_users_day'] = (
-        movements_agg.groupby('dt')['user_id_count'].transform('sum')
+    movements_agg[f'{segment_col}_outflow_direction'] = (
+        movements_agg[outflow_upgrades_count_col] + movements_agg[outflow_downgrades_count_col]
     )
 
-    # --- 3) Flow/balance metrics, computed identically for each direction ---
+    # --- 2) Daily totals ---
+    # total_users_day: total unique movers represented per day across this segment's tiers,
+    # kept as an informational column (context for hover, not used to compute shares below).
+    # Every movement is exactly one inflow (into its destination) and one outflow (out of
+    # its origin), so this total is the same whether you sum inflow or outflow counts.
+    movements_agg['total_users_day'] = (
+        movements_agg.groupby('dt')['inflow_user_id_count'].transform('sum')
+    )
+
+    # total_upgrades_day / total_downgrades_day: the day's total upgrade-movements and
+    # total downgrade-movements, each summed across all tiers — used as the (separate)
+    # share denominators below. Every upgrade movement is counted once as an inflow
+    # arrival (some destination tier) and once as an outflow departure (some origin tier),
+    # so summing inflow's upgrades_count_col across tiers gives the same total as summing
+    # outflow's outflow_upgrades_count_col across tiers — one pair of totals, shared by
+    # both directions' _add_direction_metrics calls below (same reasoning as
+    # total_users_day above, just split by direction instead of combined).
+    total_upgrades_day = movements_agg.groupby('dt')[upgrades_count_col].transform('sum')
+    total_downgrades_day = movements_agg.groupby('dt')[downgrades_count_col].transform('sum').abs()
+
+    # --- 3) Flow/direction metrics, computed identically for each direction ---
     movements_agg = _add_direction_metrics(
         movements_agg, segment_col, upgrades_count_col, downgrades_count_col,
-        movements_agg['total_users_day'],
+        total_upgrades_day, total_downgrades_day, prefix='inflow_',
     )
     movements_agg = _add_direction_metrics(
         movements_agg, segment_col, outflow_upgrades_count_col, outflow_downgrades_count_col,
-        movements_agg['total_users_day'], prefix='outflow_',
+        total_upgrades_day, total_downgrades_day, prefix='outflow_',
     )
 
     # --- 4) Net flow ---
     # Is this tier gaining or losing people today, net of both directions? Distinct from
-    # balance_index (composition of one side) — this is the actual population change.
-    movements_agg[f'{segment_col}_net_flow'] = movements_agg['user_id_count'] - movements_agg['outflow_user_id_count']
+    # direction_normalized (composition of one side) — this is the actual population change.
+    movements_agg[f'{segment_col}_net_flow'] = movements_agg['inflow_user_id_count'] - movements_agg['outflow_user_id_count']
 
     return movements_agg
+
+
+def get_segment_population_agg(segment_col, df, movements_agg):
+    """
+    Total population per tier per day — everyone currently in that tier, movers and
+    non-movers alike — plus that tier's share of the day's total users. Unlike
+    get_segment_movements_agg (which only ever sees users whose jump_size != 0 that day),
+    this counts everyone, so a tier with zero movement that day still shows up at its full
+    size instead of being invisible.
+
+    df must be the transitioned per-user-per-day frame (add_segment_transition_columns'
+    output) for this segment_col — only segment_col/dt/user_id are used, so the raw
+    pre-transition frame would also work, but passing the same df you already built for
+    get_segment_movements_agg keeps one input to track instead of two.
+
+    movements_agg must be get_segment_movements_agg's output for the same segment_col — its
+    inflow_user_id_count/outflow_user_id_count are merged in here so every population chart
+    can show the same movement context on hover.
+    """
+    total_col = f'{segment_col}_total_users'
+    total_day_col = f'{segment_col}_total_users_day'
+    share_col = f'{segment_col}_share_pct'
+
+    population_agg = df.groupby(['dt', segment_col])['user_id'].nunique().reset_index(name=total_col)
+    population_agg[total_day_col] = population_agg.groupby('dt')[total_col].transform('sum')
+    population_agg[share_col] = population_agg[total_col] / population_agg[total_day_col] * 100
+
+    population_agg = population_agg.merge(
+        movements_agg[['dt', segment_col, 'inflow_user_id_count', 'outflow_user_id_count']],
+        on=['dt', segment_col], how='left',
+    )
+    # A tier with no arrivals/departures that day has no row in movements_agg at all —
+    # that's "zero movement", not missing data.
+    move_cols = ['inflow_user_id_count', 'outflow_user_id_count']
+    population_agg[move_cols] = population_agg[move_cols].fillna(0)
+
+    return population_agg
+
+
+def plot_segment_population_charts(
+    df,
+    segment_col,
+    vlines_events=None,
+    title_prefix=None,
+    show_total=True,
+    show_share=True,
+    width=1400,
+    height=600,
+):
+    """
+    Draws up to two charts off get_segment_population_agg's output: total users per tier
+    (raw headcount, including non-movers — show_total) and each tier's share of the day's
+    total users (% — show_share). Both default on; turn either off per call. Both charts'
+    hover shows inflow/outflow/total users for that (day, tier), same as
+    plot_movement_charts, so a population chart and a movement chart can be read side by
+    side with consistent context.
+
+    df must be the output of get_segment_population_agg for this segment_col.
+    """
+    label = title_prefix or segment_col.replace('_', ' ').title()
+    total_col = f'{segment_col}_total_users'
+    share_col = f'{segment_col}_share_pct'
+
+    HOVER_LABELS = {
+        'inflow_user_id_count': 'Inflow Users',
+        'outflow_user_id_count': 'Outflow Users',
+        total_col: 'Total Users',
+    }
+    HOVER_DATA = {'inflow_user_id_count': True, 'outflow_user_id_count': True, total_col: True}
+
+    def _add_vlines(fig):
+        return add_vlines_to_figure(fig, vlines_events) if vlines_events else fig
+
+    if show_total:
+        fig_total = px.line(
+            df, x='dt', y=total_col, color=segment_col,
+            title=f'Total Users by {label}',
+            labels={total_col: 'Total Users', **HOVER_LABELS},
+            hover_data=HOVER_DATA,
+            width=width, height=height,
+        )
+        fig_total.update_layout(yaxis_title='Total Users', legend_title_text='')
+        fig_total = _add_vlines(fig_total)
+        fig_total.show()
+
+    if show_share:
+        fig_share = px.line(
+            df, x='dt', y=share_col, color=segment_col,
+            title=f'Population Share (%) by {label}',
+            labels={share_col: 'Share of Users (%)', **HOVER_LABELS},
+            hover_data=HOVER_DATA,
+            width=width, height=height,
+        )
+        fig_share.update_layout(yaxis_title='Share of Users (%)', legend_title_text='')
+        fig_share = _add_vlines(fig_share)
+        fig_share.show()
 
 
 # One-line-per-segment metric charts available through the `metrics` argument of
@@ -276,16 +391,35 @@ def get_segment_movements_agg(segment_col, df):
 # listed; metrics without an entry still work, just with a generic title/label and no
 # reference line.
 METRIC_CHART_SPECS = {
-    #'share_ratio': {'title': 'Movement share ratio by {label}', 'hline': 1},
-    'balance_index': {'title': 'Balance index by {label}', 'y_label': 'Balance Index', 'hline': 0},
-    'net_share': {'title': 'Net share (upgrades minus downgrades) by {label}', 'y_label': 'Net Share', 'hline': 0},
-    'x_times_bigger': {'title': 'Winning side size multiple by {label}', 'y_label': 'Times Bigger (Winning Side)', 'hline': 1},
-    'ratio_upgrade_to_downgrade': {'title': 'Upgrade-to-downgrade ratio by {label}', 'y_label': 'Upgrade ÷ Downgrade Ratio', 'hline': 1},
-    'ratio_downgrade_to_upgrade': {'title': 'Downgrade-to-upgrade ratio by {label}', 'y_label': 'Downgrade ÷ Upgrade Ratio', 'hline': 1},
-    'log_ratio_u_to_d': {'title': 'Log ratio of upgrades to downgrades by {label}', 'y_label': 'Log Ratio (Upgrades vs Downgrades)', 'hline': 0},
+    'inflow_direction_normalized': {'title': 'Inflow direction (normalized) by {label}', 'y_label': 'Inflow Direction (Normalized)', 'hline': 0},
+    'inflow_ratio_upgrade_to_downgrade': {'title': 'Inflow upgrade-to-downgrade ratio by {label}', 'y_label': 'Inflow Upgrade ÷ Downgrade Ratio', 'hline': 1},
+    'inflow_ratio_downgrade_to_upgrade': {'title': 'Inflow downgrade-to-upgrade ratio by {label}', 'y_label': 'Inflow Downgrade ÷ Upgrade Ratio', 'hline': 1},
     'net_flow': {'title': 'Net flow (inflow minus outflow) by {label}', 'y_label': 'Net Flow (Users)', 'hline': 0},
-    'outflow_balance_index': {'title': 'Outflow balance index by {label}', 'y_label': 'Outflow Balance Index', 'hline': 0},
-    'outflow_x_times_bigger': {'title': 'Outflow winning side size multiple by {label}', 'y_label': 'Outflow Times Bigger', 'hline': 1},
+    'outflow_direction_normalized': {'title': 'Outflow direction (normalized) by {label}', 'y_label': 'Outflow Direction (Normalized)', 'hline': 0},
+    'outflow_ratio_upgrade_to_downgrade': {'title': 'Outflow upgrade-to-downgrade ratio by {label}', 'y_label': 'Outflow Upgrade ÷ Downgrade Ratio', 'hline': 1},
+    'outflow_ratio_downgrade_to_upgrade': {'title': 'Outflow downgrade-to-upgrade ratio by {label}', 'y_label': 'Outflow Downgrade ÷ Upgrade Ratio', 'hline': 1},
+}
+
+
+# Dual-line (upgrades vs downgrades) charts available through the `metrics` argument of
+# plot_movement_charts, alongside the single-line METRIC_CHART_SPECS entries above.
+DUAL_LINE_CHART_SPECS = {
+    'inflow_counts': {
+        'upgrades_col': 'inflow_upgrades_count', 'downgrades_col': 'inflow_downgrades_count',
+        'title': 'Inflow Upgrades/Downgrades by {label}', 'y_label': 'Inflow Movement Count',
+    },
+    'inflow_shares': {
+        'upgrades_col': 'inflow_upgrades_share', 'downgrades_col': 'inflow_downgrades_share',
+        'title': 'Inflow Upgrades and Downgrades share by {label}', 'y_label': 'Inflow Movement Share',
+    },
+    'outflow_counts': {
+        'upgrades_col': 'outflow_upgrades_count', 'downgrades_col': 'outflow_downgrades_count',
+        'title': 'Outflow Upgrades/Downgrades by {label}', 'y_label': 'Outflow Movement Count',
+    },
+    'outflow_shares': {
+        'upgrades_col': 'outflow_upgrades_share', 'downgrades_col': 'outflow_downgrades_share',
+        'title': 'Outflow Upgrades and Downgrades share by {label}', 'y_label': 'Outflow Movement Share',
+    },
 }
 
 
@@ -296,36 +430,23 @@ def plot_movement_charts(
     arpdau_df=None,
     title_prefix=None,
     overlay_arpdau=True,
-    show_counts=True,
-    show_shares=True,
-    show_outflow_counts=False,
-    show_outflow_shares=False,
-    metrics=('share_ratio', 'balance_index'),
+    metrics=('inflow_counts', 'inflow_shares', 'inflow_ratio_downgrade_to_upgrade', 'inflow_direction_normalized'),
     width=1400,
     height=600,
 ):
     """
-    Draws the standard set of charts for one segment's movements: how many people moved
-    (counts), what share of users that represents (shares), plus one chart per entry in
-    `metrics` — any column suffix produced by get_segment_movements_agg, e.g.
-    'share_ratio', 'balance_index', or 'x_times_bigger' (see METRIC_CHART_SPECS for the
-    known ones, their reference lines, and y-axis labels). show_counts/show_shares plot the
-    inflow (arrivals) side; show_outflow_counts/show_outflow_shares are their departures-side
-    equivalents (off by default — turn on for the segments you actually want the outflow
-    view of, since it doubles the chart count). Pass metrics=[] to skip the single-metric
-    charts entirely. ARPDAU can optionally be overlaid on a second axis for context on every
-    chart drawn. width/height apply to every chart drawn by this call.
+    Draws one chart per entry in `metrics`. Most entries are a column suffix produced by
+    get_segment_movements_agg — a single line per tier, e.g. 'inflow_ratio_downgrade_to_upgrade',
+    'inflow_direction_normalized', or 'outflow_direction' (see METRIC_CHART_SPECS for the
+    known ones, their reference lines, and y-axis labels). Four entries are special dual-line
+    charts instead of a single column: 'inflow_counts'/'inflow_shares' (upgrades vs downgrades,
+    arrivals side) and 'outflow_counts'/'outflow_shares' (their departures-side equivalents —
+    see DUAL_LINE_CHART_SPECS). Pass metrics=[] to skip charts entirely. ARPDAU can optionally
+    be overlaid on a second axis for context on every chart drawn. width/height apply to every
+    chart drawn by this call.
 
     df must be the output of get_segment_movements_agg for this segment_col.
     """
-    upgrades_count_col = f'{segment_col}_upgrades_count'
-    downgrades_count_col = f'{segment_col}_downgrades_count'
-    upgrades_share_col = f'{segment_col}_upgrades_share'
-    downgrades_share_col = f'{segment_col}_downgrades_share'
-    outflow_upgrades_count_col = f'{segment_col}_outflow_upgrades_count'
-    outflow_downgrades_count_col = f'{segment_col}_outflow_downgrades_count'
-    outflow_upgrades_share_col = f'{segment_col}_outflow_upgrades_share'
-    outflow_downgrades_share_col = f'{segment_col}_outflow_downgrades_share'
     label = title_prefix or segment_col.replace('_', ' ').title()
 
     def _add_vlines(fig):
@@ -348,20 +469,20 @@ def plot_movement_charts(
 
     # Hover is kept to one consistent set on every chart — the point's value, and the
     # inflow/outflow/total movement counts for that (day, tier) — regardless of which
-    # direction the chart itself is showing, so hovering a share_ratio point or an outflow
+    # direction the chart itself is showing, so hovering a ratio point or an outflow
     # count point always gives the same "how many people were actually moving" context.
     total_movers_col = f'{segment_col}_total_movers'
     df = df.copy()
-    df[total_movers_col] = df['user_id_count'] + df['outflow_user_id_count']
+    df[total_movers_col] = df['inflow_user_id_count'] + df['outflow_user_id_count']
     HOVER_LABELS = {
-        'user_id_count': 'Inflow Users',
+        'inflow_user_id_count': 'Inflow Users',
         'outflow_user_id_count': 'Outflow Users',
         total_movers_col: 'Total Users Moving',
     }
 
     def _melt(value_vars):
         plot_df = df.melt(
-            id_vars=['dt', segment_col, 'user_id_count', 'outflow_user_id_count', total_movers_col],
+            id_vars=['dt', segment_col, 'inflow_user_id_count', 'outflow_user_id_count', total_movers_col],
             value_vars=value_vars,
             var_name='movement_type',
             value_name='count'
@@ -379,7 +500,7 @@ def plot_movement_charts(
             y='count',
             color='movement_type',
             line_dash=segment_col,
-            hover_data={'user_id_count': True, 'outflow_user_id_count': True, total_movers_col: True},
+            hover_data={'inflow_user_id_count': True, 'outflow_user_id_count': True, total_movers_col: True},
             color_discrete_map={'U': '#2ca02c', 'D': '#d62728'},
             labels={'count': 'Value', 'movement_type': 'Movement Type', **HOVER_LABELS},
             title=title,
@@ -392,38 +513,19 @@ def plot_movement_charts(
             fig = _overlay_arpdau(fig)
         fig.show()
 
-    # 1) Counts (inflow — arrivals into the tier)
-    if show_counts:
-        _dual_line_chart(
-            [upgrades_count_col, downgrades_count_col],
-            title=f'Upgrades/Downgrades by {label}', yaxis_title='Movement Count',
-        )
-
-    # 2) Shares (inflow)
-    if show_shares:
-        _dual_line_chart(
-            [upgrades_share_col, downgrades_share_col],
-            title=f'Upgrades and Downgrades share by {label}', yaxis_title='Movement Share',
-        )
-
-    # 2b) Outflow counts/shares — departures from the tier, split the same way. Off by
-    # default since most segments only need the inflow view; turn on per call for the
-    # segments where "what's draining this tier" is the interesting question.
-    if show_outflow_counts:
-        _dual_line_chart(
-            [outflow_upgrades_count_col, outflow_downgrades_count_col],
-            title=f'Outflow Upgrades/Downgrades by {label}', yaxis_title='Outflow Movement Count',
-        )
-
-    if show_outflow_shares:
-        _dual_line_chart(
-            [outflow_upgrades_share_col, outflow_downgrades_share_col],
-            title=f'Outflow Upgrades and Downgrades share by {label}', yaxis_title='Outflow Movement Share',
-        )
-
-    # 3) One chart per requested single-metric column (share ratio, balance index,
-    # x_times_bigger, or anything else get_segment_movements_agg produced for this segment)
+    # One chart per requested entry in `metrics` — either a dual-line upgrades/downgrades
+    # chart (the four DUAL_LINE_CHART_SPECS keys) or a single-metric column suffix (a
+    # directional ratio, direction_normalized, or anything else get_segment_movements_agg
+    # produced for this segment).
     for metric in metrics:
+        dual_spec = DUAL_LINE_CHART_SPECS.get(metric)
+        if dual_spec is not None:
+            _dual_line_chart(
+                [f'{segment_col}_{dual_spec["upgrades_col"]}', f'{segment_col}_{dual_spec["downgrades_col"]}'],
+                title=dual_spec['title'].format(label=label), yaxis_title=dual_spec['y_label'],
+            )
+            continue
+
         metric_col = f'{segment_col}_{metric}'
         spec = METRIC_CHART_SPECS.get(metric, {})
         title = spec.get('title', '{metric} by {label}').format(label=label, metric=metric)
@@ -439,7 +541,7 @@ def plot_movement_charts(
             width=width,
             height=height,
             labels={metric_col: 'Value', **HOVER_LABELS},
-            hover_data={'user_id_count': True, 'outflow_user_id_count': True, total_movers_col: True}
+            hover_data={'inflow_user_id_count': True, 'outflow_user_id_count': True, total_movers_col: True}
         )
         fig.update_layout(yaxis_title=y_label, legend_title_text='')
         fig = _add_vlines(fig)

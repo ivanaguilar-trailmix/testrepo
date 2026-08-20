@@ -15,37 +15,41 @@ select
   segment_value
 from trailmixgames-game-1.merger_prod_dimensions.dimchange_user_dailyoffers_psegs
 where 1=1
-and effective_ts between start_date and end_date
+-- overlap check, not "changed during the window" — a membership that started before
+-- start_date and never changed again is still the user's active segment throughout the
+-- window, so it must not be dropped here (matches how loyalty_segment/payer_value_segment/
+-- etc. are joined further down: as-of validity, not a change-event filter).
+and effective_ts <= end_date and (expiry_ts is null or expiry_ts >= start_date)
 and segment_type = 'DailyOffers-30d_Avg'
 --and segment_type = 'DailyOffers-30d_LastPurchase'
 --and segment_type = 'DailyOffers-30d_Count'
 )
 
 , pseg_tcount as (
-select 
-  cast(effective_ts as date) as effective_dt, 
+select
+  cast(effective_ts as date) as effective_dt,
   cast(expiry_ts as date) as expiry_dt,
-  user_id, 
+  user_id,
   segment_type,
   segment_value
 from trailmixgames-game-1.merger_prod_dimensions.dimchange_user_dailyoffers_psegs
 where 1=1
-and effective_ts between start_date and end_date
+and effective_ts <= end_date and (expiry_ts is null or expiry_ts >= start_date)
 and segment_type = 'DailyOffers-30d_Count'
 --and segment_type = 'DailyOffers-30d_LastPurchase'
 --and segment_type = 'DailyOffers-30d_Count'
 )
 
 , pseg_lastpurchase as (
-select 
-  cast(effective_ts as date) as effective_dt, 
+select
+  cast(effective_ts as date) as effective_dt,
   cast(expiry_ts as date) as expiry_dt,
-  user_id, 
+  user_id,
   segment_type,
   segment_value
 from trailmixgames-game-1.merger_prod_dimensions.dimchange_user_dailyoffers_psegs
 where 1=1
-and effective_ts between start_date and end_date
+and effective_ts <= end_date and (expiry_ts is null or expiry_ts >= start_date)
 --and segment_type = 'DailyOffers-30d_Avg'
 and segment_type = 'DailyOffers-30d_LastPurchase'
 --and segment_type = 'DailyOffers-30d_Count'
