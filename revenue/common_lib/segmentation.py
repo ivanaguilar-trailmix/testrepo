@@ -8,6 +8,7 @@ that movement over time.
 """
 import re
 import numpy as np
+import pandas as pd
 import plotly.express as px
 
 
@@ -383,6 +384,94 @@ def plot_segment_population_charts(
         fig_share.update_layout(yaxis_title='Share of Users (%)', legend_title_text='')
         fig_share = _add_vlines(fig_share)
         fig_share.show()
+
+
+def get_segment_performance_summary(segment_col, movements_agg, population_agg, freq='M'):
+    """
+    Period-over-period performance summary, one row per (period, tier): average population,
+    average share of the day's total population, average/net net_flow (scaled to % of that
+    tier's own population, so growth is comparable across differently-sized tiers), and the
+    average inflow/outflow downgrade-to-upgrade ratios. Built to answer "is a tier's trend
+    changing over time" — an all-time average can hide a recent reversal a period-by-period
+    breakdown would catch.
+
+    freq is any pandas Period alias ('M' monthly, 'W' weekly, etc.) — 'M' gives a compact
+    table for eyeballing, 'W' gives finer resolution for a trend line chart
+    (plot_segment_performance_summary).
+
+    movements_agg/population_agg must be get_segment_movements_agg's/
+    get_segment_population_agg's output for the same segment_col. Pass pre-filtered frames
+    (e.g. dropping the first 30 days) if the segment is a rolling-window one where the start
+    of any query window is a known ramp artifact, not real behavior — this function doesn't
+    do that filtering itself, since it isn't universal across all segment types.
+
+    Note: the two ratio columns are structurally extreme at edge tiers (the lowest tier can
+    never have upgrades-in, the highest can never have downgrades-in), so they're
+    uninformative there — expect large/near-zero values that don't reflect a real trend for
+    those two tiers specifically.
+    """
+    pop = population_agg.copy()
+    mov = movements_agg.copy()
+    pop['dt'] = pd.to_datetime(pop['dt'])
+    mov['dt'] = pd.to_datetime(mov['dt'])
+    pop['period'] = pop['dt'].dt.to_period(freq).dt.start_time
+    mov['period'] = mov['dt'].dt.to_period(freq).dt.start_time
+
+    pop_summary = pop.groupby(['period', segment_col]).agg(
+        avg_population=(f'{segment_col}_total_users', 'mean'),
+        avg_share_pct=(f'{segment_col}_share_pct', 'mean'),
+    )
+    mov_summary = mov.groupby(['period', segment_col]).agg(
+        avg_net_flow=(f'{segment_col}_net_flow', 'mean'),
+        total_net_flow=(f'{segment_col}_net_flow', 'sum'),
+        avg_inflow_ratio_downgrade_to_upgrade=(f'{segment_col}_inflow_ratio_downgrade_to_upgrade', 'mean'),
+        avg_outflow_ratio_downgrade_to_upgrade=(f'{segment_col}_outflow_ratio_downgrade_to_upgrade', 'mean'),
+    )
+
+    summary = pop_summary.join(mov_summary, how='outer').reset_index()
+    summary['net_flow_pct_of_pop'] = summary['avg_net_flow'] / summary['avg_population'] * 100
+
+    return summary
+
+
+def plot_segment_performance_summary(
+    summary_df,
+    segment_col,
+    metrics=('net_flow_pct_of_pop', 'avg_inflow_ratio_downgrade_to_upgrade', 'avg_outflow_ratio_downgrade_to_upgrade'),
+    title_prefix=None,
+    width=1400,
+    height=500,
+):
+    """
+    Draws one trend-line chart per entry in `metrics` — period on the x-axis, one line per
+    tier — off get_segment_performance_summary's output. Meant for spotting whether a tier's
+    story (growth rate, inflow/outflow composition) is changing period over period, not just
+    what it averaged over the whole window.
+
+    summary_df must be the output of get_segment_performance_summary for this segment_col.
+    """
+    label = title_prefix or segment_col.replace('_', ' ').title()
+    NICE_LABELS = {
+        'net_flow_pct_of_pop': 'Net Flow (% of Tier Population)',
+        'avg_inflow_ratio_downgrade_to_upgrade': 'Inflow Ratio (Downgrade ÷ Upgrade)',
+        'avg_outflow_ratio_downgrade_to_upgrade': 'Outflow Ratio (Downgrade ÷ Upgrade)',
+    }
+
+    for metric in metrics:
+        y_label = NICE_LABELS.get(metric, metric.replace('_', ' ').title())
+        fig = px.line(
+            summary_df, x='period', y=metric, color=segment_col,
+            title=f'{y_label} by period, by {label}',
+            markers=True,
+            labels={metric: y_label},
+            width=width, height=height,
+        )
+        fig.update_layout(yaxis_title=y_label, legend_title_text='')
+        if metric in ('avg_inflow_ratio_downgrade_to_upgrade', 'avg_outflow_ratio_downgrade_to_upgrade'):
+            fig.add_hline(y=1, line_width=1, line_dash='dash', line_color='black')
+        elif metric == 'net_flow_pct_of_pop':
+            fig.add_hline(y=0, line_width=1, line_dash='dash', line_color='black')
+        fig.show()
 
 
 # One-line-per-segment metric charts available through the `metrics` argument of
