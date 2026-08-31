@@ -450,6 +450,41 @@ def comparison_table(
     return styler, df
 
 
+def installs_table(result: pd.DataFrame):
+    """
+    Monthly UA-driven vs external Boost installs, combined platforms, forecast horizon only.
+
+    Returns a Styler with install source as rows and month as columns — deliberately wide
+    rather than tall (one column per forecast month), so callers should wrap the rendered
+    HTML in a horizontally scrollable container (e.g. `<div style="overflow-x:auto">`).
+    """
+    df = result[result['platform'] == 'combined'].copy()
+    df['month'] = pd.to_datetime(df['date']).dt.to_period('M').astype(str)
+    # Older saved results (before boost_installs was tracked separately) lack the column.
+    df['boost_installs'] = df['boost_installs'].fillna(0.0) if 'boost_installs' in df else 0.0
+    df['ua_installs']    = df['new_installs'] - df['boost_installs']
+
+    monthly = df.groupby('month')[['ua_installs', 'boost_installs']].sum()
+    out = monthly.T
+    out.index = ['UA Installs', 'Boost Installs']
+
+    styler = (
+        out.style
+        .format('{:,.0f}')
+        .set_table_styles([
+            {'selector': 'th',
+             'props': [('background-color', _HEADER), ('color', 'white'),
+                       ('font-weight', 'bold'), ('padding', '6px 14px'),
+                       ('text-align', 'center')]},
+            {'selector': 'td',
+             'props': [('padding', '4px 14px'), ('text-align', 'right')]},
+            {'selector': 'th.row_heading',
+             'props': [('text-align', 'left'), ('position', 'sticky'), ('left', '0')]},
+        ])
+    )
+    return styler
+
+
 def export_all_tables(
     actuals: pd.DataFrame,
     months=('2027-03', '2027-12', '2029-12'),

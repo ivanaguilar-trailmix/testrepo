@@ -47,6 +47,7 @@ class PlatformResults:
     iap_revenue: np.ndarray
     ad_revenue: np.ndarray
     new_installs: np.ndarray
+    boost_installs: np.ndarray    # portion of new_installs attributable to the external installs boost
 
     @property
     def total_revenue(self) -> np.ndarray:
@@ -65,6 +66,7 @@ class PlatformResults:
             "ad_revenue":     self.ad_revenue,
             "total_revenue":  self.total_revenue,
             "new_installs":   self.new_installs,
+            "boost_installs": self.boost_installs,
         })
 
 
@@ -87,6 +89,7 @@ class SimulationResults:
             iap_revenue=self.ios.iap_revenue + self.android.iap_revenue,
             ad_revenue=self.ios.ad_revenue + self.android.ad_revenue,
             new_installs=self.ios.new_installs + self.android.new_installs,
+            boost_installs=self.ios.boost_installs + self.android.boost_installs,
         )
 
     def to_dataframe(self, include_combined: bool = True) -> pd.DataFrame:
@@ -257,6 +260,7 @@ def _run_platform(inputs: PlatformInputs, start_date: date, n_days: int) -> Plat
         iap_revenue=iap_revenue,
         ad_revenue=ad_revenue,
         new_installs=daily_installs,
+        boost_installs=boost_installs,
     )
 
 

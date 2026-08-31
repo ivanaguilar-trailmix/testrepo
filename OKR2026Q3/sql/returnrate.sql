@@ -1,17 +1,24 @@
 
 DECLARE startdate date default cast('{start_date}' as date);
 DECLARE enddate date default cast('{end_date}' as date);
+-- Loyalty segments to include; empty array = no filter (all segments, including new installs).
+DECLARE loyalty_segments ARRAY<STRING> DEFAULT {loyalty_segments};
 
 with activity as (
-select 
-  user_id,
-  dt,
-  platform,
-from trailmixgames-game-1.merger_prod_fact.fact_dt_user_activity
-join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device using (user_id)
+select
+  a.user_id,
+  a.dt,
+  d.platform,
+from trailmixgames-game-1.merger_prod_fact.fact_dt_user_activity a
+join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device d using (user_id)
+left join trailmixgames-game-1.merger_prod_dimensions.dimchange_user_loyalty_segment us on (
+    a.user_id = us.user_id
+    and a.dt >= us.effective_dt
+    and a.dt < coalesce(us.expiry_dt, current_date()))
 where 1=1
-and dt between startdate and enddate
-and platform in ('AND','IOS')
+and a.dt between startdate and enddate
+and d.platform in ('AND','IOS')
+and (array_length(loyalty_segments) = 0 or us.loyalty_segment in unnest(loyalty_segments))
 )
 
 , arraydates as (

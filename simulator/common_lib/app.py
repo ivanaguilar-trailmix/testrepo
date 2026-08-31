@@ -27,10 +27,10 @@ from common_lib.plots import build_chart_widget, build_curve_widget, build_curve
 from common_lib.sheets import aggregate_marketing
 from common_lib.simulation import (
     PlatformInputs, SimulationEngine,
-    load_scenario, list_scenarios,
+    load_result, load_scenario, list_scenarios,
     save_result, save_scenario,
 )
-from common_lib.tables import monthly_table
+from common_lib.tables import monthly_table, installs_table
 
 
 def prefill_panel(panel, actuals: pd.DataFrame, anchor_dau: dict) -> None:
@@ -105,6 +105,11 @@ def setup_callbacks(
 
             curve_anchors = panel.get_curve_anchors()
             chart_ws = {k: build_chart_widget(name, k) for k in ('dau', 'installs', 'revenue', 'boost', 'monthly')}
+            installs_html = installs_table(load_result(name)).to_html()
+            chart_ws['installs'] = _w.VBox([
+                chart_ws['installs'],
+                _w.HTML(f'<div style="overflow-x:auto;margin-top:8px">{installs_html}</div>'),
+            ])
             arpdau_vals = panel.get_arpdau()
             mkt_actuals = None
             if marketing is not None:

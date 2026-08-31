@@ -16,6 +16,7 @@ with active_users as (
     --g.install_country_code as country_code,
     --install_build_version,
     coalesce(us.loyalty_segment,'0.0 (new install)') as loyalty_segment,
+    di.days_since_install_segment as dsi_segment
   from trailmixgames-game-1.merger_prod_fact.fact_dt_user_activity a
   --join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_build b using (user_id)
   --join trailmixgames-game-1.merger_prod_dimensions.dim_user_install_device d using (user_id)
@@ -26,6 +27,10 @@ with active_users as (
       a.user_id = us.user_id
       AND a.dt >= us.effective_dt
       AND a.dt < COALESCE(us.expiry_dt, CURRENT_DATE()))
+  left join trailmixgames-game-1.merger_prod_dimensions.dimchange_user_dsi_segment di on (
+      a.user_id = di.user_id
+      AND a.dt >= di.effective_dt
+      AND a.dt < COALESCE(di.expiry_dt, CURRENT_DATE()))
   where 1=1
   and dt between start_date and end_date
   --and cast(install_ts as date) between start_date and end_date
@@ -88,6 +93,7 @@ select
   --a.acquisition_type,
   --a.install_build_version,
   a.loyalty_segment,
+  a.dsi_segment,
   iap.usd_net_iap_revenue AS usd_net_iap_revenue,
   adr.usd_ad_revenue_est AS usd_net_ad_revenue
 from active_users a

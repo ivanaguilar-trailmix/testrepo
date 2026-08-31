@@ -1,0 +1,28 @@
+# Direct dependencies actually imported by this folder's notebooks (exploration.ipynb,
+# abtestmetrics.ipynb) + common_lib. Pinned to the versions currently in use in the shared
+# .trailmix_basic_venv (repo root), so this migration doesn't change behavior. Transitive
+# deps are resolved by pip.
+pandas==2.3.3
+numpy==2.4.1
+plotly==6.6.0
+# [pandas] extra pulls in db-dtypes + pyarrow — required for BigQueryConnector.get()'s
+# .to_dataframe() call (e.g. BQ DATE columns come back as the dbdate extension dtype, which
+# needs db-dtypes importable even though no code ever `import`s it directly). Pinned explicitly
+# below too so the versions stay tied to the shared env, not whatever the extra's range floats to.
+google-cloud-bigquery[pandas,bqstorage]==3.40.0
+# bqstorage extra silences "BigQuery Storage module not found" warning and uses the faster
+# Storage Read API instead of REST for large result sets -- same invisible-dependency pattern
+# as db-dtypes above: nothing ever `import`s google.cloud.bigquery_storage directly.
+google-cloud-bigquery-storage==2.36.0
+db-dtypes==1.5.0
+pyarrow==22.0.0
+google-auth==2.47.0
+google-cloud-core==2.5.0
+# Only exploration.ipynb uses common_lib/export.py's export_notebook_html; kept here since
+# this file covers the whole folder.
+nbformat==5.10.4
+nbconvert==7.17.0
+
+# Needed to run this notebook as a Jupyter kernel (VS Code auto-detects .venv/ and offers it
+# as a kernel once ipykernel is installed here — no separate `jupyter kernelspec install` needed).
+ipykernel==7.1.0
