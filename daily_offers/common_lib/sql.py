@@ -215,6 +215,23 @@ class BigQueryConnector:
             print(f"⚠️  {warning}")
         return cost_info
 
+    def load_or_query(self, query_name: str, refresh_data: bool, query_parameters: dict = None) -> pd.DataFrame:
+        """
+        Print a cost estimate for sql/{query_name}.sql, then either run it and pickle the result
+        (refresh_data=True) or load the existing pickle (refresh_data=False). Collapses the
+        cost-estimate-cell + refresh-or-load-cell pair notebooks otherwise repeat once per query
+        into a single call. Assumes the standard ./sql/{name}.sql, ./data/{name}.pkl layout.
+        """
+        query_location = f'./sql/{query_name}.sql'
+        self.print_cost_estimate(query=query_location, is_path=True, query_parameters=query_parameters)
+
+        if refresh_data:
+            df = self.get(query=query_location, is_path=True, query_parameters=query_parameters)
+            df.to_pickle(f'./data/{query_name}.pkl')
+        else:
+            df = pd.read_pickle(f'./data/{query_name}.pkl')
+        return df
+
     @staticmethod
     def get_query_parameters_list(query: str, is_path: bool = True) -> list[str]:
         """List parameters defined in a given query statement. Paramenters are defined in brackets. ie; {param}"""
