@@ -54,7 +54,13 @@ WITH open_tests AS (
     INNER JOIN open_tests op USING(experiment_name)
     LEFT JOIN matched_sample_data ms USING(experiment_name, user_id)
     LEFT JOIN max_exposure max_match USING(experiment_name)
+    LEFT JOIN `trailmixgames-game-1`.`merger_prod_dimensions`.`dim_users_to_exclude` u
+      ON ex.user_id = u.user_id
     WHERE ex.bool_exclude_multi_variants IS FALSE
+      -- same exclude-list filter abtest_metrics.sql already applies to the activity pull - without
+      -- it here too, this population (and anything counting it, e.g. total_users_assigned) is
+      -- inflated by users whose activity never shows up in abtest_metrics.sql anyway.
+      AND u.user_id IS NULL
       -- for ab tests that require matching:
       AND (CASE WHEN op.required_matching = 1 THEN
                     -- filter on users in the matched sample up to max_matched_exposure_dt (matching done on sample available at that time)
